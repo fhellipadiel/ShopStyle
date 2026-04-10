@@ -630,6 +630,10 @@
                 abaAlta.classList.remove("hidden");
             } else {
                 abaAlta.classList.add("hidden");
+                if(currentSpecial === "alta") {
+                    currentSpecial = null;
+                    currentCat = "todos";
+                }
             }
         }
         
@@ -638,6 +642,10 @@
                 abaFrete.classList.remove("hidden");
             } else {
                 abaFrete.classList.add("hidden");
+                if(currentSpecial === "frete") {
+                    currentSpecial = null;
+                    currentCat = "todos";
+                }
             }
         }
     }
@@ -799,15 +807,20 @@
 
         let filtrados = [...products];
         
-        // Filtro por categoria especial
+        // CORREÇÃO: Filtro por categoria especial ou normal
         if(currentSpecial === "alta") {
+            // Filtra apenas produtos EM ALTA
             filtrados = filtrados.filter(p => isProdutoEmAlta(p));
         } else if(currentSpecial === "frete") {
+            // Filtra apenas produtos com FRETE GRÁTIS
             filtrados = filtrados.filter(p => p.freteGratis === true);
         } else if(currentCat === "todos") {
+            // Aba "Todos" - mostra TODOS os produtos (independente da categoria)
             filtrados = filtrados;
         } else {
-            filtrados = filtrados.filter(p => p.categoria === currentCat || p.categoria === "todos");
+            // Categoria específica - mostra APENAS produtos que têm essa categoria
+            // Produtos com categoria "todos" NÃO aparecem em categorias específicas!
+            filtrados = filtrados.filter(p => p.categoria === currentCat);
         }
         
         // Busca por nome do produto ou categoria
@@ -818,7 +831,7 @@
             if(categoriaEncontrada && !editMode) {
                 currentSpecial = null;
                 currentCat = categoriaEncontrada;
-                filtrados = products.filter(p => p.categoria === categoriaEncontrada || p.categoria === "todos");
+                filtrados = products.filter(p => p.categoria === categoriaEncontrada);
                 document.getElementById("searchInput").value = "";
                 currentSearch = "";
                 renderizar();
@@ -834,6 +847,7 @@
             let mensagem = "";
             if(currentSpecial === "alta") mensagem = "Nenhum produto está em alta no momento.";
             else if(currentSpecial === "frete") mensagem = "Nenhum produto com frete grátis encontrado.";
+            else if(currentCat !== "todos") mensagem = `Nenhum produto na categoria "${currentCat}".`;
             else mensagem = "Nenhum produto encontrado";
             document.getElementById("productsList").innerHTML = `<div class="empty"><i class="fas fa-store"></i><p>${mensagem}</p></div>`;
             return;
