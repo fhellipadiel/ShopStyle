@@ -336,7 +336,7 @@
     let currentMetaProduct = null;
     let currentUser = null;
     let searchTimeout = null;
-    let shouldRegisterSearch = true; // Flag para controlar registro de busca
+    let shouldRegisterSearch = true;
     
     let listStates = { topTodayList: true, topTotalList: true, catClicksList: true, searchesList: true };
     
@@ -472,11 +472,7 @@
     }
     
     function registrarBusca(termo) {
-        // NÃO registra busca se estiver em modo edição OU se a flag estiver desabilitada (reset)
         if(editMode || !shouldRegisterSearch) {
-            if(!editMode && !shouldRegisterSearch) {
-                console.log("Busca não registrada (reset manual):", termo);
-            }
             return;
         }
         
@@ -487,7 +483,6 @@
         
         if(existente) {
             existente.contador++;
-            // Não mostra toast para o visitante no reset
         } else {
             stats.searches.push({ termo: termoLower, contador: 1 });
         }
@@ -496,7 +491,6 @@
         if(stats.searches.length > 20) stats.searches.pop();
         
         salvarStats();
-        console.log("✅ Busca registrada (visitante):", termoLower);
     }
     
     function resetTopHoje() {
@@ -1090,7 +1084,7 @@
         });
     }
     
-    // Função de busca corrigida - sem mensagens para o visitante no reset
+    // Função de busca corrigida
     function handleSearch() {
         let newSearch = document.getElementById("searchInput").value;
         
@@ -1204,7 +1198,7 @@
     document.getElementById("closeModal").addEventListener("click", fecharModalProduto);
     document.getElementById("searchInput").addEventListener("input", handleSearch);
     
-    // Botão de reset (X) - Agora sem mensagem para o visitante
+    // Botão de reset (X) - Agora sem mensagem para o visitante e sem registrar busca
     document.getElementById("clearSearch").addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
