@@ -16,11 +16,13 @@
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         @keyframes trendingPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); } 50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); } }
+        
         .container { max-width: 500px; margin: 0 auto; padding: 16px; animation: fadeInUp 0.6s ease-out; }
         .logo { text-align: center; margin-bottom: 24px; cursor: pointer; transition: all 0.3s ease; }
         .logo:hover { transform: scale(1.02); }
         .logo h1 { font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #ee4d2d, #f59e0b, #ee4d2d); background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 3s ease infinite; letter-spacing: -0.5px; }
         .logo p { font-size: 11px; color: #f59e0b; margin-top: 4px; font-weight: 500; }
+        
         .search-box { background: white; border-radius: 50px; padding: 14px 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); transition: all 0.3s ease; border: 1px solid rgba(245, 158, 11, 0.1); position: relative; }
         .search-box:focus-within { box-shadow: 0 8px 25px rgba(245, 158, 11, 0.15); border-color: #f59e0b; transform: translateY(-2px); }
         .search-box i { color: #f59e0b; font-size: 18px; transition: transform 0.3s ease; }
@@ -29,23 +31,25 @@
         .search-box input::placeholder { color: #cbd5e1; }
         .search-box button { background: none; border: none; cursor: pointer; color: #f59e0b; font-size: 16px; transition: transform 0.2s ease; }
         .search-box button:hover { transform: scale(1.1); }
-        .search-warning { font-size: 10px; color: #f59e0b; background: #fffbeb; padding: 4px 10px; border-radius: 20px; white-space: nowrap; display: none; align-items: center; gap: 5px; margin-left: 8px; }
-        .search-warning i { font-size: 10px; margin: 0; }
+        
         .categories-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .categories-header h3 { font-size: 14px; font-weight: 600; color: #475569; }
         .categories-header h3 i { color: #f59e0b; margin-right: 6px; }
         .add-cat { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; cursor: pointer; display: none; align-items: center; gap: 6px; transition: all 0.3s ease; }
         .add-cat:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4); }
         .edit-mode .add-cat { display: flex; }
+        
         .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 20px; scrollbar-width: none; }
         .categories::-webkit-scrollbar { display: none; }
         .category { background: white; border-radius: 40px; padding: 8px 18px; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; gap: 6px; }
         .category:hover { transform: translateY(-2px); border-color: #f59e0b; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
         .category.active { background: linear-gradient(135deg, #ee4d2d, #f59e0b); color: white; border-color: transparent; box-shadow: 0 4px 15px rgba(238, 77, 45, 0.3); }
         .category small { font-size: 10px; opacity: 0.8; }
-        .delete-cat, .move-cat-up, .move-cat-down { background: #ef4444; color: white; border: none; width: 20px; height: 20px; border-radius: 50%; font-size: 9px; cursor: pointer; margin-left: 2px; transition: all 0.2s ease; }
+        .delete-cat, .move-cat-up, .move-cat-down, .top-cat-btn { background: #ef4444; color: white; border: none; width: 20px; height: 20px; border-radius: 50%; font-size: 9px; cursor: pointer; margin-left: 2px; transition: all 0.2s ease; }
         .move-cat-up, .move-cat-down { background: #3b82f6; }
-        .delete-cat:hover, .move-cat-up:hover, .move-cat-down:hover { transform: scale(1.1); }
+        .top-cat-btn { background: #f59e0b; }
+        .delete-cat:hover, .move-cat-up:hover, .move-cat-down:hover, .top-cat-btn:hover { transform: scale(1.1); }
+        
         .admin-panel { background: white; border-radius: 20px; margin-bottom: 20px; overflow: hidden; display: none; box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
         .edit-mode .admin-panel { display: block; }
         .admin-tabs { display: flex; background: #f8fafc; border-bottom: 1px solid #e2e8f0; overflow-x: auto; }
@@ -55,6 +59,7 @@
         .tab-btn.active { color: #ee4d2d; border-bottom: 2px solid #ee4d2d; background: white; }
         .tab-content { padding: 16px; display: none; animation: fadeInUp 0.3s ease-out; }
         .tab-content.active { display: block; }
+        
         .tab-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 10px; }
         .tab-header h4 { font-size: 14px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
         .tab-header h4 i { color: #f59e0b; font-size: 14px; }
@@ -67,12 +72,14 @@
         .toggle-list-btn:hover { transform: scale(1.02); }
         .list-container { transition: all 0.3s ease; overflow: hidden; }
         .list-container.hidden { display: none; }
+        
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
         .stat-card { background: linear-gradient(135deg, #f8fafc, #ffffff); padding: 12px; border-radius: 14px; text-align: center; border: 1px solid #e2e8f0; transition: all 0.3s ease; }
         .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(245, 158, 11, 0.1); border-color: #f59e0b; }
         .stat-card .label { font-size: 11px; color: #64748b; margin-bottom: 6px; }
         .stat-card .value { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, #ee4d2d, #f59e0b); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .stat-card .value.today { background: linear-gradient(135deg, #22c55e, #16a34a); -webkit-background-clip: text; background-clip: text; }
+        
         .admin-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
         .admin-btn { padding: 8px 16px; border: none; border-radius: 40px; font-size: 11px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; }
         .admin-btn:hover { transform: translateY(-2px); filter: brightness(105%); }
@@ -80,9 +87,11 @@
         .btn-red { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
         .btn-green { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
         .btn-gray { background: linear-gradient(135deg, #475569, #334155); color: white; }
+        
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #f8fafc; border-radius: 12px; margin-bottom: 8px; font-size: 12px; font-weight: 500; transition: all 0.2s ease; }
         .list-item:hover { transform: translateX(5px); background: #fef3c7; }
         .result-count { font-size: 12px; color: #f59e0b; margin-bottom: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        
         .products { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .product { background: white; border-radius: 16px; overflow: hidden; cursor: pointer; position: relative; border: 1px solid #e2e8f0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); animation: fadeInUp 0.4s ease-out backwards; }
         .product:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-color: #f59e0b; }
@@ -90,6 +99,7 @@
         .product.trending { border: 2px solid #f59e0b; animation: trendingPulse 2s ease infinite; }
         .free-badge { position: absolute; top: 10px; left: 10px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 3px 10px; border-radius: 30px; font-size: 9px; font-weight: 700; z-index: 1; animation: pulse 2s ease infinite; }
         .trending-badge { position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; padding: 3px 10px; border-radius: 30px; font-size: 9px; font-weight: 700; z-index: 1; animation: pulse 2s ease infinite; }
+        
         .product-actions { position: absolute; top: 10px; left: 10px; right: 10px; display: none; gap: 5px; z-index: 2; flex-wrap: wrap; justify-content: center; background: rgba(0,0,0,0.7); border-radius: 30px; padding: 5px; }
         .edit-mode .product-actions { display: flex; }
         .product-actions button { width: 28px; height: 28px; border-radius: 50%; border: none; cursor: pointer; font-size: 10px; transition: all 0.2s ease; }
@@ -99,6 +109,8 @@
         .delete-product { background: #ef4444; color: white; }
         .move-up, .move-down { background: #8b5cf6; color: white; }
         .set-meta { background: #f59e0b; color: white; }
+        .top-product-btn { background: #f59e0b; color: white; }
+        
         .product-img { width: 100%; aspect-ratio: 1; object-fit: cover; background: linear-gradient(135deg, #f1f5f9, #e2e8f0); transition: transform 0.3s ease; }
         .product:hover .product-img { transform: scale(1.02); }
         .product-info { padding: 10px; }
@@ -107,32 +119,50 @@
         .product-sold { font-size: 10px; color: #f97316; display: flex; align-items: center; gap: 4px; }
         .product-stats { font-size: 9px; color: #94a3b8; margin-top: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .product-meta { font-size: 9px; color: #f59e0b; font-weight: 600; }
+        .product-shopee-id { font-size: 8px; color: #94a3b8; margin-top: 4px; }
+        
         .empty { text-align: center; padding: 40px; background: white; border-radius: 20px; grid-column: span 2; }
         .empty i { font-size: 50px; color: #f59e0b; margin-bottom: 15px; opacity: 0.5; }
+        
         .admin-bar { position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(135deg, #1e293b, #0f172a); padding: 12px; display: none; justify-content: center; gap: 12px; z-index: 100; border-top: 1px solid rgba(245, 158, 11, 0.3); }
         .edit-mode .admin-bar { display: flex; }
         .edit-mode-badge { position: fixed; top: 10px; right: 10px; background: linear-gradient(135deg, #ee4d2d, #f59e0b); color: white; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; display: none; align-items: center; gap: 6px; z-index: 100; animation: pulse 2s ease infinite; }
+        
         .footer { text-align: center; font-size: 10px; color: #94a3b8; margin-top: 25px; padding-top: 15px; border-top: 1px solid #e2e8f0; display: flex; justify-content: center; gap: 15px; }
+        
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: all 0.3s ease; z-index: 1000; }
         .modal.active { visibility: visible; opacity: 1; }
-        .modal-box { background: white; border-radius: 24px; padding: 24px; width: 90%; max-width: 350px; animation: fadeInUp 0.3s ease-out; }
+        .modal-box { background: white; border-radius: 24px; padding: 24px; width: 90%; max-width: 350px; animation: fadeInUp 0.3s ease-out; max-height: 80vh; overflow-y: auto; }
         .modal-box h3 { margin-bottom: 16px; color: #ee4d2d; font-weight: 700; text-align: center; }
         .modal-box input, .modal-box select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 14px; transition: all 0.2s ease; }
         .modal-box input:focus, .modal-box select:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1); }
         .modal-box button { width: 100%; padding: 12px; border: none; border-radius: 40px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.3s ease; }
         .modal-box button:hover { transform: translateY(-2px); }
+        
         .error-msg { color: #ef4444; font-size: 12px; text-align: center; margin-top: 8px; display: none; }
         .loading-msg { color: #f59e0b; font-size: 12px; text-align: center; margin-top: 8px; display: none; }
         .upload-area { border: 2px dashed #e2e8f0; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; margin-bottom: 12px; transition: all 0.2s ease; }
         .upload-area:hover { border-color: #f59e0b; background: #fffbeb; }
         .preview-img { width: 100%; height: 100px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; display: none; }
-        .meta-input { display: flex; gap: 8px; align-items: center; }
-        .meta-input input { flex: 1; margin-bottom: 0; }
-        .meta-input button { width: auto; padding: 12px 16px; margin-top: 0; background: #f59e0b; color: white; }
-        .warning-badge { position: fixed; bottom: 70px; right: 10px; background: #f59e0b; color: white; padding: 5px 10px; border-radius: 20px; font-size: 10px; display: none; align-items: center; gap: 5px; z-index: 99; }
-        .edit-mode .warning-badge { display: flex; }
+        
+        .position-buttons { display: flex; gap: 10px; margin-bottom: 12px; }
+        .position-buttons button { flex: 1; padding: 10px; border-radius: 30px; font-size: 12px; }
+        .position-btn-active { background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; }
+        .position-btn-inactive { background: #e2e8f0; color: #64748b; }
+        
         .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 30px; font-size: 12px; z-index: 1000; animation: fadeInUp 0.3s ease; display: none; }
         .toast i { margin-right: 6px; }
+        
+        /* Seta para voltar ao topo */
+        .scroll-top-btn { position: fixed; bottom: 30px; right: 20px; width: 45px; height: 45px; background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; border: none; border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); transition: all 0.3s ease; z-index: 99; }
+        .scroll-top-btn:hover { transform: scale(1.1); }
+        .scroll-top-btn.show { display: flex; }
+        
+        .special-categories { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .special-cat { background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; border-radius: 40px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 6px; }
+        .special-cat:hover { transform: translateY(-2px); filter: brightness(105%); }
+        .special-cat.active { background: linear-gradient(135deg, #ee4d2d, #f59e0b); box-shadow: 0 4px 15px rgba(238, 77, 45, 0.3); }
+        .special-cat.hidden { display: none; }
     </style>
 </head>
 <body>
@@ -142,29 +172,33 @@
         <h1>shopstyle</h1>
         <p><i class="fas fa-bolt"></i> marketplace oficial</p>
     </div>
-    
+
     <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Buscar produto..." autocomplete="off">
+        <input type="text" id="searchInput" placeholder="Buscar produto ou categoria..." autocomplete="off">
         <button id="clearSearch"><i class="fas fa-times-circle"></i></button>
-        <span class="search-warning" id="searchWarning"><i class="fas fa-info-circle"></i> Modo edição: buscas NÃO são registradas</span>
     </div>
-    
+
     <div class="categories-header">
         <h3><i class="fas fa-tags"></i> Categorias</h3>
         <button id="newCategoryBtn" class="add-cat"><i class="fas fa-plus"></i> Nova Categoria</button>
     </div>
     <div class="categories" id="categoriesList"></div>
-    
+
+    <!-- Categorias Especiais para Visitantes - Aparecem apenas se tiver produtos -->
+    <div class="special-categories" id="specialCategories">
+        <div class="special-cat" data-special="alta" id="specialAlta"><i class="fas fa-fire"></i> Em Alta</div>
+        <div class="special-cat" data-special="frete" id="specialFrete"><i class="fas fa-truck"></i> Frete Grátis</div>
+    </div>
+
     <div class="admin-panel" id="adminPanel">
         <div class="admin-tabs">
             <button class="tab-btn active" data-tab="tab1"><i class="fas fa-chart-line"></i> Estatísticas</button>
             <button class="tab-btn" data-tab="tab2"><i class="fas fa-fire"></i> Top Hoje</button>
             <button class="tab-btn" data-tab="tab3"><i class="fas fa-trophy"></i> Top Total</button>
             <button class="tab-btn" data-tab="tab4"><i class="fas fa-folder-open"></i> Clicks Cat</button>
-            <button class="tab-btn" data-tab="tab5"><i class="fas fa-search"></i> Buscas</button>
         </div>
-        
+
         <div class="tab-content active" id="tab1">
             <div class="stats-grid" id="statsGrid"></div>
             <div class="admin-buttons">
@@ -173,7 +207,7 @@
                 <button id="importCsv" class="admin-btn btn-green"><i class="fas fa-file-csv"></i> Importar CSV</button>
             </div>
         </div>
-        
+
         <div class="tab-content" id="tab2">
             <div class="tab-header">
                 <h4><i class="fas fa-fire"></i> Produtos Mais Clicados Hoje</h4>
@@ -184,7 +218,7 @@
             </div>
             <div id="topTodayList" class="list-container"></div>
         </div>
-        
+
         <div class="tab-content" id="tab3">
             <div class="tab-header">
                 <h4><i class="fas fa-trophy"></i> Produtos Mais Clicados Total</h4>
@@ -195,7 +229,7 @@
             </div>
             <div id="topTotalList" class="list-container"></div>
         </div>
-        
+
         <div class="tab-content" id="tab4">
             <div class="tab-header">
                 <h4><i class="fas fa-folder-open"></i> Cliques por Categoria</h4>
@@ -206,19 +240,8 @@
             </div>
             <div id="catClicksList" class="list-container"></div>
         </div>
-        
-        <div class="tab-content" id="tab5">
-            <div class="tab-header">
-                <h4><i class="fas fa-search"></i> Buscas Populares (Apenas Visitantes)</h4>
-                <div class="tab-actions">
-                    <button class="reset-tab-btn" data-reset="searches"><i class="fas fa-sync-alt"></i> Resetar</button>
-                    <button class="toggle-list-btn show" data-target="searchesList"><i class="fas fa-eye"></i> Ocultar</button>
-                </div>
-            </div>
-            <div id="searchesList" class="list-container"></div>
-        </div>
     </div>
-    
+
     <div class="result-count" id="resultCount"></div>
     <div class="products" id="productsList"></div>
     <div class="footer">
@@ -228,8 +251,10 @@
     </div>
 </div>
 
+<!-- Seta para voltar ao topo -->
+<button class="scroll-top-btn" id="scrollTopBtn"><i class="fas fa-arrow-up"></i></button>
+
 <div class="edit-mode-badge" id="editBadge"><i class="fas fa-edit"></i> Modo Edição</div>
-<div class="warning-badge" id="warningBadge"><i class="fas fa-info-circle"></i> Cliques NÃO são contados | Buscas NÃO são registradas</div>
 <div class="admin-bar" id="adminBar">
     <button id="addProductBtn" class="admin-btn btn-orange"><i class="fas fa-plus"></i> Produto</button>
     <button id="exitEdit" class="admin-btn btn-gray"><i class="fas fa-sign-out-alt"></i> Sair</button>
@@ -239,7 +264,7 @@
 <div id="loginModal" class="modal">
     <div class="modal-box">
         <i class="fas fa-envelope" style="font-size: 45px; color: #f59e0b; display: block; text-align: center; margin-bottom: 15px;"></i>
-        <h3 style="text-align: center;">Acesso Editor</h3>
+        <h3 style="text-align: center;">ShopStyle</h3>
         <input type="email" id="loginEmail" placeholder="Email cadastrado">
         <input type="password" id="loginPassword" placeholder="Senha">
         <div class="error-msg" id="loginError"></div>
@@ -254,7 +279,20 @@
         <input type="text" id="prodId" placeholder="ID" readonly>
         <input type="text" id="prodName" placeholder="Nome do produto *">
         <input type="number" id="prodPrice" placeholder="Preço *" step="0.01">
-        <select id="prodCategory"></select>
+        
+        <!-- Posição do produto: Topo ou Último -->
+        <div class="position-buttons">
+            <button id="prodPosTop" class="position-btn-active">📌 Topo</button>
+            <button id="prodPosLast" class="position-btn-inactive">📄 Último</button>
+        </div>
+        
+        <select id="prodCategory">
+            <option value="todos">Todos</option>
+        </select>
+        
+        <!-- ID Shopee -->
+        <input type="text" id="prodShopeeId" placeholder="ID do produto na Shopee (opcional)">
+        
         <div class="upload-area" id="uploadTrigger">
             <i class="fas fa-cloud-upload-alt" style="color: #f59e0b; font-size: 24px;"></i>
             <p style="margin-top: 5px;">Clique para enviar imagem</p>
@@ -270,6 +308,19 @@
         </div>
         <button id="saveProduct" style="background: linear-gradient(135deg, #ee4d2d, #f59e0b); color: white;">Salvar</button>
         <button id="closeModal" style="background: #e2e8f0;">Cancelar</button>
+    </div>
+</div>
+
+<div id="categoryModal" class="modal">
+    <div class="modal-box">
+        <h3><i class="fas fa-tag"></i> Nova Categoria</h3>
+        <input type="text" id="catName" placeholder="Nome da categoria">
+        <div class="position-buttons">
+            <button id="catPosTop" class="position-btn-active">📍 Topo</button>
+            <button id="catPosLast" class="position-btn-inactive">📄 Último</button>
+        </div>
+        <button id="saveCategory" style="background: linear-gradient(135deg, #22c55e, #16a34a); color: white;">Criar</button>
+        <button id="closeCategory" style="background: #e2e8f0;">Cancelar</button>
     </div>
 </div>
 
@@ -315,31 +366,33 @@
         messagingSenderId: "69883454447",
         appId: "1:69883454447:web:1e08aa6521489963704c1a"
     };
-    
+
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     const auth = firebase.auth();
-    
+
     const productsRef = database.ref('products');
     const categoriesRef = database.ref('categories');
     const statsRef = database.ref('stats');
     const IMGBB_KEY = "39d6fa29c5d1a99652d6dcb6bd611757";
-    
+
     let categories = ["todos"];
     let products = [];
-    let stats = { catClicks: {}, searches: [], lastReset: new Date().toDateString() };
+    let stats = { catClicks: {}, lastReset: new Date().toDateString() };
     let editMode = false;
     let currentCat = "todos";
+    let currentSpecial = null; // 'alta', 'frete' ou null
     let currentSearch = "";
     let currentImage = null;
     let pendingCSV = [];
     let currentMetaProduct = null;
     let currentUser = null;
     let searchTimeout = null;
-    let shouldRegisterSearch = true;
-    
-    let listStates = { topTodayList: true, topTotalList: true, catClicksList: true, searchesList: true };
-    
+    let productPosition = "top"; // 'top' ou 'last'
+    let categoryPosition = "top"; // 'top' ou 'last'
+
+    let listStates = { topTodayList: true, topTotalList: true, catClicksList: true };
+
     function showToast(message, isError = false, isSuccess = false) {
         const toast = document.getElementById("toast");
         toast.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle' : (isError ? 'fa-exclamation-triangle' : 'fa-info-circle')}"></i> ${message}`;
@@ -349,7 +402,7 @@
             toast.style.display = "none";
         }, 3000);
     }
-    
+
     function levenshteinDistance(a, b) {
         const matrix = [];
         for (let i = 0; i <= b.length; i++) matrix[i] = [i];
@@ -362,11 +415,11 @@
         }
         return matrix[b.length][a.length];
     }
-    
+
     function normalizeString(str) {
         return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
     }
-    
+
     function fuzzySearch(termo, nomeProduto) {
         if (!termo || termo.length < 2) return true;
         const termoNorm = normalizeString(termo);
@@ -383,38 +436,29 @@
         }
         return false;
     }
-    
+
     function isProdutoEmAlta(produto) {
         if (!produto.metaCliques || produto.metaCliques <= 0) return false;
         return (produto.clicksTotal || 0) >= produto.metaCliques;
     }
-    
+
     function ordenarProdutos() {
         if (!products || products.length === 0) return;
-        products.sort((a, b) => {
-            const aEmAlta = isProdutoEmAlta(a);
-            const bEmAlta = isProdutoEmAlta(b);
-            if (aEmAlta && !bEmAlta) return -1;
-            if (!aEmAlta && bEmAlta) return 1;
-            if (a.freteGratis && !b.freteGratis) return -1;
-            if (!a.freteGratis && b.freteGratis) return 1;
-            return (a.ordem || 0) - (b.ordem || 0);
-        });
-        products.forEach((p, idx) => p.ordem = idx);
+        products.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
     }
-    
+
     function salvarStats() {
         if (stats) {
             statsRef.set(stats).catch(err => console.error("Erro ao salvar stats:", err));
         }
     }
-    
+
     function salvarTudo() {
         if (products) productsRef.set(products).catch(err => console.error("Erro ao salvar produtos:", err));
         if (categories) categoriesRef.set(categories).catch(err => console.error("Erro ao salvar categorias:", err));
         salvarStats();
     }
-    
+
     function carregarDoFirebase() {
         Promise.all([
             productsRef.once('value'),
@@ -426,24 +470,24 @@
             } else {
                 products = [];
             }
-            
+
             if (categoriesSnap.exists() && Array.isArray(categoriesSnap.val())) {
                 categories = categoriesSnap.val();
             } else {
                 categories = ["todos"];
             }
-            
+
             if (statsSnap.exists()) {
                 stats = statsSnap.val();
             } else {
-                stats = { catClicks: {}, searches: [], lastReset: new Date().toDateString() };
+                stats = { catClicks: {}, lastReset: new Date().toDateString() };
             }
-            
+
             categories = categories.filter(cat => cat && typeof cat === 'string' && cat !== "Object Object" && cat.trim() !== "");
             if (!categories.includes("todos")) categories.unshift("todos");
-            
+
             categories.forEach(c => { if(!stats.catClicks[c]) stats.catClicks[c] = { hoje: 0, total: 0 }; });
-            
+
             if (products && products.length > 0) {
                 products.forEach((p,i) => { 
                     if(p.ordem === undefined) p.ordem = i;
@@ -452,15 +496,16 @@
                     if(p.clicksHoje === undefined) p.clicksHoje = 0;
                     if(p.clicksTotal === undefined) p.clicksTotal = 0;
                     if(p.link === undefined || p.link === "") p.link = "https://shopee.com.br";
+                    if(p.shopeeId === undefined) p.shopeeId = "";
                 });
             }
-            
+
             ordenarProdutos();
             resetDiario();
             renderizar();
         }).catch(err => console.error("Erro ao carregar:", err));
     }
-    
+
     function resetDiario() {
         let hoje = new Date().toDateString();
         if(stats.lastReset !== hoje) {
@@ -470,29 +515,7 @@
             salvarTudo();
         }
     }
-    
-    function registrarBusca(termo) {
-        if(editMode || !shouldRegisterSearch) {
-            return;
-        }
-        
-        if(!termo || termo.length < 2) return;
-        
-        let termoLower = termo.toLowerCase().trim();
-        let existente = stats.searches.find(s => s.termo.toLowerCase() === termoLower);
-        
-        if(existente) {
-            existente.contador++;
-        } else {
-            stats.searches.push({ termo: termoLower, contador: 1 });
-        }
-        
-        stats.searches.sort((a,b) => b.contador - a.contador);
-        if(stats.searches.length > 20) stats.searches.pop();
-        
-        salvarStats();
-    }
-    
+
     function resetTopHoje() {
         if(confirm("Resetar cliques de HOJE?")) {
             products.forEach(p => p.clicksHoje = 0);
@@ -501,7 +524,7 @@
             showToast("✅ Cliques de hoje resetados!", false, true);
         }
     }
-    
+
     function resetTopTotal() {
         if(confirm("Resetar cliques TOTAL?")) {
             products.forEach(p => p.clicksTotal = 0);
@@ -510,7 +533,7 @@
             showToast("✅ Cliques totais resetados!", false, true);
         }
     }
-    
+
     function resetCatClicks() {
         if(confirm("Resetar cliques das categorias?")) {
             Object.keys(stats.catClicks).forEach(c => { stats.catClicks[c].hoje = 0; stats.catClicks[c].total = 0; });
@@ -519,16 +542,11 @@
             showToast("✅ Cliques por categoria resetados!", false, true);
         }
     }
-    
-    function resetSearches() {
-        if(confirm("Resetar histórico de buscas?")) {
-            stats.searches = [];
-            salvarStats();
-            renderizar();
-            showToast("✅ Histórico de buscas resetado!", false, true);
-        }
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    
+
     function moverCategoria(index, direcao) {
         let novaPos = index + direcao;
         if(novaPos < 0 || novaPos >= categories.length) return;
@@ -537,7 +555,7 @@
         salvarTudo();
         renderizar();
     }
-    
+
     function moverProduto(id, direcao) {
         let index = products.findIndex(p => p.id === id);
         let novaPos = index + direcao;
@@ -548,37 +566,94 @@
         salvarTudo();
         renderizar();
     }
-    
+
+    function colocarProdutoTopo(id) {
+        let index = products.findIndex(p => p.id === id);
+        if(index === 0) return;
+        let produto = products.splice(index, 1)[0];
+        products.unshift(produto);
+        products.forEach((p, idx) => p.ordem = idx);
+        ordenarProdutos();
+        salvarTudo();
+        renderizar();
+        showToast(`✅ ${produto.nome} foi para o topo!`, false, true);
+    }
+
     function definirMeta(produto) {
         currentMetaProduct = produto;
         document.getElementById("metaProdName").innerText = produto.nome;
         document.getElementById("metaValue").value = produto.metaCliques || 0;
         document.getElementById("metaModal").classList.add("active");
     }
-    
+
     function salvarMeta() {
         if (currentMetaProduct) {
             let novaMeta = parseInt(document.getElementById("metaValue").value);
             currentMetaProduct.metaCliques = isNaN(novaMeta) ? 0 : novaMeta;
-            ordenarProdutos();
             salvarTudo();
             renderizar();
             document.getElementById("metaModal").classList.remove("active");
             showToast(`✅ Meta de ${currentMetaProduct.nome} definida para ${currentMetaProduct.metaCliques} cliques!`, false, true);
         }
     }
-    
+
+    function adicionarCategoria(nome, posicao) {
+        if(!nome || nome.trim() === "") return false;
+        let catNome = nome.trim().toLowerCase();
+        if(categories.includes(catNome)) {
+            showToast(`⚠️ Categoria "${catNome}" já existe!`, true);
+            return false;
+        }
+        
+        if(posicao === "top") {
+            categories.splice(1, 0, catNome);
+        } else {
+            categories.push(catNome);
+        }
+        
+        stats.catClicks[catNome] = { hoje: 0, total: 0 };
+        salvarTudo();
+        renderizar();
+        showToast(`✅ Categoria "${catNome}" adicionada!`, false, true);
+        return true;
+    }
+
+    function atualizarVisibilidadeAbasEspeciais() {
+        const temProdutoEmAlta = products.some(p => isProdutoEmAlta(p));
+        const temFreteGratis = products.some(p => p.freteGratis === true);
+        
+        const abaAlta = document.getElementById("specialAlta");
+        const abaFrete = document.getElementById("specialFrete");
+        
+        if(abaAlta) {
+            if(temProdutoEmAlta) {
+                abaAlta.classList.remove("hidden");
+            } else {
+                abaAlta.classList.add("hidden");
+            }
+        }
+        
+        if(abaFrete) {
+            if(temFreteGratis) {
+                abaFrete.classList.remove("hidden");
+            } else {
+                abaFrete.classList.add("hidden");
+            }
+        }
+    }
+
     function renderizar() {
+        atualizarVisibilidadeAbasEspeciais();
         renderCategorias();
         renderProdutos();
         if(editMode) renderAdmin();
     }
-    
+
     function renderCategorias() {
         let html = "";
         for(let i = 0; i < categories.length; i++) {
             let cat = categories[i];
-            let ativo = (currentCat === cat) ? "active" : "";
+            let ativo = (!currentSpecial && currentCat === cat) ? "active" : "";
             let statsText = "";
             if(editMode && cat !== "todos" && stats.catClicks[cat]) {
                 statsText = `<small>(${stats.catClicks[cat]?.hoje || 0}/${stats.catClicks[cat]?.total || 0})</small>`;
@@ -587,22 +662,29 @@
                         <i class="fas fa-tag"></i>
                         ${cat === "todos" ? "Todos" : cat}
                         ${statsText}`;
-            if(editMode && cat !== "todos") {
-                html += `<button class="move-cat-up" data-cat-index="${i}" data-dir="-1"><i class="fas fa-arrow-up"></i></button>`;
-                html += `<button class="move-cat-down" data-cat-index="${i}" data-dir="1"><i class="fas fa-arrow-down"></i></button>`;
-                html += `<button class="delete-cat" data-cat="${cat}"><i class="fas fa-trash"></i></button>`;
+            if(editMode) {
+                html += `<button class="top-cat-btn" data-cat-name="${cat}"><i class="fas fa-arrow-up"></i></button>`;
+                if(cat !== "todos") {
+                    html += `<button class="move-cat-up" data-cat-index="${i}" data-dir="-1"><i class="fas fa-chevron-up"></i></button>`;
+                    html += `<button class="move-cat-down" data-cat-index="${i}" data-dir="1"><i class="fas fa-chevron-down"></i></button>`;
+                    html += `<button class="delete-cat" data-cat="${cat}"><i class="fas fa-trash"></i></button>`;
+                }
             }
             html += `</div>`;
         }
         document.getElementById("categoriesList").innerHTML = html;
-        
+
         document.querySelectorAll(".category").forEach(el => {
             el.addEventListener("click", (e) => {
                 if(e.target.classList.contains("delete-cat") || e.target.closest(".delete-cat")) return;
                 if(e.target.classList.contains("move-cat-up") || e.target.closest(".move-cat-up")) return;
                 if(e.target.classList.contains("move-cat-down") || e.target.closest(".move-cat-down")) return;
+                if(e.target.classList.contains("top-cat-btn") || e.target.closest(".top-cat-btn")) return;
+                
                 let cat = el.dataset.cat;
+                currentSpecial = null;
                 currentCat = cat;
+                
                 if(!editMode && cat !== "todos") {
                     if(stats.catClicks[cat]) {
                         stats.catClicks[cat].hoje++;
@@ -612,24 +694,33 @@
                     }
                     salvarTudo();
                 }
+                
+                document.querySelectorAll(".special-cat").forEach(sc => sc.classList.remove("active"));
                 renderizar();
             });
         });
-        
+
+        document.querySelectorAll(".top-cat-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                scrollToTop();
+            });
+        });
+
         document.querySelectorAll(".move-cat-up").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
                 moverCategoria(parseInt(btn.dataset.catIndex), -1);
             });
         });
-        
+
         document.querySelectorAll(".move-cat-down").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
                 moverCategoria(parseInt(btn.dataset.catIndex), 1);
             });
         });
-        
+
         document.querySelectorAll(".delete-cat").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
@@ -644,53 +735,110 @@
                 }
             });
         });
+
+        // Categorias especiais
+        document.querySelectorAll(".special-cat").forEach(el => {
+            if(currentSpecial === el.dataset.special && currentCat === "todos") {
+                el.classList.add("active");
+            } else {
+                el.classList.remove("active");
+            }
+            
+            el.addEventListener("click", (e) => {
+                e.stopPropagation();
+                let special = el.dataset.special;
+                
+                if(currentSpecial === special && currentCat === "todos") {
+                    currentSpecial = null;
+                    currentCat = "todos";
+                    el.classList.remove("active");
+                } else {
+                    currentSpecial = special;
+                    currentCat = "todos";
+                    document.querySelectorAll(".special-cat").forEach(sc => sc.classList.remove("active"));
+                    el.classList.add("active");
+                }
+                
+                renderizar();
+            });
+        });
     }
-    
+
     function handleProductClick(prod, event) {
         if(!prod) return;
-        
+
         if(event) {
             event.preventDefault();
             event.stopPropagation();
         }
-        
+
         let productLink = prod.link && prod.link.trim() !== "" ? prod.link.trim() : "https://shopee.com.br";
-        
+
         if(productLink === "https://shopee.com.br" && (!prod.link || prod.link === "https://shopee.com.br")) {
             showToast(`⚠️ Produto "${prod.nome}" não tem link cadastrado!`, true);
         } else {
             window.open(productLink, "_blank");
             if(!editMode) showToast(`🔗 Redirecionando para ${prod.nome}...`);
         }
-        
+
         if(!editMode) {
             prod.clicksHoje = (prod.clicksHoje || 0) + 1;
             prod.clicksTotal = (prod.clicksTotal || 0) + 1;
             salvarTudo();
         }
-        
+
         renderizar();
     }
-    
+
     function renderProdutos() {
         if (!products || products.length === 0) {
             document.getElementById("productsList").innerHTML = `<div class="empty"><i class="fas fa-store"></i><p>Nenhum produto cadastrado</p><p style="font-size: 10px;">Entre no modo edição para adicionar produtos</p></div>`;
             document.getElementById("resultCount").innerHTML = `<i class="fas fa-store"></i> 0 produtos encontrados`;
             return;
         }
+
+        let filtrados = [...products];
         
-        let filtrados = products.filter(p => currentCat === "todos" || p.categoria === currentCat);
+        // Filtro por categoria especial
+        if(currentSpecial === "alta") {
+            filtrados = filtrados.filter(p => isProdutoEmAlta(p));
+        } else if(currentSpecial === "frete") {
+            filtrados = filtrados.filter(p => p.freteGratis === true);
+        } else if(currentCat === "todos") {
+            filtrados = filtrados;
+        } else {
+            filtrados = filtrados.filter(p => p.categoria === currentCat || p.categoria === "todos");
+        }
+        
+        // Busca por nome do produto ou categoria
         if(currentSearch && currentSearch.length > 0) {
+            let searchLower = currentSearch.toLowerCase().trim();
+            let categoriaEncontrada = categories.find(c => c !== "todos" && c.toLowerCase().includes(searchLower));
+            
+            if(categoriaEncontrada && !editMode) {
+                currentSpecial = null;
+                currentCat = categoriaEncontrada;
+                filtrados = products.filter(p => p.categoria === categoriaEncontrada || p.categoria === "todos");
+                document.getElementById("searchInput").value = "";
+                currentSearch = "";
+                renderizar();
+                return;
+            }
+            
             filtrados = filtrados.filter(p => fuzzySearch(currentSearch, p.nome));
         }
-        
+
         document.getElementById("resultCount").innerHTML = `<i class="fas ${filtrados.length > 0 ? 'fa-chart-line' : 'fa-store'}"></i> ${filtrados.length} produto${filtrados.length !== 1 ? 's' : ''} encontrado${filtrados.length !== 1 ? 's' : ''}`;
-        
+
         if(filtrados.length === 0) {
-            document.getElementById("productsList").innerHTML = `<div class="empty"><i class="fas fa-store"></i><p>Nenhum produto encontrado</p></div>`;
+            let mensagem = "";
+            if(currentSpecial === "alta") mensagem = "Nenhum produto está em alta no momento.";
+            else if(currentSpecial === "frete") mensagem = "Nenhum produto com frete grátis encontrado.";
+            else mensagem = "Nenhum produto encontrado";
+            document.getElementById("productsList").innerHTML = `<div class="empty"><i class="fas fa-store"></i><p>${mensagem}</p></div>`;
             return;
         }
-        
+
         let html = "";
         for(let p of filtrados) {
             let freteClass = p.freteGratis ? "free" : "";
@@ -698,13 +846,14 @@
             let freteBadge = p.freteGratis ? `<div class="free-badge"><i class="fas fa-truck"></i> Frete Grátis</div>` : "";
             let trendingBadge = isProdutoEmAlta(p) ? `<div class="trending-badge"><i class="fas fa-fire"></i> 🔥 EM ALTA!</div>` : "";
             let imgSrc = p.imagem || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f1f5f9'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='%2394a3b8' font-size='12'%3ESem imagem%3C/text%3E%3C/svg%3E";
-            
+
             html += `<div class="product ${freteClass} ${trendingClass}" data-id="${p.id}" data-link="${p.link}" data-name="${p.nome}">
                         ${freteBadge}
                         ${trendingBadge}
                         <div class="product-actions">
-                            <button class="move-up" data-id="${p.id}" data-dir="-1"><i class="fas fa-arrow-up"></i></button>
-                            <button class="move-down" data-id="${p.id}" data-dir="1"><i class="fas fa-arrow-down"></i></button>
+                            <button class="top-product-btn" data-id="${p.id}"><i class="fas fa-arrow-up"></i></button>
+                            <button class="move-up" data-id="${p.id}" data-dir="-1"><i class="fas fa-chevron-up"></i></button>
+                            <button class="move-down" data-id="${p.id}" data-dir="1"><i class="fas fa-chevron-down"></i></button>
                             <button class="edit-product" data-id="${p.id}"><i class="fas fa-edit"></i></button>
                             <button class="free-product" data-id="${p.id}"><i class="fas fa-truck"></i></button>
                             <button class="set-meta" data-id="${p.id}"><i class="fas fa-chart-line"></i></button>
@@ -719,15 +868,16 @@
                                 <i class="fas fa-eye"></i> Hoje: ${p.clicksHoje} | Total: ${p.clicksTotal}
                                 <span class="product-meta"><i class="fas fa-bullseye"></i> Meta: ${p.metaCliques || 0}</span>
                             </div>` : ""}
+                            ${p.shopeeId ? `<div class="product-shopee-id"><i class="fab fa-shopee"></i> ID: ${p.shopeeId}</div>` : ""}
                         </div>
                     </div>`;
         }
         document.getElementById("productsList").innerHTML = html;
-        
+
         document.querySelectorAll(".product").forEach(el => {
             const productId = parseInt(el.dataset.id);
             const product = products.find(p => p.id === productId);
-            
+
             el.addEventListener("click", (e) => {
                 if(e.target.closest(".product-actions")) {
                     e.preventDefault();
@@ -739,31 +889,35 @@
                 handleProductClick(product, e);
             });
         });
-        
+
+        document.querySelectorAll(".top-product-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => { e.stopPropagation(); colocarProdutoTopo(parseInt(btn.dataset.id)); });
+        });
+
         document.querySelectorAll(".move-up").forEach(btn => {
             btn.addEventListener("click", (e) => { e.stopPropagation(); moverProduto(parseInt(btn.dataset.id), -1); });
         });
-        
+
         document.querySelectorAll(".move-down").forEach(btn => {
             btn.addEventListener("click", (e) => { e.stopPropagation(); moverProduto(parseInt(btn.dataset.id), 1); });
         });
-        
+
         document.querySelectorAll(".edit-product").forEach(btn => {
             btn.addEventListener("click", (e) => { e.stopPropagation(); abrirModalProduto(products.find(p => p.id === parseInt(btn.dataset.id))); });
         });
-        
+
         document.querySelectorAll(".free-product").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
                 let prod = products.find(p => p.id === parseInt(btn.dataset.id));
-                if(prod) { prod.freteGratis = !prod.freteGratis; ordenarProdutos(); salvarTudo(); renderizar(); }
+                if(prod) { prod.freteGratis = !prod.freteGratis; salvarTudo(); renderizar(); }
             });
         });
-        
+
         document.querySelectorAll(".set-meta").forEach(btn => {
             btn.addEventListener("click", (e) => { e.stopPropagation(); definirMeta(products.find(p => p.id === parseInt(btn.dataset.id))); });
         });
-        
+
         document.querySelectorAll(".delete-product").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
@@ -778,35 +932,29 @@
             });
         });
     }
-    
+
     function renderAdmin() {
         let clicksHoje = products.reduce((s,p) => s + (p.clicksHoje||0), 0);
         let clicksTotal = products.reduce((s,p) => s + (p.clicksTotal||0), 0);
         let emAltaCount = products.filter(p => isProdutoEmAlta(p)).length;
-        
+
         document.getElementById("statsGrid").innerHTML = `
             <div class="stat-card"><div class="label"><i class="fas fa-calendar-day"></i> Cliques Hoje</div><div class="value today">${clicksHoje}</div></div>
             <div class="stat-card"><div class="label"><i class="fas fa-chart-line"></i> Cliques Total</div><div class="value">${clicksTotal}</div></div>
             <div class="stat-card"><div class="label"><i class="fas fa-box"></i> Produtos</div><div class="value">${products.length}</div></div>
             <div class="stat-card"><div class="label"><i class="fas fa-fire"></i> Em Alta</div><div class="value">${emAltaCount}</div></div>
         `;
-        
+
         let topHojeList = [...products].sort((a,b) => (b.clicksHoje||0) - (a.clicksHoje||0)).slice(0,10);
         document.getElementById("topTodayList").innerHTML = topHojeList.map((p,i) => `<div class="list-item"><span><i class="fas fa-fire" style="color:#f59e0b"></i> ${i+1}. ${p.nome.substring(0,25)}</span><span style="color:#22c55e; font-weight:700">${p.clicksHoje||0}</span></div>`).join("") || "<div class='list-item'>Nenhum clique hoje</div>";
-        
+
         let topTotalList = [...products].sort((a,b) => (b.clicksTotal||0) - (a.clicksTotal||0)).slice(0,10);
         document.getElementById("topTotalList").innerHTML = topTotalList.map((p,i) => `<div class="list-item"><span><i class="fas fa-trophy" style="color:#f59e0b"></i> ${i+1}. ${p.nome.substring(0,25)}</span><span style="color:#22c55e; font-weight:700">${p.clicksTotal||0}</span></div>`).join("") || "<div class='list-item'>Nenhum clique registrado</div>";
-        
+
         let catStats = categories.filter(c => c !== "todos").map(c => ({ nome: c, hoje: stats.catClicks[c]?.hoje || 0, total: stats.catClicks[c]?.total || 0 }));
         catStats.sort((a,b) => b.total - a.total);
         document.getElementById("catClicksList").innerHTML = catStats.map(c => `<div class="list-item"><span><i class="fas fa-folder-open" style="color:#f59e0b"></i> ${c.nome}</span><span>Hoje: <strong style="color:#22c55e">${c.hoje}</strong> | Total: ${c.total}</span></div>`).join("") || "<div class='list-item'>Nenhuma categoria</div>";
-        
-        if(stats.searches && stats.searches.length > 0) {
-            document.getElementById("searchesList").innerHTML = stats.searches.slice(0,15).map(s => `<div class="list-item"><span><i class="fas fa-search" style="color:#f59e0b"></i> ${s.termo}</span><span style="background:#fef3c7; padding:2px 8px; border-radius:20px; font-weight:600">${s.contador}</span></div>`).join("");
-        } else {
-            document.getElementById("searchesList").innerHTML = "<div class='list-item'>Nenhuma busca registrada ainda. Peça para visitantes pesquisarem!</div>";
-        }
-        
+
         for(let [listaId, isVisible] of Object.entries(listStates)) {
             let container = document.getElementById(listaId);
             let btn = document.querySelector(`.toggle-list-btn[data-target="${listaId}"]`);
@@ -814,23 +962,22 @@
             if(btn) btn.innerHTML = isVisible ? '<i class="fas fa-eye"></i> Ocultar' : '<i class="fas fa-eye-slash"></i> Mostrar';
         }
     }
-    
+
     function toggleList(listaId) {
         listStates[listaId] = !listStates[listaId];
         renderAdmin();
     }
-    
+
     function resetarContagens() {
         if(confirm("Resetar TODAS as contagens?")) {
             products.forEach(p => { p.clicksHoje = 0; p.clicksTotal = 0; });
             Object.keys(stats.catClicks).forEach(c => { stats.catClicks[c].hoje = 0; stats.catClicks[c].total = 0; });
-            stats.searches = [];
             salvarTudo();
             renderizar();
             showToast("✅ Todas as contagens foram resetadas!", false, true);
         }
     }
-    
+
     function deletarTudo() {
         if(confirm("DELETAR TODOS OS PRODUTOS?")) {
             if(confirm("Última confirmação! Esta ação não pode ser desfeita!")) {
@@ -841,77 +988,72 @@
             }
         }
     }
-    
+
     function processarCSV(texto) {
-        console.log("📄 Processando CSV...");
         let linhas = texto.split(/\r?\n/);
         let resultados = [];
         let erros = [];
-        
+
         for(let i = 0; i < linhas.length; i++) {
             let linha = linhas[i].trim();
             if(!linha) continue;
-            
+
             let separador = linha.includes(';') ? ';' : ',';
             let cols = linha.split(separador);
-            
+
             if(i === 0) {
                 let primeiraColuna = cols[0].toLowerCase();
                 if(primeiraColuna === 'nome' || primeiraColuna === 'produto' || primeiraColuna === 'product') {
-                    console.log("📋 Pulando cabeçalho:", linha);
                     continue;
                 }
             }
-            
+
             if(cols.length < 2) {
                 erros.push(`Linha ${i+1}: formato inválido (necessário pelo menos Nome e Preço)`);
                 continue;
             }
-            
+
             let nome = cols[0]?.trim();
             let valorStr = cols[1]?.toString().replace(/[^0-9.,]/g, '').replace(',', '.');
             let valor = parseFloat(valorStr);
             let categoria = cols[2]?.trim().toLowerCase() || "todos";
-            
+
             if(!nome) {
                 erros.push(`Linha ${i+1}: nome vazio`);
                 continue;
             }
-            
+
             if(isNaN(valor) || valor <= 0) {
                 erros.push(`Linha ${i+1}: preço inválido "${cols[1]}"`);
                 continue;
             }
-            
+
             resultados.push({ nome, preco: valor, categoria });
-            console.log(`✅ Produto encontrado: ${nome} - R$ ${valor} - ${categoria}`);
         }
-        
+
         if(erros.length > 0) {
-            console.warn("⚠️ Erros no CSV:", erros);
             document.getElementById("csvError").innerHTML = erros.slice(0,5).join('<br>');
             document.getElementById("csvError").style.display = "block";
         } else {
             document.getElementById("csvError").style.display = "none";
         }
-        
+
         return resultados;
     }
-    
+
     async function adicionarCSV(produtosCSV) {
         let adicionados = 0;
         let categoriasNovas = [];
-        
+
         for(let p of produtosCSV) {
             if(p.categoria !== "todos" && !categories.includes(p.categoria)) {
                 categories.push(p.categoria);
                 stats.catClicks[p.categoria] = { hoje: 0, total: 0 };
                 categoriasNovas.push(p.categoria);
-                console.log(`📁 Nova categoria criada: ${p.categoria}`);
             }
-            
+
             let novoId = products.length > 0 ? Math.max(...products.map(p=>p.id)) + 1 : 1;
-            
+
             products.push({
                 id: novoId,
                 nome: p.nome,
@@ -924,36 +1066,25 @@
                 clicksTotal: 0,
                 freteGratis: false,
                 metaCliques: 0,
+                shopeeId: "",
                 ordem: products.length
             });
             adicionados++;
         }
-        
+
         ordenarProdutos();
         salvarTudo();
         renderizar();
-        
+
         let msg = `✅ ${adicionados} produto(s) adicionado(s)!`;
         if(categoriasNovas.length > 0) {
             msg += ` Novas categorias: ${categoriasNovas.join(', ')}`;
         }
         showToast(msg, false, true);
-        
+
         return adicionados;
     }
-    
-    function novaCategoria() {
-        let nome = prompt("Digite o nome da nova categoria:");
-        if(nome && nome.trim() && !categories.includes(nome.trim().toLowerCase())) {
-            let catNome = nome.trim().toLowerCase();
-            categories.push(catNome);
-            stats.catClicks[catNome] = { hoje: 0, total: 0 };
-            salvarTudo();
-            renderizar();
-            showToast(`✅ Categoria "${catNome}" adicionada!`, false, true);
-        }
-    }
-    
+
     async function uploadImagem(file) {
         let form = new FormData();
         form.append("image", file);
@@ -963,7 +1094,7 @@
         if(data.success) return data.data.url;
         throw new Error("Erro no upload");
     }
-    
+
     async function salvarProduto() {
         let id = parseInt(document.getElementById("prodId").value);
         let nome = document.getElementById("prodName").value;
@@ -972,9 +1103,10 @@
         let link = document.getElementById("prodLink").value;
         let vendidos = parseInt(document.getElementById("prodSold").value) || 0;
         let meta = parseInt(document.getElementById("prodMeta").value) || 0;
-        
+        let shopeeId = document.getElementById("prodShopeeId").value;
+
         if(!nome || isNaN(preco)) { alert("Nome e preço são obrigatórios!"); return; }
-        
+
         let imgUrl = "";
         if(currentImage) {
             try {
@@ -982,21 +1114,29 @@
                 imgUrl = await uploadImagem(currentImage);
             } catch(e) { alert("Erro na imagem: " + e); document.getElementById("saveProduct").innerText = "Salvar"; return; }
         }
-        
+
         if(id) {
             let idx = products.findIndex(p => p.id === id);
             if(idx !== -1) {
-                products[idx] = { ...products[idx], nome, preco, categoria, link, vendidos, metaCliques: meta };
+                products[idx] = { ...products[idx], nome, preco, categoria, link, vendidos, metaCliques: meta, shopeeId };
                 if(imgUrl) products[idx].imagem = imgUrl;
             }
             showToast(`✏️ Produto "${nome}" atualizado!`, false, true);
         } else {
             let novoId = products.length > 0 ? Math.max(...products.map(p=>p.id)) + 1 : 1;
-            products.push({
+            let novoProduto = {
                 id: novoId, nome, preco, categoria, link: link || "https://shopee.com.br", imagem: imgUrl,
                 vendidos, clicksHoje: 0, clicksTotal: 0, freteGratis: false, 
-                metaCliques: meta, ordem: products.length
-            });
+                metaCliques: meta, shopeeId, ordem: products.length
+            };
+            
+            if(productPosition === "top") {
+                products.unshift(novoProduto);
+            } else {
+                products.push(novoProduto);
+            }
+            
+            products.forEach((p, idx) => p.ordem = idx);
             showToast(`✅ Produto "${nome}" adicionado com sucesso!`, false, true);
         }
         ordenarProdutos();
@@ -1005,7 +1145,7 @@
         currentImage = null;
         renderizar();
     }
-    
+
     function abrirModalProduto(prod = null) {
         document.getElementById("prodId").value = prod?.id || "";
         document.getElementById("prodName").value = prod?.nome || "";
@@ -1013,42 +1153,72 @@
         document.getElementById("prodLink").value = prod?.link || "https://shopee.com.br";
         document.getElementById("prodSold").value = prod?.vendidos || 0;
         document.getElementById("prodMeta").value = prod?.metaCliques || 0;
-        
+        document.getElementById("prodShopeeId").value = prod?.shopeeId || "";
+
         let catSelect = document.getElementById("prodCategory");
-        catSelect.innerHTML = categories.filter(c => c !== "todos").map(c => `<option value="${c}" ${prod?.categoria === c ? 'selected' : ''}>${c}</option>`).join("");
-        
+        catSelect.innerHTML = `<option value="todos">Todos</option>` + categories.filter(c => c !== "todos").map(c => `<option value="${c}" ${prod?.categoria === c ? 'selected' : ''}>${c}</option>`).join("");
+
         if(prod?.imagem) {
             document.getElementById("imagePreview").src = prod.imagem;
             document.getElementById("imagePreview").style.display = "block";
         } else {
             document.getElementById("imagePreview").style.display = "none";
         }
+        
+        productPosition = "top";
+        document.getElementById("prodPosTop").classList.add("position-btn-active");
+        document.getElementById("prodPosTop").classList.remove("position-btn-inactive");
+        document.getElementById("prodPosLast").classList.add("position-btn-inactive");
+        document.getElementById("prodPosLast").classList.remove("position-btn-active");
+        
         document.getElementById("productModal").classList.add("active");
     }
-    
+
     function fecharModalProduto() {
         document.getElementById("productModal").classList.remove("active");
         document.getElementById("saveProduct").innerText = "Salvar";
+        currentImage = null;
     }
-    
+
+    function abrirModalCategoria() {
+        document.getElementById("categoryModal").classList.add("active");
+    }
+
+    function fecharModalCategoria() {
+        document.getElementById("categoryModal").classList.remove("active");
+        document.getElementById("catName").value = "";
+        categoryPosition = "top";
+        document.getElementById("catPosTop").classList.add("position-btn-active");
+        document.getElementById("catPosTop").classList.remove("position-btn-inactive");
+        document.getElementById("catPosLast").classList.add("position-btn-inactive");
+        document.getElementById("catPosLast").classList.remove("position-btn-active");
+    }
+
+    function salvarCategoria() {
+        let nome = document.getElementById("catName").value;
+        if(adicionarCategoria(nome, categoryPosition)) {
+            fecharModalCategoria();
+        }
+    }
+
     function mostrarLogin() { 
         document.getElementById("loginModal").classList.add("active"); 
     }
-    
+
     function fazerLogin() {
         let email = document.getElementById("loginEmail").value;
         let password = document.getElementById("loginPassword").value;
-        
+
         if(!email || !password) {
             document.getElementById("loginError").innerText = "Preencha email e senha!";
             document.getElementById("loginError").style.display = "block";
             return;
         }
-        
+
         document.getElementById("loginError").style.display = "none";
         document.getElementById("loginLoading").style.display = "block";
         document.getElementById("doLogin").disabled = true;
-        
+
         auth.signInWithEmailAndPassword(email, password)
             .then((userCredential) => {
                 currentUser = userCredential.user;
@@ -1056,8 +1226,6 @@
                 editMode = true;
                 document.body.classList.add("edit-mode");
                 document.getElementById("editBadge").style.display = "flex";
-                document.getElementById("warningBadge").style.display = "flex";
-                document.getElementById("searchWarning").style.display = "flex";
                 document.getElementById("loginLoading").style.display = "none";
                 document.getElementById("doLogin").disabled = false;
                 carregarDoFirebase();
@@ -1070,151 +1238,100 @@
                 document.getElementById("loginError").style.display = "block";
             });
     }
-    
+
     function sairEdit() {
         auth.signOut().then(() => {
             editMode = false;
             currentUser = null;
             document.body.classList.remove("edit-mode");
             document.getElementById("editBadge").style.display = "none";
-            document.getElementById("warningBadge").style.display = "none";
-            document.getElementById("searchWarning").style.display = "none";
             renderizar();
             showToast("👋 Você saiu do modo edição.");
         });
     }
-    
-    // Função de busca corrigida
+
     function handleSearch() {
         let newSearch = document.getElementById("searchInput").value;
-        
-        // Só registra busca se NÃO estiver em modo edição, se tiver texto com 2+ caracteres, e se a flag estiver ativa
-        if(!editMode && newSearch.length >= 2 && shouldRegisterSearch) {
-            if(searchTimeout) clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                registrarBusca(newSearch);
-            }, 800);
-        }
-        
         currentSearch = newSearch;
         document.getElementById("clearSearch").style.display = currentSearch ? "block" : "none";
         renderizar();
     }
-    
-    // Função de reset de busca corrigida - SEM mensagem para o visitante
+
     function resetSearch() {
-        // Desativa temporariamente o registro de busca
-        shouldRegisterSearch = false;
-        
-        // Limpa o campo de busca
         document.getElementById("searchInput").value = "";
-        
-        // Reseta a busca atual
         currentSearch = "";
-        
-        // Esconde o botão de limpar
         document.getElementById("clearSearch").style.display = "none";
-        
-        // Re-renderiza os produtos (mostra todos)
         renderizar();
-        
-        // Reativa o registro de busca após um pequeno delay
-        setTimeout(() => {
-            shouldRegisterSearch = true;
-        }, 100);
     }
-    
-    // Eventos para CSV
-    document.getElementById("csvTrigger").addEventListener("click", () => {
-        document.getElementById("csvFile").click();
-    });
-    
-    document.getElementById("csvFile").addEventListener("change", async (e) => {
-        let file = e.target.files[0];
-        if(file) {
-            console.log("📁 Arquivo selecionado:", file.name);
-            document.getElementById("csvPreview").style.display = "block";
-            document.getElementById("csvPreview").innerHTML = '<i class="fas fa-spinner fa-spin"></i> Lendo arquivo...';
-            
-            try {
-                let texto = await file.text();
-                console.log("📄 Conteúdo do arquivo:", texto.substring(0, 200));
-                pendingCSV = processarCSV(texto);
-                
-                if(pendingCSV.length > 0) {
-                    let categoriasEncontradas = [...new Set(pendingCSV.map(p => p.categoria).filter(c => c !== "todos"))];
-                    document.getElementById("csvPreview").innerHTML = `
-                        <i class="fas fa-check-circle" style="color: #22c55e;"></i> 
-                        <strong>${pendingCSV.length} produto(s) encontrado(s)</strong><br>
-                        <span style="font-size: 11px;">Categorias: ${categoriasEncontradas.length > 0 ? categoriasEncontradas.join(', ') : 'todos'}</span>
-                    `;
-                } else {
-                    document.getElementById("csvPreview").innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i> Nenhum produto válido encontrado no arquivo';
-                }
-            } catch(err) {
-                console.error("Erro ao ler arquivo:", err);
-                document.getElementById("csvPreview").innerHTML = '<i class="fas fa-times-circle" style="color: #ef4444;"></i> Erro ao ler o arquivo';
-            }
-        }
-    });
-    
-    document.getElementById("confirmCsv").addEventListener("click", async () => {
-        if(pendingCSV && pendingCSV.length > 0) {
-            document.getElementById("confirmCsv").disabled = true;
-            document.getElementById("confirmCsv").innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importando...';
-            
-            let count = await adicionarCSV(pendingCSV);
-            
-            document.getElementById("confirmCsv").disabled = false;
-            document.getElementById("confirmCsv").innerHTML = '✅ Importar';
-            document.getElementById("csvModal").classList.remove("active");
-            document.getElementById("csvFile").value = "";
-            document.getElementById("csvPreview").style.display = "none";
-            pendingCSV = [];
-            
-            showToast(`✅ ${count} produtos importados com sucesso!`, false, true);
+
+    // Scroll spy para mostrar/esconder botão de voltar ao topo
+    window.addEventListener("scroll", () => {
+        const scrollBtn = document.getElementById("scrollTopBtn");
+        if(window.scrollY > 300) {
+            scrollBtn.classList.add("show");
         } else {
-            showToast("❌ Nenhum produto para importar. Selecione um arquivo CSV válido.", true);
+            scrollBtn.classList.remove("show");
         }
     });
-    
-    document.getElementById("closeCsv").addEventListener("click", () => {
-        document.getElementById("csvModal").classList.remove("active");
-        document.getElementById("csvFile").value = "";
-        document.getElementById("csvPreview").style.display = "none";
-        document.getElementById("csvError").style.display = "none";
-        pendingCSV = [];
-    });
-    
+
+    // Event Listeners
+    document.getElementById("scrollTopBtn").addEventListener("click", scrollToTop);
     document.getElementById("logoBtn").addEventListener("click", mostrarLogin);
     document.getElementById("doLogin").addEventListener("click", fazerLogin);
     document.getElementById("exitEdit").addEventListener("click", sairEdit);
     document.getElementById("addProductBtn").addEventListener("click", () => abrirModalProduto(null));
-    document.getElementById("newCategoryBtn").addEventListener("click", novaCategoria);
+    document.getElementById("newCategoryBtn").addEventListener("click", abrirModalCategoria);
     document.getElementById("resetCounts").addEventListener("click", resetarContagens);
     document.getElementById("deleteAll").addEventListener("click", deletarTudo);
     document.getElementById("importCsv").addEventListener("click", () => document.getElementById("csvModal").classList.add("active"));
     document.getElementById("saveProduct").addEventListener("click", salvarProduto);
     document.getElementById("closeModal").addEventListener("click", fecharModalProduto);
+    document.getElementById("saveCategory").addEventListener("click", salvarCategoria);
+    document.getElementById("closeCategory").addEventListener("click", fecharModalCategoria);
     document.getElementById("searchInput").addEventListener("input", handleSearch);
+    document.getElementById("clearSearch").addEventListener("click", resetSearch);
     
-    // Botão de reset (X) - Agora sem mensagem para o visitante e sem registrar busca
-    document.getElementById("clearSearch").addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        resetSearch();
+    // Posição do produto
+    document.getElementById("prodPosTop").addEventListener("click", () => {
+        productPosition = "top";
+        document.getElementById("prodPosTop").classList.add("position-btn-active");
+        document.getElementById("prodPosTop").classList.remove("position-btn-inactive");
+        document.getElementById("prodPosLast").classList.add("position-btn-inactive");
+        document.getElementById("prodPosLast").classList.remove("position-btn-active");
+    });
+    document.getElementById("prodPosLast").addEventListener("click", () => {
+        productPosition = "last";
+        document.getElementById("prodPosLast").classList.add("position-btn-active");
+        document.getElementById("prodPosLast").classList.remove("position-btn-inactive");
+        document.getElementById("prodPosTop").classList.add("position-btn-inactive");
+        document.getElementById("prodPosTop").classList.remove("position-btn-active");
     });
     
+    // Posição da categoria
+    document.getElementById("catPosTop").addEventListener("click", () => {
+        categoryPosition = "top";
+        document.getElementById("catPosTop").classList.add("position-btn-active");
+        document.getElementById("catPosTop").classList.remove("position-btn-inactive");
+        document.getElementById("catPosLast").classList.add("position-btn-inactive");
+        document.getElementById("catPosLast").classList.remove("position-btn-active");
+    });
+    document.getElementById("catPosLast").addEventListener("click", () => {
+        categoryPosition = "last";
+        document.getElementById("catPosLast").classList.add("position-btn-active");
+        document.getElementById("catPosLast").classList.remove("position-btn-inactive");
+        document.getElementById("catPosTop").classList.add("position-btn-inactive");
+        document.getElementById("catPosTop").classList.remove("position-btn-active");
+    });
+
     document.querySelectorAll(".reset-tab-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             let resetType = btn.dataset.reset;
             if(resetType === "topHoje") resetTopHoje();
             else if(resetType === "topTotal") resetTopTotal();
             else if(resetType === "catClicks") resetCatClicks();
-            else if(resetType === "searches") resetSearches();
         });
     });
-    
+
     document.getElementById("uploadTrigger").addEventListener("click", () => document.getElementById("prodImage").click());
     document.getElementById("prodImage").addEventListener("change", (e) => {
         currentImage = e.target.files[0];
@@ -1227,14 +1344,14 @@
             reader.readAsDataURL(currentImage);
         }
     });
-    
+
     document.getElementById("saveMeta").addEventListener("click", salvarMeta);
     document.getElementById("closeMeta").addEventListener("click", () => document.getElementById("metaModal").classList.remove("active"));
-    
+
     document.querySelectorAll(".toggle-list-btn").forEach(btn => {
         btn.addEventListener("click", () => toggleList(btn.dataset.target));
     });
-    
+
     document.querySelectorAll(".tab-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             let tabId = btn.dataset.tab;
@@ -1244,34 +1361,89 @@
             document.getElementById(tabId).classList.add("active");
         });
     });
-    
+
+    // CSV Events
+    document.getElementById("csvTrigger").addEventListener("click", () => {
+        document.getElementById("csvFile").click();
+    });
+
+    document.getElementById("csvFile").addEventListener("change", async (e) => {
+        let file = e.target.files[0];
+        if(file) {
+            document.getElementById("csvPreview").style.display = "block";
+            document.getElementById("csvPreview").innerHTML = '<i class="fas fa-spinner fa-spin"></i> Lendo arquivo...';
+
+            try {
+                let texto = await file.text();
+                pendingCSV = processarCSV(texto);
+
+                if(pendingCSV.length > 0) {
+                    let categoriasEncontradas = [...new Set(pendingCSV.map(p => p.categoria).filter(c => c !== "todos"))];
+                    document.getElementById("csvPreview").innerHTML = `
+                        <i class="fas fa-check-circle" style="color: #22c55e;"></i> 
+                        <strong>${pendingCSV.length} produto(s) encontrado(s)</strong><br>
+                        <span style="font-size: 11px;">Categorias: ${categoriasEncontradas.length > 0 ? categoriasEncontradas.join(', ') : 'todos'}</span>
+                    `;
+                } else {
+                    document.getElementById("csvPreview").innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i> Nenhum produto válido encontrado no arquivo';
+                }
+            } catch(err) {
+                document.getElementById("csvPreview").innerHTML = '<i class="fas fa-times-circle" style="color: #ef4444;"></i> Erro ao ler o arquivo';
+            }
+        }
+    });
+
+    document.getElementById("confirmCsv").addEventListener("click", async () => {
+        if(pendingCSV && pendingCSV.length > 0) {
+            document.getElementById("confirmCsv").disabled = true;
+            document.getElementById("confirmCsv").innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importando...';
+
+            let count = await adicionarCSV(pendingCSV);
+
+            document.getElementById("confirmCsv").disabled = false;
+            document.getElementById("confirmCsv").innerHTML = '✅ Importar';
+            document.getElementById("csvModal").classList.remove("active");
+            document.getElementById("csvFile").value = "";
+            document.getElementById("csvPreview").style.display = "none";
+            pendingCSV = [];
+
+            showToast(`✅ ${count} produtos importados com sucesso!`, false, true);
+        } else {
+            showToast("❌ Nenhum produto para importar. Selecione um arquivo CSV válido.", true);
+        }
+    });
+
+    document.getElementById("closeCsv").addEventListener("click", () => {
+        document.getElementById("csvModal").classList.remove("active");
+        document.getElementById("csvFile").value = "";
+        document.getElementById("csvPreview").style.display = "none";
+        document.getElementById("csvError").style.display = "none";
+        pendingCSV = [];
+    });
+
     statsRef.on('value', (snapshot) => {
         if(snapshot.exists()) {
             stats = snapshot.val();
             if(editMode) renderAdmin();
         }
     });
-    
+
     auth.onAuthStateChanged((user) => {
         if(user) {
             currentUser = user;
             editMode = true;
             document.body.classList.add("edit-mode");
             document.getElementById("editBadge").style.display = "flex";
-            document.getElementById("warningBadge").style.display = "flex";
-            document.getElementById("searchWarning").style.display = "flex";
             carregarDoFirebase();
         } else {
             currentUser = null;
             editMode = false;
             document.body.classList.remove("edit-mode");
             document.getElementById("editBadge").style.display = "none";
-            document.getElementById("warningBadge").style.display = "none";
-            document.getElementById("searchWarning").style.display = "none";
             carregarDoFirebase();
         }
     });
-    
+
     setInterval(() => { resetDiario(); if(editMode) renderAdmin(); }, 60000);
 </script>
 </body>
