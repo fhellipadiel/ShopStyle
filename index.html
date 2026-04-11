@@ -16,29 +16,29 @@
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         @keyframes trendingPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); } 50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); } }
-        
+
         .container { max-width: 500px; margin: 0 auto; padding: 16px; animation: fadeInUp 0.6s ease-out; }
         .logo { text-align: center; margin-bottom: 24px; cursor: pointer; transition: all 0.3s ease; }
         .logo:hover { transform: scale(1.02); }
         .logo h1 { font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #ee4d2d, #f59e0b, #ee4d2d); background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 3s ease infinite; letter-spacing: -0.5px; }
         .logo p { font-size: 11px; color: #f59e0b; margin-top: 4px; font-weight: 500; }
-        
+
         .search-box { background: white; border-radius: 50px; padding: 14px 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); transition: all 0.3s ease; border: 1px solid rgba(245, 158, 11, 0.1); position: relative; }
         .search-box:focus-within { box-shadow: 0 8px 25px rgba(245, 158, 11, 0.15); border-color: #f59e0b; transform: translateY(-2px); }
         .search-box i { color: #f59e0b; font-size: 18px; transition: transform 0.3s ease; }
         .search-box:hover i { transform: rotate(15deg); }
         .search-box input { flex: 1; border: none; outline: none; font-size: 14px; font-weight: 500; background: transparent; }
-        .search-box input::placeholder { color: #cbd5e1; }
-        .search-box button { background: none; border: none; cursor: pointer; color: #f59e0b; font-size: 16px; transition: transform 0.2s ease; }
+        .search-box input::placeholder { color: #94a3b8; font-size: 14px; font-weight: 400; }
+        .search-box button { background: none; border: none; cursor: pointer; color: #f59e0b; font-size: 16px; transition: transform 0.2s ease; display: none; }
         .search-box button:hover { transform: scale(1.1); }
-        
+
         .categories-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .categories-header h3 { font-size: 14px; font-weight: 600; color: #475569; }
         .categories-header h3 i { color: #f59e0b; margin-right: 6px; }
         .add-cat { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; cursor: pointer; display: none; align-items: center; gap: 6px; transition: all 0.3s ease; }
         .add-cat:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4); }
         .edit-mode .add-cat { display: flex; }
-        
+
         .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 20px; scrollbar-width: none; }
         .categories::-webkit-scrollbar { display: none; }
         .category { background: white; border-radius: 40px; padding: 8px 18px; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; gap: 6px; }
@@ -49,7 +49,7 @@
         .move-cat-up, .move-cat-down { background: #3b82f6; }
         .top-cat-btn { background: #f59e0b; }
         .delete-cat:hover, .move-cat-up:hover, .move-cat-down:hover, .top-cat-btn:hover { transform: scale(1.1); }
-        
+
         .admin-panel { background: white; border-radius: 20px; margin-bottom: 20px; overflow: hidden; display: none; box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
         .edit-mode .admin-panel { display: block; }
         .admin-tabs { display: flex; background: #f8fafc; border-bottom: 1px solid #e2e8f0; overflow-x: auto; }
@@ -59,7 +59,7 @@
         .tab-btn.active { color: #ee4d2d; border-bottom: 2px solid #ee4d2d; background: white; }
         .tab-content { padding: 16px; display: none; animation: fadeInUp 0.3s ease-out; }
         .tab-content.active { display: block; }
-        
+
         .tab-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 10px; }
         .tab-header h4 { font-size: 14px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
         .tab-header h4 i { color: #f59e0b; font-size: 14px; }
@@ -72,14 +72,14 @@
         .toggle-list-btn:hover { transform: scale(1.02); }
         .list-container { transition: all 0.3s ease; overflow: hidden; }
         .list-container.hidden { display: none; }
-        
+
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
         .stat-card { background: linear-gradient(135deg, #f8fafc, #ffffff); padding: 12px; border-radius: 14px; text-align: center; border: 1px solid #e2e8f0; transition: all 0.3s ease; }
         .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(245, 158, 11, 0.1); border-color: #f59e0b; }
         .stat-card .label { font-size: 11px; color: #64748b; margin-bottom: 6px; }
         .stat-card .value { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, #ee4d2d, #f59e0b); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .stat-card .value.today { background: linear-gradient(135deg, #22c55e, #16a34a); -webkit-background-clip: text; background-clip: text; }
-        
+
         .admin-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
         .admin-btn { padding: 8px 16px; border: none; border-radius: 40px; font-size: 11px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; }
         .admin-btn:hover { transform: translateY(-2px); filter: brightness(105%); }
@@ -87,11 +87,11 @@
         .btn-red { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
         .btn-green { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
         .btn-gray { background: linear-gradient(135deg, #475569, #334155); color: white; }
-        
+
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #f8fafc; border-radius: 12px; margin-bottom: 8px; font-size: 12px; font-weight: 500; transition: all 0.2s ease; }
         .list-item:hover { transform: translateX(5px); background: #fef3c7; }
         .result-count { font-size: 12px; color: #f59e0b; margin-bottom: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-        
+
         .products { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .product { background: white; border-radius: 16px; overflow: hidden; cursor: pointer; position: relative; border: 1px solid #e2e8f0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); animation: fadeInUp 0.4s ease-out backwards; }
         .product:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-color: #f59e0b; }
@@ -99,7 +99,7 @@
         .product.trending { border: 2px solid #f59e0b; animation: trendingPulse 2s ease infinite; }
         .free-badge { position: absolute; top: 10px; left: 10px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 3px 10px; border-radius: 30px; font-size: 9px; font-weight: 700; z-index: 1; animation: pulse 2s ease infinite; }
         .trending-badge { position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; padding: 3px 10px; border-radius: 30px; font-size: 9px; font-weight: 700; z-index: 1; animation: pulse 2s ease infinite; }
-        
+
         .product-actions { position: absolute; top: 10px; left: 10px; right: 10px; display: none; gap: 5px; z-index: 2; flex-wrap: wrap; justify-content: center; background: rgba(0,0,0,0.7); border-radius: 30px; padding: 5px; }
         .edit-mode .product-actions { display: flex; }
         .product-actions button { width: 28px; height: 28px; border-radius: 50%; border: none; cursor: pointer; font-size: 10px; transition: all 0.2s ease; }
@@ -110,7 +110,7 @@
         .move-up, .move-down { background: #8b5cf6; color: white; }
         .set-meta { background: #f59e0b; color: white; }
         .top-product-btn { background: #f59e0b; color: white; }
-        
+
         .product-img { width: 100%; aspect-ratio: 1; object-fit: cover; background: linear-gradient(135deg, #f1f5f9, #e2e8f0); transition: transform 0.3s ease; }
         .product:hover .product-img { transform: scale(1.02); }
         .product-info { padding: 10px; }
@@ -120,16 +120,16 @@
         .product-stats { font-size: 9px; color: #94a3b8; margin-top: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .product-meta { font-size: 9px; color: #f59e0b; font-weight: 600; }
         .product-shopee-id { font-size: 8px; color: #94a3b8; margin-top: 4px; }
-        
+
         .empty { text-align: center; padding: 40px; background: white; border-radius: 20px; grid-column: span 2; }
         .empty i { font-size: 50px; color: #f59e0b; margin-bottom: 15px; opacity: 0.5; }
-        
+
         .admin-bar { position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(135deg, #1e293b, #0f172a); padding: 12px; display: none; justify-content: center; gap: 12px; z-index: 100; border-top: 1px solid rgba(245, 158, 11, 0.3); }
         .edit-mode .admin-bar { display: flex; }
         .edit-mode-badge { position: fixed; top: 10px; right: 10px; background: linear-gradient(135deg, #ee4d2d, #f59e0b); color: white; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; display: none; align-items: center; gap: 6px; z-index: 100; animation: pulse 2s ease infinite; }
-        
+
         .footer { text-align: center; font-size: 10px; color: #94a3b8; margin-top: 25px; padding-top: 15px; border-top: 1px solid #e2e8f0; display: flex; justify-content: center; gap: 15px; }
-        
+
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: all 0.3s ease; z-index: 1000; }
         .modal.active { visibility: visible; opacity: 1; }
         .modal-box { background: white; border-radius: 24px; padding: 24px; width: 90%; max-width: 350px; animation: fadeInUp 0.3s ease-out; max-height: 80vh; overflow-y: auto; }
@@ -138,26 +138,25 @@
         .modal-box input:focus, .modal-box select:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1); }
         .modal-box button { width: 100%; padding: 12px; border: none; border-radius: 40px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.3s ease; }
         .modal-box button:hover { transform: translateY(-2px); }
-        
+
         .error-msg { color: #ef4444; font-size: 12px; text-align: center; margin-top: 8px; display: none; }
         .loading-msg { color: #f59e0b; font-size: 12px; text-align: center; margin-top: 8px; display: none; }
         .upload-area { border: 2px dashed #e2e8f0; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; margin-bottom: 12px; transition: all 0.2s ease; }
         .upload-area:hover { border-color: #f59e0b; background: #fffbeb; }
         .preview-img { width: 100%; height: 100px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; display: none; }
-        
+
         .position-buttons { display: flex; gap: 10px; margin-bottom: 12px; }
         .position-buttons button { flex: 1; padding: 10px; border-radius: 30px; font-size: 12px; }
         .position-btn-active { background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; }
         .position-btn-inactive { background: #e2e8f0; color: #64748b; }
-        
+
         .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 30px; font-size: 12px; z-index: 1000; animation: fadeInUp 0.3s ease; display: none; }
         .toast i { margin-right: 6px; }
-        
-        /* Seta para voltar ao topo */
+
         .scroll-top-btn { position: fixed; bottom: 30px; right: 20px; width: 45px; height: 45px; background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; border: none; border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); transition: all 0.3s ease; z-index: 99; }
         .scroll-top-btn:hover { transform: scale(1.1); }
         .scroll-top-btn.show { display: flex; }
-        
+
         .special-categories { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
         .special-cat { background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; border-radius: 40px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 6px; }
         .special-cat:hover { transform: translateY(-2px); filter: brightness(105%); }
@@ -185,7 +184,6 @@
     </div>
     <div class="categories" id="categoriesList"></div>
 
-    <!-- Categorias Especiais para Visitantes - Aparecem apenas se tiver produtos -->
     <div class="special-categories" id="specialCategories">
         <div class="special-cat" data-special="alta" id="specialAlta"><i class="fas fa-fire"></i> Em Alta</div>
         <div class="special-cat" data-special="frete" id="specialFrete"><i class="fas fa-truck"></i> Frete Grátis</div>
@@ -251,9 +249,7 @@
     </div>
 </div>
 
-<!-- Seta para voltar ao topo -->
 <button class="scroll-top-btn" id="scrollTopBtn"><i class="fas fa-arrow-up"></i></button>
-
 <div class="edit-mode-badge" id="editBadge"><i class="fas fa-edit"></i> Modo Edição</div>
 <div class="admin-bar" id="adminBar">
     <button id="addProductBtn" class="admin-btn btn-orange"><i class="fas fa-plus"></i> Produto</button>
@@ -279,27 +275,19 @@
         <input type="text" id="prodId" placeholder="ID" readonly>
         <input type="text" id="prodName" placeholder="Nome do produto *">
         <input type="number" id="prodPrice" placeholder="Preço *" step="0.01">
-        
-        <!-- Posição do produto: Topo ou Último -->
         <div class="position-buttons">
             <button id="prodPosTop" class="position-btn-active">📌 Topo</button>
             <button id="prodPosLast" class="position-btn-inactive">📄 Último</button>
         </div>
-        
-        <select id="prodCategory">
-            <option value="todos">Todos</option>
-        </select>
-        
-        <!-- ID Shopee -->
+        <select id="prodCategory"><option value="todos">Todos</option></select>
         <input type="text" id="prodShopeeId" placeholder="ID do produto na Shopee (opcional)">
-        
         <div class="upload-area" id="uploadTrigger">
             <i class="fas fa-cloud-upload-alt" style="color: #f59e0b; font-size: 24px;"></i>
             <p style="margin-top: 5px;">Clique para enviar imagem</p>
         </div>
         <input type="file" id="prodImage" accept="image/*" style="display: none;">
         <img id="imagePreview" class="preview-img">
-        <input type="text" id="prodLink" placeholder="Link do produto (ex: https://shopee.com.br/...)" value="https://shopee.com.br">
+        <input type="text" id="prodLink" placeholder="Link do produto" value="https://shopee.com.br">
         <div class="link-hint" style="font-size: 11px; color: #64748b; margin-top: -8px; margin-bottom: 12px;"><i class="fas fa-info-circle"></i> Cole o link completo do produto na Shopee</div>
         <input type="number" id="prodSold" placeholder="Quantos compraram">
         <div class="meta-input">
@@ -381,16 +369,14 @@
     let stats = { catClicks: {}, lastReset: new Date().toDateString() };
     let editMode = false;
     let currentCat = "todos";
-    let currentSpecial = null; // 'alta', 'frete' ou null
+    let currentSpecial = null;
     let currentSearch = "";
     let currentImage = null;
     let pendingCSV = [];
     let currentMetaProduct = null;
     let currentUser = null;
-    let searchTimeout = null;
-    let productPosition = "top"; // 'top' ou 'last'
-    let categoryPosition = "top"; // 'top' ou 'last'
-
+    let productPosition = "top";
+    let categoryPosition = "top";
     let listStates = { topTodayList: true, topTotalList: true, catClicksList: true };
 
     function showToast(message, isError = false, isSuccess = false) {
@@ -398,9 +384,7 @@
         toast.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle' : (isError ? 'fa-exclamation-triangle' : 'fa-info-circle')}"></i> ${message}`;
         toast.style.backgroundColor = isError ? "#ef4444" : (isSuccess ? "#22c55e" : "#f59e0b");
         toast.style.display = "block";
-        setTimeout(() => {
-            toast.style.display = "none";
-        }, 3000);
+        setTimeout(() => { toast.style.display = "none"; }, 3000);
     }
 
     function levenshteinDistance(a, b) {
@@ -448,9 +432,7 @@
     }
 
     function salvarStats() {
-        if (stats) {
-            statsRef.set(stats).catch(err => console.error("Erro ao salvar stats:", err));
-        }
+        if (stats) statsRef.set(stats).catch(err => console.error("Erro ao salvar stats:", err));
     }
 
     function salvarTudo() {
@@ -465,23 +447,14 @@
             categoriesRef.once('value'),
             statsRef.once('value')
         ]).then(([productsSnap, categoriesSnap, statsSnap]) => {
-            if (productsSnap.exists() && Array.isArray(productsSnap.val())) {
-                products = productsSnap.val();
-            } else {
-                products = [];
-            }
+            if (productsSnap.exists() && Array.isArray(productsSnap.val())) products = productsSnap.val();
+            else products = [];
 
-            if (categoriesSnap.exists() && Array.isArray(categoriesSnap.val())) {
-                categories = categoriesSnap.val();
-            } else {
-                categories = ["todos"];
-            }
+            if (categoriesSnap.exists() && Array.isArray(categoriesSnap.val())) categories = categoriesSnap.val();
+            else categories = ["todos"];
 
-            if (statsSnap.exists()) {
-                stats = statsSnap.val();
-            } else {
-                stats = { catClicks: {}, lastReset: new Date().toDateString() };
-            }
+            if (statsSnap.exists()) stats = statsSnap.val();
+            else stats = { catClicks: {}, lastReset: new Date().toDateString() };
 
             categories = categories.filter(cat => cat && typeof cat === 'string' && cat !== "Object Object" && cat.trim() !== "");
             if (!categories.includes("todos")) categories.unshift("todos");
@@ -516,36 +489,7 @@
         }
     }
 
-    function resetTopHoje() {
-        if(confirm("Resetar cliques de HOJE?")) {
-            products.forEach(p => p.clicksHoje = 0);
-            salvarTudo();
-            renderizar();
-            showToast("✅ Cliques de hoje resetados!", false, true);
-        }
-    }
-
-    function resetTopTotal() {
-        if(confirm("Resetar cliques TOTAL?")) {
-            products.forEach(p => p.clicksTotal = 0);
-            salvarTudo();
-            renderizar();
-            showToast("✅ Cliques totais resetados!", false, true);
-        }
-    }
-
-    function resetCatClicks() {
-        if(confirm("Resetar cliques das categorias?")) {
-            Object.keys(stats.catClicks).forEach(c => { stats.catClicks[c].hoje = 0; stats.catClicks[c].total = 0; });
-            salvarTudo();
-            renderizar();
-            showToast("✅ Cliques por categoria resetados!", false, true);
-        }
-    }
-
-    function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
     function moverCategoria(index, direcao) {
         let novaPos = index + direcao;
@@ -604,13 +548,10 @@
             showToast(`⚠️ Categoria "${catNome}" já existe!`, true);
             return false;
         }
-        
-        if(posicao === "top") {
-            categories.splice(1, 0, catNome);
-        } else {
-            categories.push(catNome);
-        }
-        
+
+        if(posicao === "top") categories.splice(1, 0, catNome);
+        else categories.push(catNome);
+
         stats.catClicks[catNome] = { hoje: 0, total: 0 };
         salvarTudo();
         renderizar();
@@ -621,31 +562,23 @@
     function atualizarVisibilidadeAbasEspeciais() {
         const temProdutoEmAlta = products.some(p => isProdutoEmAlta(p));
         const temFreteGratis = products.some(p => p.freteGratis === true);
-        
+
         const abaAlta = document.getElementById("specialAlta");
         const abaFrete = document.getElementById("specialFrete");
-        
+
         if(abaAlta) {
-            if(temProdutoEmAlta) {
-                abaAlta.classList.remove("hidden");
-            } else {
+            if(temProdutoEmAlta) abaAlta.classList.remove("hidden");
+            else {
                 abaAlta.classList.add("hidden");
-                if(currentSpecial === "alta") {
-                    currentSpecial = null;
-                    currentCat = "todos";
-                }
+                if(currentSpecial === "alta") { currentSpecial = null; currentCat = "todos"; }
             }
         }
-        
+
         if(abaFrete) {
-            if(temFreteGratis) {
-                abaFrete.classList.remove("hidden");
-            } else {
+            if(temFreteGratis) abaFrete.classList.remove("hidden");
+            else {
                 abaFrete.classList.add("hidden");
-                if(currentSpecial === "frete") {
-                    currentSpecial = null;
-                    currentCat = "todos";
-                }
+                if(currentSpecial === "frete") { currentSpecial = null; currentCat = "todos"; }
             }
         }
     }
@@ -657,6 +590,7 @@
         if(editMode) renderAdmin();
     }
 
+    // FUNÇÃO CORRIGIDA - AGORA O BOTÃO TOP-CAT-BTN FUNCIONA
     function renderCategorias() {
         let html = "";
         for(let i = 0; i < categories.length; i++) {
@@ -682,56 +616,40 @@
         }
         document.getElementById("categoriesList").innerHTML = html;
 
-        document.querySelectorAll(".category").forEach(el => {
-            el.addEventListener("click", (e) => {
-                if(e.target.classList.contains("delete-cat") || e.target.closest(".delete-cat")) return;
-                if(e.target.classList.contains("move-cat-up") || e.target.closest(".move-cat-up")) return;
-                if(e.target.classList.contains("move-cat-down") || e.target.closest(".move-cat-down")) return;
-                if(e.target.classList.contains("top-cat-btn") || e.target.closest(".top-cat-btn")) return;
-                
-                let cat = el.dataset.cat;
-                currentSpecial = null;
-                currentCat = cat;
-                
-                if(!editMode && cat !== "todos") {
-                    if(stats.catClicks[cat]) {
-                        stats.catClicks[cat].hoje++;
-                        stats.catClicks[cat].total++;
-                    } else {
-                        stats.catClicks[cat] = { hoje: 1, total: 1 };
-                    }
-                    salvarTudo();
-                }
-                
-                document.querySelectorAll(".special-cat").forEach(sc => sc.classList.remove("active"));
-                renderizar();
-            });
-        });
-
+        // CORREÇÃO CRÍTICA: Adicionar eventos ANTES de qualquer outro evento
+        // Botão de voltar ao topo (seta laranja)
         document.querySelectorAll(".top-cat-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
-                scrollToTop();
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return false;
             });
         });
 
+        // Botões de mover para cima/baixo
         document.querySelectorAll(".move-cat-up").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
+                e.preventDefault();
                 moverCategoria(parseInt(btn.dataset.catIndex), -1);
+                return false;
             });
         });
 
         document.querySelectorAll(".move-cat-down").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
+                e.preventDefault();
                 moverCategoria(parseInt(btn.dataset.catIndex), 1);
+                return false;
             });
         });
 
         document.querySelectorAll(".delete-cat").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
+                e.preventDefault();
                 let cat = btn.dataset.cat;
                 if(confirm(`Excluir categoria "${cat}"?`)) {
                     categories = categories.filter(c => c !== cat);
@@ -741,21 +659,53 @@
                     salvarTudo();
                     renderizar();
                 }
+                return false;
+            });
+        });
+
+        // Evento de clique na categoria (NÃO nos botões)
+        document.querySelectorAll(".category").forEach(el => {
+            el.addEventListener("click", (e) => {
+                // Verifica se o clique foi em algum botão
+                if(e.target.classList.contains("top-cat-btn") || 
+                   e.target.closest(".top-cat-btn") ||
+                   e.target.classList.contains("move-cat-up") || 
+                   e.target.closest(".move-cat-up") ||
+                   e.target.classList.contains("move-cat-down") || 
+                   e.target.closest(".move-cat-down") ||
+                   e.target.classList.contains("delete-cat") || 
+                   e.target.closest(".delete-cat")) {
+                    return;
+                }
+
+                let cat = el.dataset.cat;
+                currentSpecial = null;
+                currentCat = cat;
+
+                if(!editMode && cat !== "todos") {
+                    if(stats.catClicks[cat]) {
+                        stats.catClicks[cat].hoje++;
+                        stats.catClicks[cat].total++;
+                    } else {
+                        stats.catClicks[cat] = { hoje: 1, total: 1 };
+                    }
+                    salvarTudo();
+                }
+
+                document.querySelectorAll(".special-cat").forEach(sc => sc.classList.remove("active"));
+                renderizar();
             });
         });
 
         // Categorias especiais
         document.querySelectorAll(".special-cat").forEach(el => {
-            if(currentSpecial === el.dataset.special && currentCat === "todos") {
-                el.classList.add("active");
-            } else {
-                el.classList.remove("active");
-            }
-            
+            if(currentSpecial === el.dataset.special && currentCat === "todos") el.classList.add("active");
+            else el.classList.remove("active");
+
             el.addEventListener("click", (e) => {
                 e.stopPropagation();
                 let special = el.dataset.special;
-                
+
                 if(currentSpecial === special && currentCat === "todos") {
                     currentSpecial = null;
                     currentCat = "todos";
@@ -766,7 +716,6 @@
                     document.querySelectorAll(".special-cat").forEach(sc => sc.classList.remove("active"));
                     el.classList.add("active");
                 }
-                
                 renderizar();
             });
         });
@@ -774,11 +723,7 @@
 
     function handleProductClick(prod, event) {
         if(!prod) return;
-
-        if(event) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
+        if(event) { event.preventDefault(); event.stopPropagation(); }
 
         let productLink = prod.link && prod.link.trim() !== "" ? prod.link.trim() : "https://shopee.com.br";
 
@@ -794,7 +739,6 @@
             prod.clicksTotal = (prod.clicksTotal || 0) + 1;
             salvarTudo();
         }
-
         renderizar();
     }
 
@@ -806,38 +750,26 @@
         }
 
         let filtrados = [...products];
-        
-        // CORREÇÃO: Filtro por categoria especial ou normal
-        if(currentSpecial === "alta") {
-            // Filtra apenas produtos EM ALTA
-            filtrados = filtrados.filter(p => isProdutoEmAlta(p));
-        } else if(currentSpecial === "frete") {
-            // Filtra apenas produtos com FRETE GRÁTIS
-            filtrados = filtrados.filter(p => p.freteGratis === true);
-        } else if(currentCat === "todos") {
-            // Aba "Todos" - mostra TODOS os produtos (independente da categoria)
-            filtrados = filtrados;
-        } else {
-            // Categoria específica - mostra APENAS produtos que têm essa categoria
-            // Produtos com categoria "todos" NÃO aparecem em categorias específicas!
-            filtrados = filtrados.filter(p => p.categoria === currentCat);
-        }
-        
-        // Busca por nome do produto ou categoria
-        if(currentSearch && currentSearch.length > 0) {
+
+        if(currentSpecial === "alta") filtrados = filtrados.filter(p => isProdutoEmAlta(p));
+        else if(currentSpecial === "frete") filtrados = filtrados.filter(p => p.freteGratis === true);
+        else if(currentCat !== "todos") filtrados = filtrados.filter(p => p.categoria === currentCat);
+
+        if(currentSearch && currentSearch.trim().length > 0) {
             let searchLower = currentSearch.toLowerCase().trim();
-            let categoriaEncontrada = categories.find(c => c !== "todos" && c.toLowerCase().includes(searchLower));
-            
-            if(categoriaEncontrada && !editMode) {
-                currentSpecial = null;
-                currentCat = categoriaEncontrada;
-                filtrados = products.filter(p => p.categoria === categoriaEncontrada);
-                document.getElementById("searchInput").value = "";
-                currentSearch = "";
-                renderizar();
-                return;
+
+            if(!editMode) {
+                let categoriaEncontrada = categories.find(c => c !== "todos" && c.toLowerCase().includes(searchLower));
+                if(categoriaEncontrada && filtrados.length === 0) {
+                    currentSpecial = null;
+                    currentCat = categoriaEncontrada;
+                    document.getElementById("searchInput").value = "";
+                    currentSearch = "";
+                    renderizar();
+                    return;
+                }
             }
-            
+
             filtrados = filtrados.filter(p => fuzzySearch(currentSearch, p.nome));
         }
 
@@ -848,6 +780,7 @@
             if(currentSpecial === "alta") mensagem = "Nenhum produto está em alta no momento.";
             else if(currentSpecial === "frete") mensagem = "Nenhum produto com frete grátis encontrado.";
             else if(currentCat !== "todos") mensagem = `Nenhum produto na categoria "${currentCat}".`;
+            else if(currentSearch) mensagem = `Nenhum produto encontrado para "${currentSearch}".`;
             else mensagem = "Nenhum produto encontrado";
             document.getElementById("productsList").innerHTML = `<div class="empty"><i class="fas fa-store"></i><p>${mensagem}</p></div>`;
             return;
@@ -891,7 +824,6 @@
         document.querySelectorAll(".product").forEach(el => {
             const productId = parseInt(el.dataset.id);
             const product = products.find(p => p.id === productId);
-
             el.addEventListener("click", (e) => {
                 if(e.target.closest(".product-actions")) {
                     e.preventDefault();
@@ -907,19 +839,15 @@
         document.querySelectorAll(".top-product-btn").forEach(btn => {
             btn.addEventListener("click", (e) => { e.stopPropagation(); colocarProdutoTopo(parseInt(btn.dataset.id)); });
         });
-
         document.querySelectorAll(".move-up").forEach(btn => {
             btn.addEventListener("click", (e) => { e.stopPropagation(); moverProduto(parseInt(btn.dataset.id), -1); });
         });
-
         document.querySelectorAll(".move-down").forEach(btn => {
             btn.addEventListener("click", (e) => { e.stopPropagation(); moverProduto(parseInt(btn.dataset.id), 1); });
         });
-
         document.querySelectorAll(".edit-product").forEach(btn => {
             btn.addEventListener("click", (e) => { e.stopPropagation(); abrirModalProduto(products.find(p => p.id === parseInt(btn.dataset.id))); });
         });
-
         document.querySelectorAll(".free-product").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
@@ -927,11 +855,9 @@
                 if(prod) { prod.freteGratis = !prod.freteGratis; salvarTudo(); renderizar(); }
             });
         });
-
         document.querySelectorAll(".set-meta").forEach(btn => {
             btn.addEventListener("click", (e) => { e.stopPropagation(); definirMeta(products.find(p => p.id === parseInt(btn.dataset.id))); });
         });
-
         document.querySelectorAll(".delete-product").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
@@ -1017,9 +943,7 @@
 
             if(i === 0) {
                 let primeiraColuna = cols[0].toLowerCase();
-                if(primeiraColuna === 'nome' || primeiraColuna === 'produto' || primeiraColuna === 'product') {
-                    continue;
-                }
+                if(primeiraColuna === 'nome' || primeiraColuna === 'produto' || primeiraColuna === 'product') continue;
             }
 
             if(cols.length < 2) {
@@ -1032,15 +956,8 @@
             let valor = parseFloat(valorStr);
             let categoria = cols[2]?.trim().toLowerCase() || "todos";
 
-            if(!nome) {
-                erros.push(`Linha ${i+1}: nome vazio`);
-                continue;
-            }
-
-            if(isNaN(valor) || valor <= 0) {
-                erros.push(`Linha ${i+1}: preço inválido "${cols[1]}"`);
-                continue;
-            }
+            if(!nome) { erros.push(`Linha ${i+1}: nome vazio`); continue; }
+            if(isNaN(valor) || valor <= 0) { erros.push(`Linha ${i+1}: preço inválido "${cols[1]}"`); continue; }
 
             resultados.push({ nome, preco: valor, categoria });
         }
@@ -1051,7 +968,6 @@
         } else {
             document.getElementById("csvError").style.display = "none";
         }
-
         return resultados;
     }
 
@@ -1067,21 +983,12 @@
             }
 
             let novoId = products.length > 0 ? Math.max(...products.map(p=>p.id)) + 1 : 1;
-
             products.push({
-                id: novoId,
-                nome: p.nome,
-                preco: p.preco,
+                id: novoId, nome: p.nome, preco: p.preco,
                 categoria: categories.includes(p.categoria) ? p.categoria : "todos",
-                link: "https://shopee.com.br",
-                imagem: "",
-                vendidos: 0,
-                clicksHoje: 0,
-                clicksTotal: 0,
-                freteGratis: false,
-                metaCliques: 0,
-                shopeeId: "",
-                ordem: products.length
+                link: "https://shopee.com.br", imagem: "", vendidos: 0,
+                clicksHoje: 0, clicksTotal: 0, freteGratis: false,
+                metaCliques: 0, shopeeId: "", ordem: products.length
             });
             adicionados++;
         }
@@ -1091,11 +998,8 @@
         renderizar();
 
         let msg = `✅ ${adicionados} produto(s) adicionado(s)!`;
-        if(categoriasNovas.length > 0) {
-            msg += ` Novas categorias: ${categoriasNovas.join(', ')}`;
-        }
+        if(categoriasNovas.length > 0) msg += ` Novas categorias: ${categoriasNovas.join(', ')}`;
         showToast(msg, false, true);
-
         return adicionados;
     }
 
@@ -1143,13 +1047,8 @@
                 vendidos, clicksHoje: 0, clicksTotal: 0, freteGratis: false, 
                 metaCliques: meta, shopeeId, ordem: products.length
             };
-            
-            if(productPosition === "top") {
-                products.unshift(novoProduto);
-            } else {
-                products.push(novoProduto);
-            }
-            
+            if(productPosition === "top") products.unshift(novoProduto);
+            else products.push(novoProduto);
             products.forEach((p, idx) => p.ordem = idx);
             showToast(`✅ Produto "${nome}" adicionado com sucesso!`, false, true);
         }
@@ -1178,13 +1077,12 @@
         } else {
             document.getElementById("imagePreview").style.display = "none";
         }
-        
+
         productPosition = "top";
         document.getElementById("prodPosTop").classList.add("position-btn-active");
         document.getElementById("prodPosTop").classList.remove("position-btn-inactive");
         document.getElementById("prodPosLast").classList.add("position-btn-inactive");
         document.getElementById("prodPosLast").classList.remove("position-btn-active");
-        
         document.getElementById("productModal").classList.add("active");
     }
 
@@ -1194,10 +1092,7 @@
         currentImage = null;
     }
 
-    function abrirModalCategoria() {
-        document.getElementById("categoryModal").classList.add("active");
-    }
-
+    function abrirModalCategoria() { document.getElementById("categoryModal").classList.add("active"); }
     function fecharModalCategoria() {
         document.getElementById("categoryModal").classList.remove("active");
         document.getElementById("catName").value = "";
@@ -1210,29 +1105,22 @@
 
     function salvarCategoria() {
         let nome = document.getElementById("catName").value;
-        if(adicionarCategoria(nome, categoryPosition)) {
-            fecharModalCategoria();
-        }
+        if(adicionarCategoria(nome, categoryPosition)) fecharModalCategoria();
     }
 
-    function mostrarLogin() { 
-        document.getElementById("loginModal").classList.add("active"); 
-    }
+    function mostrarLogin() { document.getElementById("loginModal").classList.add("active"); }
 
     function fazerLogin() {
         let email = document.getElementById("loginEmail").value;
         let password = document.getElementById("loginPassword").value;
-
         if(!email || !password) {
             document.getElementById("loginError").innerText = "Preencha email e senha!";
             document.getElementById("loginError").style.display = "block";
             return;
         }
-
         document.getElementById("loginError").style.display = "none";
         document.getElementById("loginLoading").style.display = "block";
         document.getElementById("doLogin").disabled = true;
-
         auth.signInWithEmailAndPassword(email, password)
             .then((userCredential) => {
                 currentUser = userCredential.user;
@@ -1267,7 +1155,9 @@
     function handleSearch() {
         let newSearch = document.getElementById("searchInput").value;
         currentSearch = newSearch;
-        document.getElementById("clearSearch").style.display = currentSearch ? "block" : "none";
+        const clearBtn = document.getElementById("clearSearch");
+        if(currentSearch && currentSearch.length > 0) clearBtn.style.display = "block";
+        else clearBtn.style.display = "none";
         renderizar();
     }
 
@@ -1278,14 +1168,10 @@
         renderizar();
     }
 
-    // Scroll spy para mostrar/esconder botão de voltar ao topo
     window.addEventListener("scroll", () => {
         const scrollBtn = document.getElementById("scrollTopBtn");
-        if(window.scrollY > 300) {
-            scrollBtn.classList.add("show");
-        } else {
-            scrollBtn.classList.remove("show");
-        }
+        if(window.scrollY > 300) scrollBtn.classList.add("show");
+        else scrollBtn.classList.remove("show");
     });
 
     // Event Listeners
@@ -1304,8 +1190,7 @@
     document.getElementById("closeCategory").addEventListener("click", fecharModalCategoria);
     document.getElementById("searchInput").addEventListener("input", handleSearch);
     document.getElementById("clearSearch").addEventListener("click", resetSearch);
-    
-    // Posição do produto
+
     document.getElementById("prodPosTop").addEventListener("click", () => {
         productPosition = "top";
         document.getElementById("prodPosTop").classList.add("position-btn-active");
@@ -1320,8 +1205,7 @@
         document.getElementById("prodPosTop").classList.add("position-btn-inactive");
         document.getElementById("prodPosTop").classList.remove("position-btn-active");
     });
-    
-    // Posição da categoria
+
     document.getElementById("catPosTop").addEventListener("click", () => {
         categoryPosition = "top";
         document.getElementById("catPosTop").classList.add("position-btn-active");
@@ -1345,6 +1229,33 @@
             else if(resetType === "catClicks") resetCatClicks();
         });
     });
+
+    function resetTopHoje() {
+        if(confirm("Resetar cliques de HOJE?")) {
+            products.forEach(p => p.clicksHoje = 0);
+            salvarTudo();
+            renderizar();
+            showToast("✅ Cliques de hoje resetados!", false, true);
+        }
+    }
+
+    function resetTopTotal() {
+        if(confirm("Resetar cliques TOTAL?")) {
+            products.forEach(p => p.clicksTotal = 0);
+            salvarTudo();
+            renderizar();
+            showToast("✅ Cliques totais resetados!", false, true);
+        }
+    }
+
+    function resetCatClicks() {
+        if(confirm("Resetar cliques das categorias?")) {
+            Object.keys(stats.catClicks).forEach(c => { stats.catClicks[c].hoje = 0; stats.catClicks[c].total = 0; });
+            salvarTudo();
+            renderizar();
+            showToast("✅ Cliques por categoria resetados!", false, true);
+        }
+    }
 
     document.getElementById("uploadTrigger").addEventListener("click", () => document.getElementById("prodImage").click());
     document.getElementById("prodImage").addEventListener("change", (e) => {
@@ -1376,28 +1287,18 @@
         });
     });
 
-    // CSV Events
-    document.getElementById("csvTrigger").addEventListener("click", () => {
-        document.getElementById("csvFile").click();
-    });
-
+    document.getElementById("csvTrigger").addEventListener("click", () => { document.getElementById("csvFile").click(); });
     document.getElementById("csvFile").addEventListener("change", async (e) => {
         let file = e.target.files[0];
         if(file) {
             document.getElementById("csvPreview").style.display = "block";
             document.getElementById("csvPreview").innerHTML = '<i class="fas fa-spinner fa-spin"></i> Lendo arquivo...';
-
             try {
                 let texto = await file.text();
                 pendingCSV = processarCSV(texto);
-
                 if(pendingCSV.length > 0) {
                     let categoriasEncontradas = [...new Set(pendingCSV.map(p => p.categoria).filter(c => c !== "todos"))];
-                    document.getElementById("csvPreview").innerHTML = `
-                        <i class="fas fa-check-circle" style="color: #22c55e;"></i> 
-                        <strong>${pendingCSV.length} produto(s) encontrado(s)</strong><br>
-                        <span style="font-size: 11px;">Categorias: ${categoriasEncontradas.length > 0 ? categoriasEncontradas.join(', ') : 'todos'}</span>
-                    `;
+                    document.getElementById("csvPreview").innerHTML = `<i class="fas fa-check-circle" style="color: #22c55e;"></i> <strong>${pendingCSV.length} produto(s) encontrado(s)</strong><br><span style="font-size: 11px;">Categorias: ${categoriasEncontradas.length > 0 ? categoriasEncontradas.join(', ') : 'todos'}</span>`;
                 } else {
                     document.getElementById("csvPreview").innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i> Nenhum produto válido encontrado no arquivo';
                 }
@@ -1411,16 +1312,13 @@
         if(pendingCSV && pendingCSV.length > 0) {
             document.getElementById("confirmCsv").disabled = true;
             document.getElementById("confirmCsv").innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importando...';
-
             let count = await adicionarCSV(pendingCSV);
-
             document.getElementById("confirmCsv").disabled = false;
             document.getElementById("confirmCsv").innerHTML = '✅ Importar';
             document.getElementById("csvModal").classList.remove("active");
             document.getElementById("csvFile").value = "";
             document.getElementById("csvPreview").style.display = "none";
             pendingCSV = [];
-
             showToast(`✅ ${count} produtos importados com sucesso!`, false, true);
         } else {
             showToast("❌ Nenhum produto para importar. Selecione um arquivo CSV válido.", true);
