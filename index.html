@@ -144,7 +144,6 @@
         .modal-box button { width: 100%; padding: 12px; border: none; border-radius: 40px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.3s ease; }
         .modal-box button:hover { transform: translateY(-2px); }
         
-        /* Estilos para o select de categorias com rolagem */
         .category-select-container { margin-bottom: 12px; }
         .category-search { position: relative; margin-bottom: 8px; }
         .category-search input { padding-left: 35px; margin-bottom: 0; }
@@ -192,7 +191,6 @@
 
         .shuffle-buttons { display: flex; gap: 8px; margin-top: 12px; }
         
-        /* Estilos para a lista de categorias no modal de gerenciar */
         .category-manage-list { max-height: 400px; overflow-y: auto; margin: 15px 0; }
         .category-manage-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: all 0.2s ease; flex-wrap: wrap; }
         .category-manage-item:hover { background: #fef3c7; transform: translateX(3px); }
@@ -214,6 +212,23 @@
         
         .btn-green { background: #22c55e; color: white; }
         .btn-gray { background: #64748b; color: white; }
+
+        .system-config { padding: 15px; }
+        .config-group { margin-bottom: 20px; }
+        .config-group label { display: block; font-size: 13px; font-weight: 600; color: #1e293b; margin-bottom: 8px; }
+        .config-group label i { color: #f59e0b; margin-right: 6px; }
+        .telegram-input-wrapper { position: relative; display: flex; align-items: center; }
+        .telegram-input-wrapper input { flex: 1; padding-right: 45px; }
+        .toggle-token-btn { position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: #f59e0b; font-size: 16px; padding: 8px; width: auto; margin-top: 0; }
+        .toggle-token-btn:hover { transform: scale(1.05); background: none; }
+        .toggle-switch { display: flex; gap: 15px; margin-top: 8px; }
+        .toggle-switch button { flex: 1; padding: 10px; border-radius: 30px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .toggle-switch .btn-active { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; }
+        .toggle-switch .btn-inactive { background: #e2e8f0; color: #64748b; border: none; }
+        .toggle-switch button:hover { transform: translateY(-2px); }
+        .config-hint { font-size: 11px; color: #64748b; margin-top: 8px; display: flex; align-items: center; gap: 6px; }
+        .test-btn { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border: none; padding: 8px 16px; border-radius: 30px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; }
+        .test-btn:hover { transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -250,6 +265,7 @@
             <button class="tab-btn" data-tab="tab2"><i class="fas fa-fire"></i> Top Hoje</button>
             <button class="tab-btn" data-tab="tab3"><i class="fas fa-trophy"></i> Top Total</button>
             <button class="tab-btn" data-tab="tab4"><i class="fas fa-folder-open"></i> Clicks Cat</button>
+            <button class="tab-btn" data-tab="tab5"><i class="fab fa-telegram"></i> Sistema</button>
         </div>
 
         <div class="tab-content active" id="tab1">
@@ -296,6 +312,38 @@
                 </div>
             </div>
             <div id="catClicksList" class="list-container"></div>
+        </div>
+
+        <!-- Nova Aba Sistema -->
+        <div class="tab-content" id="tab5">
+            <div class="system-config">
+                <div class="config-group">
+                    <label><i class="fab fa-telegram"></i> Configuração do Bot Telegram</label>
+                    <div class="telegram-input-wrapper">
+                        <input type="password" id="telegramBotToken" placeholder="Token do Bot (ex: 1234567890:ABCdefGHIjklMNOpqrsTUVwxyz)" autocomplete="off">
+                        <button id="toggleTokenBtn" class="toggle-token-btn" title="Mostrar/Ocultar Token">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="config-group" style="margin-top: 12px;">
+                        <label><i class="fas fa-id-badge"></i> Chat ID do Telegram</label>
+                        <input type="text" id="telegramChatId" placeholder="Chat ID (ex: 123456789)" autocomplete="off">
+                    </div>
+                    <div class="toggle-switch">
+                        <button id="enableTelegramBtn" class="btn-active"><i class="fas fa-bell"></i> Ativar Notificações</button>
+                        <button id="disableTelegramBtn" class="btn-inactive"><i class="fas fa-bell-slash"></i> Desativar</button>
+                    </div>
+                    <div class="config-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Status: <strong id="telegramStatus">Carregando...</strong></span>
+                    </div>
+                    <button id="testTelegramBtn" class="test-btn"><i class="fas fa-paper-plane"></i> Testar Notificação</button>
+                    <div class="config-hint" style="margin-top: 12px;">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Como obter Token e Chat ID: <a href="https://t.me/BotFather" target="_blank" style="color:#f59e0b">@BotFather</a> e <a href="https://t.me/userinfobot" target="_blank" style="color:#f59e0b">@userinfobot</a></span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -441,11 +489,13 @@
     const productsRef = database.ref('products');
     const categoriesRef = database.ref('categories');
     const statsRef = database.ref('stats');
+    const settingsRef = database.ref('settings');
     const IMGBB_KEY = "39d6fa29c5d1a99652d6dcb6bd611757";
 
     let categories = ["todos"];
     let products = [];
     let stats = { catClicks: {}, lastReset: new Date().toDateString() };
+    let settings = { telegram: { enabled: false, botToken: "", chatId: "" } };
     let editMode = false;
     let currentCat = "todos";
     let currentSpecial = null;
@@ -457,6 +507,7 @@
     let productPosition = "top";
     let categoryPosition = "top";
     let listStates = { topTodayList: true, topTotalList: true, catClicksList: true };
+    let tokenVisible = false;
 
     function showToast(message, isError = false, isSuccess = false) {
         const toast = document.getElementById("toast");
@@ -464,6 +515,198 @@
         toast.style.backgroundColor = isError ? "#ef4444" : (isSuccess ? "#22c55e" : "#f59e0b");
         toast.style.display = "block";
         setTimeout(() => { toast.style.display = "none"; }, 3000);
+    }
+
+    // Função para enviar notificação para o Telegram (envio rápido e assíncrono)
+    async function enviarNotificacaoTelegram(mensagem) {
+        if (!settings.telegram.enabled) return false;
+        if (!settings.telegram.botToken || !settings.telegram.botToken.trim() === "") return false;
+        if (!settings.telegram.chatId || !settings.telegram.chatId.trim() === "") return false;
+        
+        const url = `https://api.telegram.org/bot${settings.telegram.botToken}/sendMessage`;
+        const params = {
+            chat_id: settings.telegram.chatId,
+            text: mensagem,
+            parse_mode: "HTML"
+        };
+        
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(params)
+            });
+            const data = await response.json();
+            if (data.ok) {
+                return true;
+            } else {
+                console.error("Erro ao enviar notificação:", data);
+                return false;
+            }
+        } catch (error) {
+            console.error("Erro ao enviar notificação:", error);
+            return false;
+        }
+    }
+
+    // Função para testar notificação
+    async function testarNotificacaoTelegram() {
+        if (!settings.telegram.enabled) {
+            showToast("❌ Notificações estão desativadas! Ative primeiro.", true);
+            return false;
+        }
+        if (!settings.telegram.botToken || !settings.telegram.botToken.trim() === "") {
+            showToast("❌ Configure o Token do Bot primeiro!", true);
+            return false;
+        }
+        if (!settings.telegram.chatId || !settings.telegram.chatId.trim() === "") {
+            showToast("❌ Configure o Chat ID primeiro!", true);
+            return false;
+        }
+        
+        const mensagem = "🔔 <b>Teste de Notificação</b>\n\n✅ Sua conexão com o Telegram está funcionando perfeitamente!\n\nShopStyle - Sistema de Notificações";
+        const enviado = await enviarNotificacaoTelegram(mensagem);
+        if (enviado) {
+            showToast("📨 Notificação de teste enviada com sucesso!", false, true);
+        } else {
+            showToast("❌ Falha ao enviar notificação. Verifique Token e Chat ID.", true);
+        }
+        return enviado;
+    }
+
+    // Função para notificar clique em produto (envio instantâneo)
+    async function notificarCliqueProduto(produto) {
+        if (!settings.telegram.enabled) return;
+        if (!settings.telegram.botToken || !settings.telegram.botToken.trim() === "") return;
+        if (!settings.telegram.chatId || !settings.telegram.chatId.trim() === "") return;
+        
+        const dataHora = new Date().toLocaleString('pt-BR');
+        const mensagem = `🛍️ <b>CLIQUE EM PRODUTO</b>\n\n` +
+                        `📦 <b>Produto:</b> ${produto.nome}\n` +
+                        `💰 <b>Preço:</b> R$ ${produto.preco.toFixed(2).replace('.', ',')}\n` +
+                        `📊 <b>Cliques Hoje:</b> ${(produto.clicksHoje || 0) + 1}\n` +
+                        `📈 <b>Cliques Total:</b> ${(produto.clicksTotal || 0) + 1}\n` +
+                        `🕐 <b>Data/Hora:</b> ${dataHora}\n\n` +
+                        `🔗 <a href="${produto.link || 'https://shopee.com.br'}">Ver produto na Shopee</a>`;
+        
+        // Envio assíncrono - não espera resposta para não travar a experiência
+        enviarNotificacaoTelegram(mensagem).catch(err => console.error("Erro no envio:", err));
+    }
+
+    // Função para notificar clique em categoria (envio instantâneo)
+    async function notificarCliqueCategoria(categoria) {
+        if (!settings.telegram.enabled) return;
+        if (!settings.telegram.botToken || !settings.telegram.botToken.trim() === "") return;
+        if (!settings.telegram.chatId || !settings.telegram.chatId.trim() === "") return;
+        
+        const dataHora = new Date().toLocaleString('pt-BR');
+        const mensagem = `📂 <b>CLIQUE EM CATEGORIA</b>\n\n` +
+                        `🏷️ <b>Categoria:</b> ${categoria}\n` +
+                        `📊 <b>Cliques Hoje:</b> ${(stats.catClicks[categoria]?.hoje || 0) + 1}\n` +
+                        `📈 <b>Cliques Total:</b> ${(stats.catClicks[categoria]?.total || 0) + 1}\n` +
+                        `🕐 <b>Data/Hora:</b> ${dataHora}`;
+        
+        // Envio assíncrono - não espera resposta para não travar a experiência
+        enviarNotificacaoTelegram(mensagem).catch(err => console.error("Erro no envio:", err));
+    }
+
+    // Carregar configurações do Firebase
+    function carregarConfiguracoes() {
+        settingsRef.on('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const savedSettings = snapshot.val();
+                settings = savedSettings;
+                if (!settings.telegram) {
+                    settings.telegram = { enabled: false, botToken: "", chatId: "" };
+                }
+            } else {
+                settings = { telegram: { enabled: false, botToken: "", chatId: "" } };
+                settingsRef.set(settings);
+            }
+            atualizarInterfaceTelegram();
+        });
+    }
+
+    // Salvar configurações no Firebase
+    function salvarConfiguracoes() {
+        settingsRef.set(settings).then(() => {
+            console.log("Configurações salvas com sucesso!");
+        }).catch(err => console.error("Erro ao salvar configurações:", err));
+    }
+
+    // Atualizar interface do Telegram com os dados atuais
+    function atualizarInterfaceTelegram() {
+        const tokenInput = document.getElementById("telegramBotToken");
+        const chatIdInput = document.getElementById("telegramChatId");
+        const statusSpan = document.getElementById("telegramStatus");
+        const enableBtn = document.getElementById("enableTelegramBtn");
+        const disableBtn = document.getElementById("disableTelegramBtn");
+        
+        if (tokenInput) tokenInput.value = settings.telegram.botToken || "";
+        if (chatIdInput) chatIdInput.value = settings.telegram.chatId || "";
+        
+        if (settings.telegram.enabled) {
+            if (statusSpan) statusSpan.innerHTML = '<i class="fas fa-check-circle" style="color:#22c55e"></i> Ativado';
+            if (enableBtn) {
+                enableBtn.classList.add("btn-active");
+                enableBtn.classList.remove("btn-inactive");
+            }
+            if (disableBtn) {
+                disableBtn.classList.add("btn-inactive");
+                disableBtn.classList.remove("btn-active");
+            }
+        } else {
+            if (statusSpan) statusSpan.innerHTML = '<i class="fas fa-times-circle" style="color:#ef4444"></i> Desativado';
+            if (enableBtn) {
+                enableBtn.classList.add("btn-inactive");
+                enableBtn.classList.remove("btn-active");
+            }
+            if (disableBtn) {
+                disableBtn.classList.add("btn-active");
+                disableBtn.classList.remove("btn-inactive");
+            }
+        }
+    }
+
+    // Ativar notificações (salva imediatamente no Firebase)
+    function ativarNotificacoes() {
+        const botToken = document.getElementById("telegramBotToken").value.trim();
+        const chatId = document.getElementById("telegramChatId").value.trim();
+        
+        if (!botToken || !chatId) {
+            showToast("❌ Preencha o Token do Bot e o Chat ID antes de ativar!", true);
+            return;
+        }
+        
+        settings.telegram.enabled = true;
+        settings.telegram.botToken = botToken;
+        settings.telegram.chatId = chatId;
+        salvarConfiguracoes();
+        atualizarInterfaceTelegram();
+        showToast("✅ Notificações ativadas e salvas com sucesso!", false, true);
+    }
+
+    // Desativar notificações (salva imediatamente no Firebase)
+    function desativarNotificacoes() {
+        settings.telegram.enabled = false;
+        salvarConfiguracoes();
+        atualizarInterfaceTelegram();
+        showToast("🔕 Notificações desativadas.", false, true);
+    }
+
+    // Alternar visibilidade do token
+    function toggleTokenVisibility() {
+        const tokenInput = document.getElementById("telegramBotToken");
+        const toggleBtn = document.getElementById("toggleTokenBtn");
+        
+        tokenVisible = !tokenVisible;
+        if (tokenVisible) {
+            tokenInput.type = "text";
+            toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+        } else {
+            tokenInput.type = "password";
+            toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
+        }
     }
 
     function levenshteinDistance(a, b) {
@@ -1027,7 +1270,7 @@
         });
 
         document.querySelectorAll(".category").forEach(el => {
-            el.addEventListener("click", (e) => {
+            el.addEventListener("click", async (e) => {
                 if(e.target.classList.contains("top-cat-btn") || 
                    e.target.closest(".top-cat-btn") ||
                    e.target.classList.contains("move-cat-up") || 
@@ -1047,8 +1290,11 @@
                     if(stats.catClicks[cat]) {
                         stats.catClicks[cat].hoje++;
                         stats.catClicks[cat].total++;
+                        // Enviar notificação de clique em categoria (instantâneo)
+                        notificarCliqueCategoria(cat);
                     } else {
                         stats.catClicks[cat] = { hoje: 1, total: 1 };
+                        notificarCliqueCategoria(cat);
                     }
                     salvarTudo();
                 }
@@ -1098,6 +1344,8 @@
             prod.clicksHoje = (prod.clicksHoje || 0) + 1;
             prod.clicksTotal = (prod.clicksTotal || 0) + 1;
             salvarTudo();
+            // Enviar notificação de clique em produto (instantâneo)
+            notificarCliqueProduto(prod);
         }
         renderizar();
     }
@@ -1567,6 +1815,16 @@
     document.getElementById("shuffleRandom").addEventListener("click", shuffleAllProducts);
     document.getElementById("categorySearchInput").addEventListener("input", filtrarCategoriasSelect);
 
+    // Eventos da aba Sistema
+    document.getElementById("enableTelegramBtn").addEventListener("click", ativarNotificacoes);
+    document.getElementById("disableTelegramBtn").addEventListener("click", desativarNotificacoes);
+    document.getElementById("testTelegramBtn").addEventListener("click", testarNotificacaoTelegram);
+    document.getElementById("toggleTokenBtn").addEventListener("click", toggleTokenVisibility);
+    
+    // Inicializar campo de token como password
+    const tokenInputElement = document.getElementById("telegramBotToken");
+    if (tokenInputElement) tokenInputElement.type = "password";
+
     document.getElementById("prodPosTop").addEventListener("click", () => {
         productPosition = "top";
         document.getElementById("prodPosTop").classList.add("position-btn-active");
@@ -1717,12 +1975,14 @@
             document.body.classList.add("edit-mode");
             document.getElementById("editBadge").style.display = "flex";
             carregarDoFirebase();
+            carregarConfiguracoes();
         } else {
             currentUser = null;
             editMode = false;
             document.body.classList.remove("edit-mode");
             document.getElementById("editBadge").style.display = "none";
             carregarDoFirebase();
+            carregarConfiguracoes();
         }
     });
 
