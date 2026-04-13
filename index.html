@@ -143,9 +143,28 @@
         .modal-box input:focus, .modal-box select:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1); }
         .modal-box button { width: 100%; padding: 12px; border: none; border-radius: 40px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.3s ease; }
         .modal-box button:hover { transform: translateY(-2px); }
-        .category-search { position: relative; margin-bottom: 12px; }
+        
+        /* Estilos para o select de categorias com rolagem */
+        .category-select-container { margin-bottom: 12px; }
+        .category-search { position: relative; margin-bottom: 8px; }
         .category-search input { padding-left: 35px; margin-bottom: 0; }
         .category-search i { position: absolute; left: 12px; top: 13px; color: #94a3b8; font-size: 14px; }
+        #prodCategory { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 12px; 
+            font-size: 14px;
+            max-height: 180px;
+            overflow-y: auto;
+            background: white;
+        }
+        #prodCategory option { 
+            padding: 8px 12px; 
+            cursor: pointer;
+        }
+        #prodCategory option:hover { background: #fef3c7; }
+        #prodCategory option:checked { background: linear-gradient(135deg, #ee4d2d, #f59e0b); color: white; }
 
         .error-msg { color: #ef4444; font-size: 12px; text-align: center; margin-top: 8px; display: none; }
         .loading-msg { color: #f59e0b; font-size: 12px; text-align: center; margin-top: 8px; display: none; }
@@ -173,9 +192,9 @@
 
         .shuffle-buttons { display: flex; gap: 8px; margin-top: 12px; }
         
-        /* Estilos para a lista de categorias no modal */
+        /* Estilos para a lista de categorias no modal de gerenciar */
         .category-manage-list { max-height: 400px; overflow-y: auto; margin: 15px 0; }
-        .category-manage-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: all 0.2s ease; }
+        .category-manage-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: all 0.2s ease; flex-wrap: wrap; }
         .category-manage-item:hover { background: #fef3c7; transform: translateX(3px); }
         .category-manage-name { font-weight: 600; font-size: 14px; flex: 1; cursor: pointer; }
         .category-manage-actions { display: flex; gap: 6px; }
@@ -186,11 +205,15 @@
         .cat-move-down { background: #3b82f6; color: white; }
         .cat-edit-btn { background: #8b5cf6; color: white; }
         .cat-delete-btn { background: #ef4444; color: white; }
-        .edit-cat-input { display: none; margin-top: 8px; gap: 8px; }
-        .edit-cat-input input { flex: 1; padding: 6px 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; }
-        .edit-cat-input button { padding: 6px 12px; border-radius: 8px; font-size: 11px; margin-top: 0; width: auto; }
+        .edit-cat-input { display: none; gap: 8px; width: 100%; margin-top: 10px; }
+        .edit-cat-input input { flex: 1; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; margin: 0; }
+        .edit-cat-input button { padding: 8px 12px; border-radius: 8px; font-size: 12px; margin-top: 0; width: auto; }
         .category-manage-item.editing .category-manage-name { display: none; }
+        .category-manage-item.editing .category-manage-actions { display: none; }
         .category-manage-item.editing .edit-cat-input { display: flex; }
+        
+        .btn-green { background: #22c55e; color: white; }
+        .btn-gray { background: #64748b; color: white; }
     </style>
 </head>
 <body>
@@ -315,13 +338,17 @@
             <button id="prodPosTop" class="position-btn-active">📌 Topo</button>
             <button id="prodPosLast" class="position-btn-inactive">📄 Último</button>
         </div>
-        <div class="category-search">
-            <i class="fas fa-search"></i>
-            <input type="text" id="categorySearchInput" placeholder="🔍 Pesquisar categoria...">
+        
+        <div class="category-select-container">
+            <div class="category-search">
+                <i class="fas fa-search"></i>
+                <input type="text" id="categorySearchInput" placeholder="🔍 Pesquisar categoria...">
+            </div>
+            <select id="prodCategory" size="6">
+                <option value="todos">Todos</option>
+            </select>
         </div>
-        <select id="prodCategory" size="5" style="height: auto; min-height: 120px;">
-            <option value="todos">Todos</option>
-        </select>
+        
         <input type="text" id="prodShopeeId" placeholder="ID do produto na Shopee (opcional)">
         <div class="upload-area" id="uploadTrigger">
             <i class="fas fa-cloud-upload-alt" style="color: #f59e0b; font-size: 24px;"></i>
@@ -334,7 +361,6 @@
         <input type="number" id="prodSold" placeholder="Quantos compraram">
         <div class="meta-input">
             <input type="number" id="prodMeta" placeholder="Meta de cliques (Em Alta)">
-            <button id="setMetaBtn" type="button">Definir Meta</button>
         </div>
         <button id="saveProduct" style="background: linear-gradient(135deg, #ee4d2d, #f59e0b); color: white;">Salvar</button>
         <button id="closeModal" style="background: #e2e8f0;">Cancelar</button>
@@ -354,12 +380,11 @@
     </div>
 </div>
 
-<!-- Modal de Gerenciar Categorias -->
 <div id="manageCategoriesModal" class="modal">
     <div class="modal-box">
         <h3><i class="fas fa-list-ul"></i> Gerenciar Categorias</h3>
         <p style="font-size: 12px; color: #64748b; text-align: center; margin-bottom: 10px;">
-            <i class="fas fa-arrows-alt"></i> Organize, edite ou remova categorias
+            <i class="fas fa-pen"></i> Clique no lápis para editar o nome | <i class="fas fa-arrows-alt"></i> Arraste ou use os botões para organizar
         </p>
         <div id="categoryManageList" class="category-manage-list"></div>
         <button id="closeManageModal" style="background: #e2e8f0;">Fechar</button>
@@ -432,7 +457,6 @@
     let productPosition = "top";
     let categoryPosition = "top";
     let listStates = { topTodayList: true, topTotalList: true, catClicksList: true };
-    let editingCategoryName = null;
 
     function showToast(message, isError = false, isSuccess = false) {
         const toast = document.getElementById("toast");
@@ -511,7 +535,7 @@
         ordenarProdutos();
         salvarTudo();
         renderizar();
-        showToast("🎲 Produtos misturados aleatoriamente! (Em alta/Frete grátis no topo)", false, true);
+        showToast("🎲 Produtos misturados aleatoriamente!", false, true);
     }
 
     function reverseProducts() {
@@ -537,7 +561,7 @@
         ordenarProdutos();
         salvarTudo();
         renderizar();
-        showToast("🔄 Ordem invertida! (Últimos pra cima)", false, true);
+        showToast("🔄 Ordem invertida!", false, true);
     }
 
     function ordenarProdutos() {
@@ -590,6 +614,7 @@
             ordenarProdutos();
             resetDiario();
             renderizar();
+            atualizarSelectCategorias();
         }).catch(err => console.error("Erro ao carregar:", err));
     }
 
@@ -613,6 +638,7 @@
         salvarTudo();
         renderizar();
         atualizarListaCategoriasModal();
+        atualizarSelectCategorias();
     }
 
     function moverProduto(id, direcao) {
@@ -646,6 +672,7 @@
         salvarTudo();
         renderizar();
         atualizarListaCategoriasModal();
+        atualizarSelectCategorias();
         showToast(`✅ Categoria "${nomeCat}" foi para o topo!`, false, true);
     }
 
@@ -679,6 +706,7 @@
             salvarTudo();
             renderizar();
             atualizarListaCategoriasModal();
+            atualizarSelectCategorias();
             showToast(`✅ Categoria renomeada para "${novoNomeTrim}"`, false, true);
             return true;
         }
@@ -695,6 +723,7 @@
             salvarTudo();
             renderizar();
             atualizarListaCategoriasModal();
+            atualizarSelectCategorias();
             showToast(`🗑️ Categoria "${nomeCat}" excluída!`, false, true);
         }
     }
@@ -736,8 +765,58 @@
         salvarTudo();
         renderizar();
         atualizarListaCategoriasModal();
+        atualizarSelectCategorias();
         showToast(`✅ Categoria "${catNome}" adicionada!`, false, true);
         return true;
+    }
+
+    function atualizarSelectCategorias() {
+        const select = document.getElementById("prodCategory");
+        if(!select) return;
+        
+        const categoriasFiltradas = categories.filter(c => c !== "todos");
+        const selectedValue = select.value;
+        
+        select.innerHTML = '<option value="todos">Todos</option>';
+        
+        for(let cat of categoriasFiltradas) {
+            const option = document.createElement("option");
+            option.value = cat;
+            option.textContent = cat;
+            select.appendChild(option);
+        }
+        
+        if(selectedValue && categories.includes(selectedValue)) {
+            select.value = selectedValue;
+        }
+    }
+    
+    function filtrarCategoriasSelect() {
+        const searchTerm = document.getElementById("categorySearchInput").value.toLowerCase();
+        const select = document.getElementById("prodCategory");
+        const options = select.options;
+        
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            if (option.value === "todos") {
+                option.style.display = "";
+                continue;
+            }
+            if (option.text.toLowerCase().includes(searchTerm) || searchTerm === "") {
+                option.style.display = "";
+            } else {
+                option.style.display = "none";
+            }
+        }
+        
+        if (searchTerm !== "") {
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].style.display !== "none" && options[i].value !== "todos") {
+                    options[i].selected = true;
+                    break;
+                }
+            }
+        }
     }
 
     function atualizarListaCategoriasModal() {
@@ -775,47 +854,68 @@
             const catName = item.dataset.cat;
             const index = parseInt(item.dataset.index);
             
-            item.querySelector(".cat-top-btn")?.addEventListener("click", (e) => {
-                e.stopPropagation();
-                colocarCategoriaTopo(catName);
-            });
+            const topBtn = item.querySelector(".cat-top-btn");
+            if(topBtn) {
+                topBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    colocarCategoriaTopo(catName);
+                });
+            }
             
-            item.querySelector(".cat-move-up")?.addEventListener("click", (e) => {
-                e.stopPropagation();
-                moverCategoria(index, -1);
-            });
+            const moveUpBtn = item.querySelector(".cat-move-up");
+            if(moveUpBtn && !moveUpBtn.disabled) {
+                moveUpBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    moverCategoria(index, -1);
+                });
+            }
             
-            item.querySelector(".cat-move-down")?.addEventListener("click", (e) => {
-                e.stopPropagation();
-                moverCategoria(index, 1);
-            });
+            const moveDownBtn = item.querySelector(".cat-move-down");
+            if(moveDownBtn && !moveDownBtn.disabled) {
+                moveDownBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    moverCategoria(index, 1);
+                });
+            }
             
-            item.querySelector(".cat-edit-btn")?.addEventListener("click", (e) => {
-                e.stopPropagation();
-                document.querySelectorAll(".category-manage-item").forEach(i => i.classList.remove("editing"));
-                item.classList.add("editing");
-                const input = item.querySelector(".edit-cat-field");
-                if(input) input.focus();
-            });
+            const editBtn = item.querySelector(".cat-edit-btn");
+            if(editBtn) {
+                editBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll(".category-manage-item").forEach(i => i.classList.remove("editing"));
+                    item.classList.add("editing");
+                    const input = item.querySelector(".edit-cat-field");
+                    if(input) input.focus();
+                });
+            }
             
-            item.querySelector(".save-cat-edit")?.addEventListener("click", (e) => {
-                e.stopPropagation();
-                const newName = item.querySelector(".edit-cat-field").value;
-                if(newName && newName.trim()) {
-                    editarCategoriaNome(catName, newName.trim().toLowerCase());
-                }
-                item.classList.remove("editing");
-            });
+            const saveBtn = item.querySelector(".save-cat-edit");
+            if(saveBtn) {
+                saveBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const newName = item.querySelector(".edit-cat-field").value;
+                    if(newName && newName.trim()) {
+                        editarCategoriaNome(catName, newName.trim().toLowerCase());
+                    }
+                    item.classList.remove("editing");
+                });
+            }
             
-            item.querySelector(".cancel-cat-edit")?.addEventListener("click", (e) => {
-                e.stopPropagation();
-                item.classList.remove("editing");
-            });
+            const cancelBtn = item.querySelector(".cancel-cat-edit");
+            if(cancelBtn) {
+                cancelBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    item.classList.remove("editing");
+                });
+            }
             
-            item.querySelector(".cat-delete-btn")?.addEventListener("click", (e) => {
-                e.stopPropagation();
-                excluirCategoria(catName);
-            });
+            const deleteBtn = item.querySelector(".cat-delete-btn");
+            if(deleteBtn) {
+                deleteBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    excluirCategoria(catName);
+                });
+            }
         });
     }
 
@@ -920,6 +1020,7 @@
                     salvarTudo();
                     renderizar();
                     atualizarListaCategoriasModal();
+                    atualizarSelectCategorias();
                 }
                 return false;
             });
@@ -1255,6 +1356,7 @@
         ordenarProdutos();
         salvarTudo();
         renderizar();
+        atualizarSelectCategorias();
 
         let msg = `✅ ${adicionados} produto(s) adicionado(s)!`;
         if(categoriasNovas.length > 0) msg += ` Novas categorias: ${categoriasNovas.join(', ')}`;
@@ -1270,22 +1372,6 @@
         let data = await resp.json();
         if(data.success) return data.data.url;
         throw new Error("Erro no upload");
-    }
-
-    function filterCategories() {
-        const searchTerm = document.getElementById("categorySearchInput").value.toLowerCase();
-        const select = document.getElementById("prodCategory");
-        const options = select.options;
-        
-        for (let i = 0; i < options.length; i++) {
-            const option = options[i];
-            if (option.value === "todos") continue;
-            if (option.text.toLowerCase().includes(searchTerm)) {
-                option.style.display = "";
-            } else {
-                option.style.display = "none";
-            }
-        }
     }
 
     async function salvarProduto() {
@@ -1332,6 +1418,7 @@
         fecharModalProduto();
         currentImage = null;
         renderizar();
+        atualizarSelectCategorias();
     }
 
     function abrirModalProduto(prod = null) {
@@ -1343,13 +1430,17 @@
         document.getElementById("prodMeta").value = prod?.metaCliques || 0;
         document.getElementById("prodShopeeId").value = prod?.shopeeId || "";
         document.getElementById("categorySearchInput").value = "";
-
-        let catSelect = document.getElementById("prodCategory");
-        catSelect.innerHTML = `<option value="todos">Todos</option>` + categories.filter(c => c !== "todos").map(c => `<option value="${c}" ${prod?.categoria === c ? 'selected' : ''}>${c}</option>`).join("");
         
-        for(let i = 0; i < catSelect.options.length; i++) {
-            catSelect.options[i].style.display = "";
+        atualizarSelectCategorias();
+        
+        if(prod?.categoria) {
+            const select = document.getElementById("prodCategory");
+            if(select.querySelector(`option[value="${prod.categoria}"]`)) {
+                select.value = prod.categoria;
+            }
         }
+        
+        filtrarCategoriasSelect();
 
         if(prod?.imagem) {
             document.getElementById("imagePreview").src = prod.imagem;
@@ -1474,7 +1565,7 @@
     document.getElementById("clearSearch").addEventListener("click", resetSearch);
     document.getElementById("shuffleReverse").addEventListener("click", reverseProducts);
     document.getElementById("shuffleRandom").addEventListener("click", shuffleAllProducts);
-    document.getElementById("categorySearchInput").addEventListener("input", filterCategories);
+    document.getElementById("categorySearchInput").addEventListener("input", filtrarCategoriasSelect);
 
     document.getElementById("prodPosTop").addEventListener("click", () => {
         productPosition = "top";
