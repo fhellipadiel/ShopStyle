@@ -37,7 +37,11 @@
         .categories-header h3 i { color: #f59e0b; margin-right: 6px; }
         .add-cat { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; cursor: pointer; display: none; align-items: center; gap: 6px; transition: all 0.3s ease; }
         .add-cat:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4); }
+        .manage-cat-btn { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border: none; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; cursor: pointer; display: none; align-items: center; gap: 6px; transition: all 0.3s ease; margin-right: 8px; }
+        .manage-cat-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); }
         .edit-mode .add-cat { display: flex; }
+        .edit-mode .manage-cat-btn { display: flex; }
+        .header-buttons { display: flex; gap: 8px; }
 
         .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 20px; scrollbar-width: none; }
         .categories::-webkit-scrollbar { display: none; }
@@ -168,6 +172,25 @@
         .special-cat.hidden { display: none; }
 
         .shuffle-buttons { display: flex; gap: 8px; margin-top: 12px; }
+        
+        /* Estilos para a lista de categorias no modal */
+        .category-manage-list { max-height: 400px; overflow-y: auto; margin: 15px 0; }
+        .category-manage-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: all 0.2s ease; }
+        .category-manage-item:hover { background: #fef3c7; transform: translateX(3px); }
+        .category-manage-name { font-weight: 600; font-size: 14px; flex: 1; cursor: pointer; }
+        .category-manage-actions { display: flex; gap: 6px; }
+        .category-manage-actions button { width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; transition: all 0.2s ease; }
+        .category-manage-actions button:hover { transform: scale(1.05); }
+        .cat-top-btn { background: #f59e0b; color: white; }
+        .cat-move-up { background: #3b82f6; color: white; }
+        .cat-move-down { background: #3b82f6; color: white; }
+        .cat-edit-btn { background: #8b5cf6; color: white; }
+        .cat-delete-btn { background: #ef4444; color: white; }
+        .edit-cat-input { display: none; margin-top: 8px; gap: 8px; }
+        .edit-cat-input input { flex: 1; padding: 6px 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; }
+        .edit-cat-input button { padding: 6px 12px; border-radius: 8px; font-size: 11px; margin-top: 0; width: auto; }
+        .category-manage-item.editing .category-manage-name { display: none; }
+        .category-manage-item.editing .edit-cat-input { display: flex; }
     </style>
 </head>
 <body>
@@ -186,7 +209,10 @@
 
     <div class="categories-header">
         <h3><i class="fas fa-tags"></i> Categorias</h3>
-        <button id="newCategoryBtn" class="add-cat"><i class="fas fa-plus"></i> Nova Categoria</button>
+        <div class="header-buttons">
+            <button id="manageCategoriesBtn" class="manage-cat-btn"><i class="fas fa-list-ul"></i> Gerenciar</button>
+            <button id="newCategoryBtn" class="add-cat"><i class="fas fa-plus"></i> Nova Categoria</button>
+        </div>
     </div>
     <div class="categories" id="categoriesList"></div>
 
@@ -328,6 +354,18 @@
     </div>
 </div>
 
+<!-- Modal de Gerenciar Categorias -->
+<div id="manageCategoriesModal" class="modal">
+    <div class="modal-box">
+        <h3><i class="fas fa-list-ul"></i> Gerenciar Categorias</h3>
+        <p style="font-size: 12px; color: #64748b; text-align: center; margin-bottom: 10px;">
+            <i class="fas fa-arrows-alt"></i> Organize, edite ou remova categorias
+        </p>
+        <div id="categoryManageList" class="category-manage-list"></div>
+        <button id="closeManageModal" style="background: #e2e8f0;">Fechar</button>
+    </div>
+</div>
+
 <div id="metaModal" class="modal">
     <div class="modal-box">
         <h3><i class="fas fa-chart-line"></i> Definir Meta de Cliques</h3>
@@ -394,6 +432,7 @@
     let productPosition = "top";
     let categoryPosition = "top";
     let listStates = { topTodayList: true, topTotalList: true, catClicksList: true };
+    let editingCategoryName = null;
 
     function showToast(message, isError = false, isSuccess = false) {
         const toast = document.getElementById("toast");
@@ -573,6 +612,7 @@
         [categories[index], categories[novaPos]] = [categories[novaPos], categories[index]];
         salvarTudo();
         renderizar();
+        atualizarListaCategoriasModal();
     }
 
     function moverProduto(id, direcao) {
@@ -596,6 +636,67 @@
         salvarTudo();
         renderizar();
         showToast(`✅ ${produto.nome} foi para o topo!`, false, true);
+    }
+
+    function colocarCategoriaTopo(nomeCat) {
+        let index = categories.findIndex(c => c === nomeCat);
+        if(index <= 1) return;
+        let categoria = categories.splice(index, 1)[0];
+        categories.splice(1, 0, categoria);
+        salvarTudo();
+        renderizar();
+        atualizarListaCategoriasModal();
+        showToast(`✅ Categoria "${nomeCat}" foi para o topo!`, false, true);
+    }
+
+    function editarCategoriaNome(nomeAntigo, novoNome) {
+        if(novoNome === nomeAntigo) return true;
+        if(!novoNome || novoNome.trim() === "") {
+            showToast("❌ Nome da categoria não pode ficar vazio!", true);
+            return false;
+        }
+        let novoNomeTrim = novoNome.trim().toLowerCase();
+        if(novoNomeTrim === "todos") {
+            showToast("❌ 'todos' é uma categoria especial e não pode ser usada!", true);
+            return false;
+        }
+        if(categories.includes(novoNomeTrim) && categories.indexOf(novoNomeTrim) !== categories.indexOf(nomeAntigo)) {
+            showToast(`❌ Categoria "${novoNomeTrim}" já existe!`, true);
+            return false;
+        }
+        
+        let index = categories.findIndex(c => c === nomeAntigo);
+        if(index !== -1 && nomeAntigo !== "todos") {
+            categories[index] = novoNomeTrim;
+            products.forEach(p => {
+                if(p.categoria === nomeAntigo) p.categoria = novoNomeTrim;
+            });
+            if(stats.catClicks[nomeAntigo]) {
+                stats.catClicks[novoNomeTrim] = stats.catClicks[nomeAntigo];
+                delete stats.catClicks[nomeAntigo];
+            }
+            if(currentCat === nomeAntigo) currentCat = novoNomeTrim;
+            salvarTudo();
+            renderizar();
+            atualizarListaCategoriasModal();
+            showToast(`✅ Categoria renomeada para "${novoNomeTrim}"`, false, true);
+            return true;
+        }
+        return false;
+    }
+
+    function excluirCategoria(nomeCat) {
+        if(nomeCat === "todos") return;
+        if(confirm(`Excluir categoria "${nomeCat}"? Produtos serão movidos para "Todos".`)) {
+            categories = categories.filter(c => c !== nomeCat);
+            products.forEach(p => { if(p.categoria === nomeCat) p.categoria = "todos"; });
+            delete stats.catClicks[nomeCat];
+            if(currentCat === nomeCat) currentCat = "todos";
+            salvarTudo();
+            renderizar();
+            atualizarListaCategoriasModal();
+            showToast(`🗑️ Categoria "${nomeCat}" excluída!`, false, true);
+        }
     }
 
     function definirMeta(produto) {
@@ -623,6 +724,10 @@
             showToast(`⚠️ Categoria "${catNome}" já existe!`, true);
             return false;
         }
+        if(catNome === "todos") {
+            showToast(`⚠️ "todos" é uma categoria padrão!`, true);
+            return false;
+        }
 
         if(posicao === "top") categories.splice(1, 0, catNome);
         else categories.push(catNome);
@@ -630,8 +735,93 @@
         stats.catClicks[catNome] = { hoje: 0, total: 0 };
         salvarTudo();
         renderizar();
+        atualizarListaCategoriasModal();
         showToast(`✅ Categoria "${catNome}" adicionada!`, false, true);
         return true;
+    }
+
+    function atualizarListaCategoriasModal() {
+        const container = document.getElementById("categoryManageList");
+        if(!container) return;
+        
+        let categoriasSemTodos = categories.filter(c => c !== "todos");
+        let html = "";
+        
+        for(let i = 0; i < categoriasSemTodos.length; i++) {
+            let cat = categoriasSemTodos[i];
+            let originalIndex = categories.indexOf(cat);
+            html += `
+                <div class="category-manage-item" data-cat="${cat}" data-index="${originalIndex}">
+                    <span class="category-manage-name">${cat}</span>
+                    <div class="edit-cat-input">
+                        <input type="text" class="edit-cat-field" value="${cat}" maxlength="30">
+                        <button class="save-cat-edit btn-green">Salvar</button>
+                        <button class="cancel-cat-edit btn-gray">Cancelar</button>
+                    </div>
+                    <div class="category-manage-actions">
+                        <button class="cat-top-btn" title="Colocar no topo"><i class="fas fa-arrow-up"></i></button>
+                        <button class="cat-move-up" title="Subir" ${i === 0 ? 'disabled style="opacity:0.5"' : ''}><i class="fas fa-chevron-up"></i></button>
+                        <button class="cat-move-down" title="Descer" ${i === categoriasSemTodos.length-1 ? 'disabled style="opacity:0.5"' : ''}><i class="fas fa-chevron-down"></i></button>
+                        <button class="cat-edit-btn" title="Editar nome"><i class="fas fa-pen"></i></button>
+                        <button class="cat-delete-btn" title="Excluir"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        container.innerHTML = html || "<div style='text-align:center;padding:20px;color:#94a3b8;'>Nenhuma categoria além de 'Todos'</div>";
+        
+        document.querySelectorAll(".category-manage-item").forEach(item => {
+            const catName = item.dataset.cat;
+            const index = parseInt(item.dataset.index);
+            
+            item.querySelector(".cat-top-btn")?.addEventListener("click", (e) => {
+                e.stopPropagation();
+                colocarCategoriaTopo(catName);
+            });
+            
+            item.querySelector(".cat-move-up")?.addEventListener("click", (e) => {
+                e.stopPropagation();
+                moverCategoria(index, -1);
+            });
+            
+            item.querySelector(".cat-move-down")?.addEventListener("click", (e) => {
+                e.stopPropagation();
+                moverCategoria(index, 1);
+            });
+            
+            item.querySelector(".cat-edit-btn")?.addEventListener("click", (e) => {
+                e.stopPropagation();
+                document.querySelectorAll(".category-manage-item").forEach(i => i.classList.remove("editing"));
+                item.classList.add("editing");
+                const input = item.querySelector(".edit-cat-field");
+                if(input) input.focus();
+            });
+            
+            item.querySelector(".save-cat-edit")?.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const newName = item.querySelector(".edit-cat-field").value;
+                if(newName && newName.trim()) {
+                    editarCategoriaNome(catName, newName.trim().toLowerCase());
+                }
+                item.classList.remove("editing");
+            });
+            
+            item.querySelector(".cancel-cat-edit")?.addEventListener("click", (e) => {
+                e.stopPropagation();
+                item.classList.remove("editing");
+            });
+            
+            item.querySelector(".cat-delete-btn")?.addEventListener("click", (e) => {
+                e.stopPropagation();
+                excluirCategoria(catName);
+            });
+        });
+    }
+
+    function abrirModalGerenciarCategorias() {
+        atualizarListaCategoriasModal();
+        document.getElementById("manageCategoriesModal").classList.add("active");
     }
 
     function atualizarVisibilidadeAbasEspeciais() {
@@ -729,6 +919,7 @@
                     if(currentCat === cat) currentCat = "todos";
                     salvarTudo();
                     renderizar();
+                    atualizarListaCategoriasModal();
                 }
                 return false;
             });
@@ -1270,6 +1461,7 @@
     document.getElementById("exitEdit").addEventListener("click", sairEdit);
     document.getElementById("addProductBtn").addEventListener("click", () => abrirModalProduto(null));
     document.getElementById("newCategoryBtn").addEventListener("click", abrirModalCategoria);
+    document.getElementById("manageCategoriesBtn").addEventListener("click", abrirModalGerenciarCategorias);
     document.getElementById("resetCounts").addEventListener("click", resetarContagens);
     document.getElementById("deleteAll").addEventListener("click", deletarTudo);
     document.getElementById("importCsv").addEventListener("click", () => document.getElementById("csvModal").classList.add("active"));
@@ -1277,6 +1469,7 @@
     document.getElementById("closeModal").addEventListener("click", fecharModalProduto);
     document.getElementById("saveCategory").addEventListener("click", salvarCategoria);
     document.getElementById("closeCategory").addEventListener("click", fecharModalCategoria);
+    document.getElementById("closeManageModal").addEventListener("click", () => document.getElementById("manageCategoriesModal").classList.remove("active"));
     document.getElementById("searchInput").addEventListener("input", handleSearch);
     document.getElementById("clearSearch").addEventListener("click", resetSearch);
     document.getElementById("shuffleReverse").addEventListener("click", reverseProducts);
