@@ -87,6 +87,7 @@
         .btn-red { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
         .btn-green { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
         .btn-gray { background: linear-gradient(135deg, #475569, #334155); color: white; }
+        .btn-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; }
 
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #f8fafc; border-radius: 12px; margin-bottom: 8px; font-size: 12px; font-weight: 500; transition: all 0.2s ease; }
         .list-item:hover { transform: translateX(5px); background: #fef3c7; }
@@ -138,6 +139,9 @@
         .modal-box input:focus, .modal-box select:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1); }
         .modal-box button { width: 100%; padding: 12px; border: none; border-radius: 40px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.3s ease; }
         .modal-box button:hover { transform: translateY(-2px); }
+        .category-search { position: relative; margin-bottom: 12px; }
+        .category-search input { padding-left: 35px; margin-bottom: 0; }
+        .category-search i { position: absolute; left: 12px; top: 13px; color: #94a3b8; font-size: 14px; }
 
         .error-msg { color: #ef4444; font-size: 12px; text-align: center; margin-top: 8px; display: none; }
         .loading-msg { color: #f59e0b; font-size: 12px; text-align: center; margin-top: 8px; display: none; }
@@ -162,6 +166,8 @@
         .special-cat:hover { transform: translateY(-2px); filter: brightness(105%); }
         .special-cat.active { background: linear-gradient(135deg, #ee4d2d, #f59e0b); box-shadow: 0 4px 15px rgba(238, 77, 45, 0.3); }
         .special-cat.hidden { display: none; }
+
+        .shuffle-buttons { display: flex; gap: 8px; margin-top: 12px; }
     </style>
 </head>
 <body>
@@ -203,6 +209,10 @@
                 <button id="resetCounts" class="admin-btn btn-orange"><i class="fas fa-sync-alt"></i> Resetar Contagens</button>
                 <button id="deleteAll" class="admin-btn btn-red"><i class="fas fa-trash-alt"></i> Deletar Tudo</button>
                 <button id="importCsv" class="admin-btn btn-green"><i class="fas fa-file-csv"></i> Importar CSV</button>
+            </div>
+            <div class="shuffle-buttons">
+                <button id="shuffleReverse" class="admin-btn btn-purple"><i class="fas fa-exchange-alt"></i> 🔄 Últimos pra cima</button>
+                <button id="shuffleRandom" class="admin-btn btn-purple"><i class="fas fa-random"></i> 🎲 Aleatório</button>
             </div>
         </div>
 
@@ -279,7 +289,13 @@
             <button id="prodPosTop" class="position-btn-active">📌 Topo</button>
             <button id="prodPosLast" class="position-btn-inactive">📄 Último</button>
         </div>
-        <select id="prodCategory"><option value="todos">Todos</option></select>
+        <div class="category-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="categorySearchInput" placeholder="🔍 Pesquisar categoria...">
+        </div>
+        <select id="prodCategory" size="5" style="height: auto; min-height: 120px;">
+            <option value="todos">Todos</option>
+        </select>
         <input type="text" id="prodShopeeId" placeholder="ID do produto na Shopee (opcional)">
         <div class="upload-area" id="uploadTrigger">
             <i class="fas fa-cloud-upload-alt" style="color: #f59e0b; font-size: 24px;"></i>
@@ -424,6 +440,65 @@
     function isProdutoEmAlta(produto) {
         if (!produto.metaCliques || produto.metaCliques <= 0) return false;
         return (produto.clicksTotal || 0) >= produto.metaCliques;
+    }
+
+    function shuffleArrayExceptTop(array) {
+        const specialProducts = [];
+        const normalProducts = [];
+        
+        for (let p of array) {
+            if (p.freteGratis === true || isProdutoEmAlta(p)) {
+                specialProducts.push(p);
+            } else {
+                normalProducts.push(p);
+            }
+        }
+        
+        for (let i = normalProducts.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [normalProducts[i], normalProducts[j]] = [normalProducts[j], normalProducts[i]];
+        }
+        
+        return [...specialProducts, ...normalProducts];
+    }
+
+    function shuffleAllProducts() {
+        if (!products.length) return;
+        const shuffled = shuffleArrayExceptTop([...products]);
+        for (let i = 0; i < shuffled.length; i++) {
+            shuffled[i].ordem = i;
+        }
+        products = shuffled;
+        ordenarProdutos();
+        salvarTudo();
+        renderizar();
+        showToast("🎲 Produtos misturados aleatoriamente! (Em alta/Frete grátis no topo)", false, true);
+    }
+
+    function reverseProducts() {
+        if (!products.length) return;
+        const specialProducts = [];
+        const normalProducts = [];
+        
+        for (let p of products) {
+            if (p.freteGratis === true || isProdutoEmAlta(p)) {
+                specialProducts.push(p);
+            } else {
+                normalProducts.push(p);
+            }
+        }
+        
+        normalProducts.reverse();
+        
+        const newOrder = [...specialProducts, ...normalProducts];
+        for (let i = 0; i < newOrder.length; i++) {
+            newOrder[i].ordem = i;
+        }
+        products = newOrder;
+        ordenarProdutos();
+        salvarTudo();
+        renderizar();
+        showToast("🔄 Ordem invertida! (Últimos pra cima)", false, true);
     }
 
     function ordenarProdutos() {
@@ -590,7 +665,6 @@
         if(editMode) renderAdmin();
     }
 
-    // FUNÇÃO CORRIGIDA - AGORA O BOTÃO TOP-CAT-BTN FUNCIONA
     function renderCategorias() {
         let html = "";
         for(let i = 0; i < categories.length; i++) {
@@ -616,8 +690,6 @@
         }
         document.getElementById("categoriesList").innerHTML = html;
 
-        // CORREÇÃO CRÍTICA: Adicionar eventos ANTES de qualquer outro evento
-        // Botão de voltar ao topo (seta laranja)
         document.querySelectorAll(".top-cat-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
@@ -627,7 +699,6 @@
             });
         });
 
-        // Botões de mover para cima/baixo
         document.querySelectorAll(".move-cat-up").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
@@ -663,10 +734,8 @@
             });
         });
 
-        // Evento de clique na categoria (NÃO nos botões)
         document.querySelectorAll(".category").forEach(el => {
             el.addEventListener("click", (e) => {
-                // Verifica se o clique foi em algum botão
                 if(e.target.classList.contains("top-cat-btn") || 
                    e.target.closest(".top-cat-btn") ||
                    e.target.classList.contains("move-cat-up") || 
@@ -697,7 +766,6 @@
             });
         });
 
-        // Categorias especiais
         document.querySelectorAll(".special-cat").forEach(el => {
             if(currentSpecial === el.dataset.special && currentCat === "todos") el.classList.add("active");
             else el.classList.remove("active");
@@ -1013,6 +1081,22 @@
         throw new Error("Erro no upload");
     }
 
+    function filterCategories() {
+        const searchTerm = document.getElementById("categorySearchInput").value.toLowerCase();
+        const select = document.getElementById("prodCategory");
+        const options = select.options;
+        
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            if (option.value === "todos") continue;
+            if (option.text.toLowerCase().includes(searchTerm)) {
+                option.style.display = "";
+            } else {
+                option.style.display = "none";
+            }
+        }
+    }
+
     async function salvarProduto() {
         let id = parseInt(document.getElementById("prodId").value);
         let nome = document.getElementById("prodName").value;
@@ -1067,9 +1151,14 @@
         document.getElementById("prodSold").value = prod?.vendidos || 0;
         document.getElementById("prodMeta").value = prod?.metaCliques || 0;
         document.getElementById("prodShopeeId").value = prod?.shopeeId || "";
+        document.getElementById("categorySearchInput").value = "";
 
         let catSelect = document.getElementById("prodCategory");
         catSelect.innerHTML = `<option value="todos">Todos</option>` + categories.filter(c => c !== "todos").map(c => `<option value="${c}" ${prod?.categoria === c ? 'selected' : ''}>${c}</option>`).join("");
+        
+        for(let i = 0; i < catSelect.options.length; i++) {
+            catSelect.options[i].style.display = "";
+        }
 
         if(prod?.imagem) {
             document.getElementById("imagePreview").src = prod.imagem;
@@ -1090,6 +1179,7 @@
         document.getElementById("productModal").classList.remove("active");
         document.getElementById("saveProduct").innerText = "Salvar";
         currentImage = null;
+        document.getElementById("categorySearchInput").value = "";
     }
 
     function abrirModalCategoria() { document.getElementById("categoryModal").classList.add("active"); }
@@ -1174,7 +1264,6 @@
         else scrollBtn.classList.remove("show");
     });
 
-    // Event Listeners
     document.getElementById("scrollTopBtn").addEventListener("click", scrollToTop);
     document.getElementById("logoBtn").addEventListener("click", mostrarLogin);
     document.getElementById("doLogin").addEventListener("click", fazerLogin);
@@ -1190,6 +1279,9 @@
     document.getElementById("closeCategory").addEventListener("click", fecharModalCategoria);
     document.getElementById("searchInput").addEventListener("input", handleSearch);
     document.getElementById("clearSearch").addEventListener("click", resetSearch);
+    document.getElementById("shuffleReverse").addEventListener("click", reverseProducts);
+    document.getElementById("shuffleRandom").addEventListener("click", shuffleAllProducts);
+    document.getElementById("categorySearchInput").addEventListener("input", filterCategories);
 
     document.getElementById("prodPosTop").addEventListener("click", () => {
         productPosition = "top";
@@ -1224,38 +1316,32 @@
     document.querySelectorAll(".reset-tab-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             let resetType = btn.dataset.reset;
-            if(resetType === "topHoje") resetTopHoje();
-            else if(resetType === "topTotal") resetTopTotal();
-            else if(resetType === "catClicks") resetCatClicks();
+            if(resetType === "topHoje") {
+                if(confirm("Resetar cliques de HOJE?")) {
+                    products.forEach(p => p.clicksHoje = 0);
+                    salvarTudo();
+                    renderizar();
+                    showToast("✅ Cliques de hoje resetados!", false, true);
+                }
+            }
+            else if(resetType === "topTotal") {
+                if(confirm("Resetar cliques TOTAL?")) {
+                    products.forEach(p => p.clicksTotal = 0);
+                    salvarTudo();
+                    renderizar();
+                    showToast("✅ Cliques totais resetados!", false, true);
+                }
+            }
+            else if(resetType === "catClicks") {
+                if(confirm("Resetar cliques das categorias?")) {
+                    Object.keys(stats.catClicks).forEach(c => { stats.catClicks[c].hoje = 0; stats.catClicks[c].total = 0; });
+                    salvarTudo();
+                    renderizar();
+                    showToast("✅ Cliques por categoria resetados!", false, true);
+                }
+            }
         });
     });
-
-    function resetTopHoje() {
-        if(confirm("Resetar cliques de HOJE?")) {
-            products.forEach(p => p.clicksHoje = 0);
-            salvarTudo();
-            renderizar();
-            showToast("✅ Cliques de hoje resetados!", false, true);
-        }
-    }
-
-    function resetTopTotal() {
-        if(confirm("Resetar cliques TOTAL?")) {
-            products.forEach(p => p.clicksTotal = 0);
-            salvarTudo();
-            renderizar();
-            showToast("✅ Cliques totais resetados!", false, true);
-        }
-    }
-
-    function resetCatClicks() {
-        if(confirm("Resetar cliques das categorias?")) {
-            Object.keys(stats.catClicks).forEach(c => { stats.catClicks[c].hoje = 0; stats.catClicks[c].total = 0; });
-            salvarTudo();
-            renderizar();
-            showToast("✅ Cliques por categoria resetados!", false, true);
-        }
-    }
 
     document.getElementById("uploadTrigger").addEventListener("click", () => document.getElementById("prodImage").click());
     document.getElementById("prodImage").addEventListener("change", (e) => {
