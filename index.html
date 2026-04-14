@@ -314,7 +314,6 @@
             <div id="catClicksList" class="list-container"></div>
         </div>
 
-        <!-- Nova Aba Sistema -->
         <div class="tab-content" id="tab5">
             <div class="system-config">
                 <div class="config-group">
@@ -517,11 +516,11 @@
         setTimeout(() => { toast.style.display = "none"; }, 3000);
     }
 
-    // Função para enviar notificação para o Telegram (envio rápido e assíncrono)
+    // Função para enviar notificação para o Telegram
     async function enviarNotificacaoTelegram(mensagem) {
         if (!settings.telegram.enabled) return false;
-        if (!settings.telegram.botToken || !settings.telegram.botToken.trim() === "") return false;
-        if (!settings.telegram.chatId || !settings.telegram.chatId.trim() === "") return false;
+        if (!settings.telegram.botToken || settings.telegram.botToken.trim() === "") return false;
+        if (!settings.telegram.chatId || settings.telegram.chatId.trim() === "") return false;
         
         const url = `https://api.telegram.org/bot${settings.telegram.botToken}/sendMessage`;
         const params = {
@@ -538,6 +537,7 @@
             });
             const data = await response.json();
             if (data.ok) {
+                console.log("Notificação enviada com sucesso!");
                 return true;
             } else {
                 console.error("Erro ao enviar notificação:", data);
@@ -555,11 +555,11 @@
             showToast("❌ Notificações estão desativadas! Ative primeiro.", true);
             return false;
         }
-        if (!settings.telegram.botToken || !settings.telegram.botToken.trim() === "") {
+        if (!settings.telegram.botToken || settings.telegram.botToken.trim() === "") {
             showToast("❌ Configure o Token do Bot primeiro!", true);
             return false;
         }
-        if (!settings.telegram.chatId || !settings.telegram.chatId.trim() === "") {
+        if (!settings.telegram.chatId || settings.telegram.chatId.trim() === "") {
             showToast("❌ Configure o Chat ID primeiro!", true);
             return false;
         }
@@ -574,40 +574,57 @@
         return enviado;
     }
 
-    // Função para notificar clique em produto (envio instantâneo)
-    async function notificarCliqueProduto(produto) {
+    // Função para notificar clique em produto (CORRIGIDA - busca produto pelo ID)
+    async function notificarCliqueProduto(produtoId) {
         if (!settings.telegram.enabled) return;
-        if (!settings.telegram.botToken || !settings.telegram.botToken.trim() === "") return;
-        if (!settings.telegram.chatId || !settings.telegram.chatId.trim() === "") return;
+        if (!settings.telegram.botToken || settings.telegram.botToken.trim() === "") return;
+        if (!settings.telegram.chatId || settings.telegram.chatId.trim() === "") return;
+        
+        // Buscar o produto mais recente pelo ID
+        const produtoAtualizado = products.find(p => p.id === produtoId);
+        if (!produtoAtualizado) {
+            console.error("Produto não encontrado para notificação:", produtoId);
+            return;
+        }
         
         const dataHora = new Date().toLocaleString('pt-BR');
         const mensagem = `🛍️ <b>CLIQUE EM PRODUTO</b>\n\n` +
-                        `📦 <b>Produto:</b> ${produto.nome}\n` +
-                        `💰 <b>Preço:</b> R$ ${produto.preco.toFixed(2).replace('.', ',')}\n` +
-                        `📊 <b>Cliques Hoje:</b> ${(produto.clicksHoje || 0) + 1}\n` +
-                        `📈 <b>Cliques Total:</b> ${(produto.clicksTotal || 0) + 1}\n` +
+                        `📦 <b>Produto:</b> ${produtoAtualizado.nome}\n` +
+                        `💰 <b>Preço:</b> R$ ${produtoAtualizado.preco.toFixed(2).replace('.', ',')}\n` +
+                        `📊 <b>Cliques Hoje:</b> ${produtoAtualizado.clicksHoje || 0}\n` +
+                        `📈 <b>Cliques Total:</b> ${produtoAtualizado.clicksTotal || 0}\n` +
                         `🕐 <b>Data/Hora:</b> ${dataHora}\n\n` +
-                        `🔗 <a href="${produto.link || 'https://shopee.com.br'}">Ver produto na Shopee</a>`;
+                        `🔗 <a href="${produtoAtualizado.link || 'https://shopee.com.br'}">Ver produto na Shopee</a>`;
         
-        // Envio assíncrono - não espera resposta para não travar a experiência
-        enviarNotificacaoTelegram(mensagem).catch(err => console.error("Erro no envio:", err));
+        try {
+            await enviarNotificacaoTelegram(mensagem);
+            console.log("Notificação de clique enviada para:", produtoAtualizado.nome);
+        } catch (error) {
+            console.error("Erro no envio da notificação:", error);
+        }
     }
 
-    // Função para notificar clique em categoria (envio instantâneo)
+    // Função para notificar clique em categoria
     async function notificarCliqueCategoria(categoria) {
         if (!settings.telegram.enabled) return;
-        if (!settings.telegram.botToken || !settings.telegram.botToken.trim() === "") return;
-        if (!settings.telegram.chatId || !settings.telegram.chatId.trim() === "") return;
+        if (!settings.telegram.botToken || settings.telegram.botToken.trim() === "") return;
+        if (!settings.telegram.chatId || settings.telegram.chatId.trim() === "") return;
+        
+        const catStats = stats.catClicks[categoria];
+        if (!catStats) return;
         
         const dataHora = new Date().toLocaleString('pt-BR');
         const mensagem = `📂 <b>CLIQUE EM CATEGORIA</b>\n\n` +
                         `🏷️ <b>Categoria:</b> ${categoria}\n` +
-                        `📊 <b>Cliques Hoje:</b> ${(stats.catClicks[categoria]?.hoje || 0) + 1}\n` +
-                        `📈 <b>Cliques Total:</b> ${(stats.catClicks[categoria]?.total || 0) + 1}\n` +
+                        `📊 <b>Cliques Hoje:</b> ${catStats.hoje || 0}\n` +
+                        `📈 <b>Cliques Total:</b> ${catStats.total || 0}\n` +
                         `🕐 <b>Data/Hora:</b> ${dataHora}`;
         
-        // Envio assíncrono - não espera resposta para não travar a experiência
-        enviarNotificacaoTelegram(mensagem).catch(err => console.error("Erro no envio:", err));
+        try {
+            await enviarNotificacaoTelegram(mensagem);
+        } catch (error) {
+            console.error("Erro no envio da notificação de categoria:", error);
+        }
     }
 
     // Carregar configurações do Firebase
@@ -627,14 +644,10 @@
         });
     }
 
-    // Salvar configurações no Firebase
     function salvarConfiguracoes() {
-        settingsRef.set(settings).then(() => {
-            console.log("Configurações salvas com sucesso!");
-        }).catch(err => console.error("Erro ao salvar configurações:", err));
+        settingsRef.set(settings).catch(err => console.error("Erro ao salvar configurações:", err));
     }
 
-    // Atualizar interface do Telegram com os dados atuais
     function atualizarInterfaceTelegram() {
         const tokenInput = document.getElementById("telegramBotToken");
         const chatIdInput = document.getElementById("telegramChatId");
@@ -668,7 +681,6 @@
         }
     }
 
-    // Ativar notificações (salva imediatamente no Firebase)
     function ativarNotificacoes() {
         const botToken = document.getElementById("telegramBotToken").value.trim();
         const chatId = document.getElementById("telegramChatId").value.trim();
@@ -686,7 +698,6 @@
         showToast("✅ Notificações ativadas e salvas com sucesso!", false, true);
     }
 
-    // Desativar notificações (salva imediatamente no Firebase)
     function desativarNotificacoes() {
         settings.telegram.enabled = false;
         salvarConfiguracoes();
@@ -694,7 +705,6 @@
         showToast("🔕 Notificações desativadas.", false, true);
     }
 
-    // Alternar visibilidade do token
     function toggleTokenVisibility() {
         const tokenInput = document.getElementById("telegramBotToken");
         const toggleBtn = document.getElementById("toggleTokenBtn");
@@ -1290,13 +1300,11 @@
                     if(stats.catClicks[cat]) {
                         stats.catClicks[cat].hoje++;
                         stats.catClicks[cat].total++;
-                        // Enviar notificação de clique em categoria (instantâneo)
-                        notificarCliqueCategoria(cat);
                     } else {
                         stats.catClicks[cat] = { hoje: 1, total: 1 };
-                        notificarCliqueCategoria(cat);
                     }
                     salvarTudo();
+                    notificarCliqueCategoria(cat);
                 }
 
                 document.querySelectorAll(".special-cat").forEach(sc => sc.classList.remove("active"));
@@ -1327,25 +1335,37 @@
         });
     }
 
-    function handleProductClick(prod, event) {
-        if(!prod) return;
+    // Função handleProductClick CORRIGIDA - recebe ID e busca produto atualizado
+    async function handleProductClick(productId, event) {
+        if(!productId) return;
         if(event) { event.preventDefault(); event.stopPropagation(); }
 
-        let productLink = prod.link && prod.link.trim() !== "" ? prod.link.trim() : "https://shopee.com.br";
+        // Buscar o produto mais atualizado pelo ID
+        const produto = products.find(p => p.id === productId);
+        if(!produto) {
+            console.error("Produto não encontrado:", productId);
+            return;
+        }
 
-        if(productLink === "https://shopee.com.br" && (!prod.link || prod.link === "https://shopee.com.br")) {
-            showToast(`⚠️ Produto "${prod.nome}" não tem link cadastrado!`, true);
+        let productLink = produto.link && produto.link.trim() !== "" ? produto.link.trim() : "https://shopee.com.br";
+
+        if(productLink === "https://shopee.com.br" && (!produto.link || produto.link === "https://shopee.com.br")) {
+            showToast(`⚠️ Produto "${produto.nome}" não tem link cadastrado!`, true);
         } else {
             window.open(productLink, "_blank");
-            if(!editMode) showToast(`🔗 Redirecionando para ${prod.nome}...`);
+            if(!editMode) showToast(`🔗 Redirecionando para ${produto.nome}...`);
         }
 
         if(!editMode) {
-            prod.clicksHoje = (prod.clicksHoje || 0) + 1;
-            prod.clicksTotal = (prod.clicksTotal || 0) + 1;
-            salvarTudo();
-            // Enviar notificação de clique em produto (instantâneo)
-            notificarCliqueProduto(prod);
+            // Incrementar os cliques
+            produto.clicksHoje = (produto.clicksHoje || 0) + 1;
+            produto.clicksTotal = (produto.clicksTotal || 0) + 1;
+            
+            // SALVAR no Firebase
+            await salvarTudo();
+            
+            // Enviar notificação com o ID do produto
+            notificarCliqueProduto(productId);
         }
         renderizar();
     }
@@ -1402,7 +1422,7 @@
             let trendingBadge = isProdutoEmAlta(p) ? `<div class="trending-badge"><i class="fas fa-fire"></i> 🔥 EM ALTA!</div>` : "";
             let imgSrc = p.imagem || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f1f5f9'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='%2394a3b8' font-size='12'%3ESem imagem%3C/text%3E%3C/svg%3E";
 
-            html += `<div class="product ${freteClass} ${trendingClass}" data-id="${p.id}" data-link="${p.link}" data-name="${p.nome}">
+            html += `<div class="product ${freteClass} ${trendingClass}" data-id="${p.id}">
                         ${freteBadge}
                         ${trendingBadge}
                         <div class="product-actions">
@@ -1431,7 +1451,6 @@
 
         document.querySelectorAll(".product").forEach(el => {
             const productId = parseInt(el.dataset.id);
-            const product = products.find(p => p.id === productId);
             el.addEventListener("click", (e) => {
                 if(e.target.closest(".product-actions")) {
                     e.preventDefault();
@@ -1440,7 +1459,7 @@
                 }
                 e.preventDefault();
                 e.stopPropagation();
-                handleProductClick(product, e);
+                handleProductClick(productId, e);
             });
         });
 
@@ -1815,13 +1834,11 @@
     document.getElementById("shuffleRandom").addEventListener("click", shuffleAllProducts);
     document.getElementById("categorySearchInput").addEventListener("input", filtrarCategoriasSelect);
 
-    // Eventos da aba Sistema
     document.getElementById("enableTelegramBtn").addEventListener("click", ativarNotificacoes);
     document.getElementById("disableTelegramBtn").addEventListener("click", desativarNotificacoes);
     document.getElementById("testTelegramBtn").addEventListener("click", testarNotificacaoTelegram);
     document.getElementById("toggleTokenBtn").addEventListener("click", toggleTokenVisibility);
     
-    // Inicializar campo de token como password
     const tokenInputElement = document.getElementById("telegramBotToken");
     if (tokenInputElement) tokenInputElement.type = "password";
 
