@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f5f7fb 0%, #f0f2f5 100%); min-height: 100vh; padding-bottom: 30px; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
@@ -97,6 +97,18 @@
         .list-item:hover { transform: translateX(5px); background: #fef3c7; }
         .result-count { font-size: 12px; color: #f59e0b; margin-bottom: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 
+        .activity-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: linear-gradient(135deg, #f8fafc, #ffffff); border-radius: 14px; margin-bottom: 10px; border-left: 4px solid #f59e0b; transition: all 0.2s ease; }
+        .activity-item:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .activity-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .activity-icon.produto { background: linear-gradient(135deg, #ee4d2d20, #f59e0b20); color: #f59e0b; }
+        .activity-icon.categoria { background: linear-gradient(135deg, #8b5cf620, #7c3aed20); color: #7c3aed; }
+        .activity-content { flex: 1; }
+        .activity-title { font-weight: 700; font-size: 13px; color: #1e293b; margin-bottom: 4px; }
+        .activity-time { font-size: 10px; color: #94a3b8; display: flex; align-items: center; gap: 4px; }
+        .activity-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 9px; font-weight: 600; margin-left: 8px; }
+        .activity-badge.produto { background: #fef3c7; color: #f59e0b; }
+        .activity-badge.categoria { background: #ede9fe; color: #7c3aed; }
+
         .products { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .product { background: white; border-radius: 16px; overflow: hidden; cursor: pointer; position: relative; border: 1px solid #e2e8f0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); animation: fadeInUp 0.4s ease-out backwards; }
         .product:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-color: #f59e0b; }
@@ -116,9 +128,9 @@
         .set-meta { background: #f59e0b; color: white; }
         .top-product-btn { background: #f59e0b; color: white; }
 
-        .product-img { width: 100%; aspect-ratio: 1; object-fit: cover; background: linear-gradient(135deg, #f1f5f9, #e2e8f0); transition: transform 0.3s ease; }
+        .product-img { width: 100%; aspect-ratio: 1; object-fit: cover; background: linear-gradient(135deg, #f1f5f9, #e2e8f0); transition: transform 0.3s ease; pointer-events: none; }
         .product:hover .product-img { transform: scale(1.02); }
-        .product-info { padding: 10px; }
+        .product-info { padding: 10px; pointer-events: none; }
         .product-name { font-size: 13px; font-weight: 700; margin-bottom: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: #1e293b; }
         .product-price { font-size: 16px; font-weight: 800; background: linear-gradient(135deg, #ee4d2d, #f59e0b); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 5px; }
         .product-sold { font-size: 10px; color: #f97316; display: flex; align-items: center; gap: 4px; }
@@ -143,7 +155,7 @@
         .modal-box input:focus, .modal-box select:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1); }
         .modal-box button { width: 100%; padding: 12px; border: none; border-radius: 40px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.3s ease; }
         .modal-box button:hover { transform: translateY(-2px); }
-        
+
         .category-select-container { margin-bottom: 12px; }
         .category-search { position: relative; margin-bottom: 8px; }
         .category-search input { padding-left: 35px; margin-bottom: 0; }
@@ -190,7 +202,7 @@
         .special-cat.hidden { display: none; }
 
         .shuffle-buttons { display: flex; gap: 8px; margin-top: 12px; }
-        
+
         .category-manage-list { max-height: 400px; overflow-y: auto; margin: 15px 0; }
         .category-manage-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: all 0.2s ease; flex-wrap: wrap; }
         .category-manage-item:hover { background: #fef3c7; transform: translateX(3px); }
@@ -209,26 +221,9 @@
         .category-manage-item.editing .category-manage-name { display: none; }
         .category-manage-item.editing .category-manage-actions { display: none; }
         .category-manage-item.editing .edit-cat-input { display: flex; }
-        
+
         .btn-green { background: #22c55e; color: white; }
         .btn-gray { background: #64748b; color: white; }
-
-        .system-config { padding: 15px; }
-        .config-group { margin-bottom: 20px; }
-        .config-group label { display: block; font-size: 13px; font-weight: 600; color: #1e293b; margin-bottom: 8px; }
-        .config-group label i { color: #f59e0b; margin-right: 6px; }
-        .telegram-input-wrapper { position: relative; display: flex; align-items: center; }
-        .telegram-input-wrapper input { flex: 1; padding-right: 45px; }
-        .toggle-token-btn { position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: #f59e0b; font-size: 16px; padding: 8px; width: auto; margin-top: 0; }
-        .toggle-token-btn:hover { transform: scale(1.05); background: none; }
-        .toggle-switch { display: flex; gap: 15px; margin-top: 8px; }
-        .toggle-switch button { flex: 1; padding: 10px; border-radius: 30px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
-        .toggle-switch .btn-active { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; }
-        .toggle-switch .btn-inactive { background: #e2e8f0; color: #64748b; border: none; }
-        .toggle-switch button:hover { transform: translateY(-2px); }
-        .config-hint { font-size: 11px; color: #64748b; margin-top: 8px; display: flex; align-items: center; gap: 6px; }
-        .test-btn { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border: none; padding: 8px 16px; border-radius: 30px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; }
-        .test-btn:hover { transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -265,7 +260,7 @@
             <button class="tab-btn" data-tab="tab2"><i class="fas fa-fire"></i> Top Hoje</button>
             <button class="tab-btn" data-tab="tab3"><i class="fas fa-trophy"></i> Top Total</button>
             <button class="tab-btn" data-tab="tab4"><i class="fas fa-folder-open"></i> Clicks Cat</button>
-            <button class="tab-btn" data-tab="tab5"><i class="fab fa-telegram"></i> Sistema</button>
+            <button class="tab-btn" data-tab="tab5"><i class="fas fa-history"></i> Atividade</button>
         </div>
 
         <div class="tab-content active" id="tab1">
@@ -315,34 +310,14 @@
         </div>
 
         <div class="tab-content" id="tab5">
-            <div class="system-config">
-                <div class="config-group">
-                    <label><i class="fab fa-telegram"></i> Configuração do Bot Telegram</label>
-                    <div class="telegram-input-wrapper">
-                        <input type="password" id="telegramBotToken" placeholder="Token do Bot (ex: 1234567890:ABCdefGHIjklMNOpqrsTUVwxyz)" autocomplete="off">
-                        <button id="toggleTokenBtn" class="toggle-token-btn" title="Mostrar/Ocultar Token">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    <div class="config-group" style="margin-top: 12px;">
-                        <label><i class="fas fa-id-badge"></i> Chat ID do Telegram</label>
-                        <input type="text" id="telegramChatId" placeholder="Chat ID (ex: 123456789)" autocomplete="off">
-                    </div>
-                    <div class="toggle-switch">
-                        <button id="enableTelegramBtn" class="btn-active"><i class="fas fa-bell"></i> Ativar Notificações</button>
-                        <button id="disableTelegramBtn" class="btn-inactive"><i class="fas fa-bell-slash"></i> Desativar</button>
-                    </div>
-                    <div class="config-hint">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Status: <strong id="telegramStatus">Carregando...</strong></span>
-                    </div>
-                    <button id="testTelegramBtn" class="test-btn"><i class="fas fa-paper-plane"></i> Testar Notificação</button>
-                    <div class="config-hint" style="margin-top: 12px;">
-                        <i class="fas fa-question-circle"></i>
-                        <span>Como obter Token e Chat ID: <a href="https://t.me/BotFather" target="_blank" style="color:#f59e0b">@BotFather</a> e <a href="https://t.me/userinfobot" target="_blank" style="color:#f59e0b">@userinfobot</a></span>
-                    </div>
+            <div class="tab-header">
+                <h4><i class="fas fa-history"></i> Últimas Atividades</h4>
+                <div class="tab-actions">
+                    <button class="reset-tab-btn" data-reset="atividades"><i class="fas fa-trash-alt"></i> Limpar Histórico</button>
+                    <button class="toggle-list-btn show" data-target="atividadesList"><i class="fas fa-eye"></i> Ocultar</button>
                 </div>
             </div>
+            <div id="atividadesList" class="list-container"></div>
         </div>
     </div>
 
@@ -385,7 +360,7 @@
             <button id="prodPosTop" class="position-btn-active">📌 Topo</button>
             <button id="prodPosLast" class="position-btn-inactive">📄 Último</button>
         </div>
-        
+
         <div class="category-select-container">
             <div class="category-search">
                 <i class="fas fa-search"></i>
@@ -395,7 +370,7 @@
                 <option value="todos">Todos</option>
             </select>
         </div>
-        
+
         <input type="text" id="prodShopeeId" placeholder="ID do produto na Shopee (opcional)">
         <div class="upload-area" id="uploadTrigger">
             <i class="fas fa-cloud-upload-alt" style="color: #f59e0b; font-size: 24px;"></i>
@@ -488,13 +463,13 @@
     const productsRef = database.ref('products');
     const categoriesRef = database.ref('categories');
     const statsRef = database.ref('stats');
-    const settingsRef = database.ref('settings');
+    const atividadesRef = database.ref('atividades');
     const IMGBB_KEY = "39d6fa29c5d1a99652d6dcb6bd611757";
 
     let categories = ["todos"];
     let products = [];
     let stats = { catClicks: {}, lastReset: new Date().toDateString() };
-    let settings = { telegram: { enabled: false, botToken: "", chatId: "" } };
+    let atividades = [];
     let editMode = false;
     let currentCat = "todos";
     let currentSpecial = null;
@@ -505,8 +480,7 @@
     let currentUser = null;
     let productPosition = "top";
     let categoryPosition = "top";
-    let listStates = { topTodayList: true, topTotalList: true, catClicksList: true };
-    let tokenVisible = false;
+    let listStates = { topTodayList: true, topTotalList: true, catClicksList: true, atividadesList: true };
 
     function showToast(message, isError = false, isSuccess = false) {
         const toast = document.getElementById("toast");
@@ -516,207 +490,96 @@
         setTimeout(() => { toast.style.display = "none"; }, 3000);
     }
 
-    // Função para enviar notificação para o Telegram
-    async function enviarNotificacaoTelegram(mensagem) {
-        if (!settings.telegram.enabled) return false;
-        if (!settings.telegram.botToken || settings.telegram.botToken.trim() === "") return false;
-        if (!settings.telegram.chatId || settings.telegram.chatId.trim() === "") return false;
-        
-        const url = `https://api.telegram.org/bot${settings.telegram.botToken}/sendMessage`;
-        const params = {
-            chat_id: settings.telegram.chatId,
-            text: mensagem,
-            parse_mode: "HTML"
+    function adicionarAtividade(tipo, nome, subtipo = null) {
+        const agora = new Date();
+        const horaFormatada = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        const novaAtividade = {
+            id: Date.now(),
+            tipo: tipo, // 'produto' ou 'categoria'
+            nome: nome,
+            horario: horaFormatada,
+            timestamp: agora.getTime(),
+            subtipo: subtipo
         };
-        
-        try {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(params)
-            });
-            const data = await response.json();
-            if (data.ok) {
-                console.log("Notificação enviada com sucesso!");
-                return true;
-            } else {
-                console.error("Erro ao enviar notificação:", data);
-                return false;
-            }
-        } catch (error) {
-            console.error("Erro ao enviar notificação:", error);
-            return false;
+
+        atividades.unshift(novaAtividade);
+
+        if (atividades.length > 5) {
+            atividades = atividades.slice(0, 5);
+        }
+
+        atividadesRef.set(atividades).catch(err => console.error("Erro ao salvar atividades:", err));
+
+        if (editMode) {
+            renderAdmin();
         }
     }
 
-    // Função para testar notificação
-    async function testarNotificacaoTelegram() {
-        if (!settings.telegram.enabled) {
-            showToast("❌ Notificações estão desativadas! Ative primeiro.", true);
-            return false;
-        }
-        if (!settings.telegram.botToken || settings.telegram.botToken.trim() === "") {
-            showToast("❌ Configure o Token do Bot primeiro!", true);
-            return false;
-        }
-        if (!settings.telegram.chatId || settings.telegram.chatId.trim() === "") {
-            showToast("❌ Configure o Chat ID primeiro!", true);
-            return false;
-        }
-        
-        const mensagem = "🔔 <b>Teste de Notificação</b>\n\n✅ Sua conexão com o Telegram está funcionando perfeitamente!\n\nShopStyle - Sistema de Notificações";
-        const enviado = await enviarNotificacaoTelegram(mensagem);
-        if (enviado) {
-            showToast("📨 Notificação de teste enviada com sucesso!", false, true);
-        } else {
-            showToast("❌ Falha ao enviar notificação. Verifique Token e Chat ID.", true);
-        }
-        return enviado;
-    }
-
-    // Função para notificar clique em produto (CORRIGIDA - busca produto pelo ID)
-    async function notificarCliqueProduto(produtoId) {
-        if (!settings.telegram.enabled) return;
-        if (!settings.telegram.botToken || settings.telegram.botToken.trim() === "") return;
-        if (!settings.telegram.chatId || settings.telegram.chatId.trim() === "") return;
-        
-        // Buscar o produto mais recente pelo ID
-        const produtoAtualizado = products.find(p => p.id === produtoId);
-        if (!produtoAtualizado) {
-            console.error("Produto não encontrado para notificação:", produtoId);
-            return;
-        }
-        
-        const dataHora = new Date().toLocaleString('pt-BR');
-        const mensagem = `🛍️ <b>CLIQUE EM PRODUTO</b>\n\n` +
-                        `📦 <b>Produto:</b> ${produtoAtualizado.nome}\n` +
-                        `💰 <b>Preço:</b> R$ ${produtoAtualizado.preco.toFixed(2).replace('.', ',')}\n` +
-                        `📊 <b>Cliques Hoje:</b> ${produtoAtualizado.clicksHoje || 0}\n` +
-                        `📈 <b>Cliques Total:</b> ${produtoAtualizado.clicksTotal || 0}\n` +
-                        `🕐 <b>Data/Hora:</b> ${dataHora}\n\n` +
-                        `🔗 <a href="${produtoAtualizado.link || 'https://shopee.com.br'}">Ver produto na Shopee</a>`;
-        
-        try {
-            await enviarNotificacaoTelegram(mensagem);
-            console.log("Notificação de clique enviada para:", produtoAtualizado.nome);
-        } catch (error) {
-            console.error("Erro no envio da notificação:", error);
+    function limparAtividades() {
+        if (confirm("Limpar todo o histórico de atividades?")) {
+            atividades = [];
+            atividadesRef.set(atividades);
+            if (editMode) renderAdmin();
+            showToast("✅ Histórico de atividades limpo!", false, true);
         }
     }
 
-    // Função para notificar clique em categoria
-    async function notificarCliqueCategoria(categoria) {
-        if (!settings.telegram.enabled) return;
-        if (!settings.telegram.botToken || settings.telegram.botToken.trim() === "") return;
-        if (!settings.telegram.chatId || settings.telegram.chatId.trim() === "") return;
-        
-        const catStats = stats.catClicks[categoria];
-        if (!catStats) return;
-        
-        const dataHora = new Date().toLocaleString('pt-BR');
-        const mensagem = `📂 <b>CLIQUE EM CATEGORIA</b>\n\n` +
-                        `🏷️ <b>Categoria:</b> ${categoria}\n` +
-                        `📊 <b>Cliques Hoje:</b> ${catStats.hoje || 0}\n` +
-                        `📈 <b>Cliques Total:</b> ${catStats.total || 0}\n` +
-                        `🕐 <b>Data/Hora:</b> ${dataHora}`;
-        
-        try {
-            await enviarNotificacaoTelegram(mensagem);
-        } catch (error) {
-            console.error("Erro no envio da notificação de categoria:", error);
-        }
-    }
-
-    // Carregar configurações do Firebase
-    function carregarConfiguracoes() {
-        settingsRef.on('value', (snapshot) => {
+    function carregarAtividades() {
+        atividadesRef.on('value', (snapshot) => {
             if (snapshot.exists()) {
-                const savedSettings = snapshot.val();
-                settings = savedSettings;
-                if (!settings.telegram) {
-                    settings.telegram = { enabled: false, botToken: "", chatId: "" };
-                }
+                atividades = snapshot.val();
+                if (!Array.isArray(atividades)) atividades = [];
+                atividades.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                if (atividades.length > 5) atividades = atividades.slice(0, 5);
             } else {
-                settings = { telegram: { enabled: false, botToken: "", chatId: "" } };
-                settingsRef.set(settings);
+                atividades = [];
             }
-            atualizarInterfaceTelegram();
+            if (editMode) renderAdmin();
         });
     }
 
-    function salvarConfiguracoes() {
-        settingsRef.set(settings).catch(err => console.error("Erro ao salvar configurações:", err));
-    }
+    function renderAtividades() {
+        const container = document.getElementById("atividadesList");
+        if (!container) return;
 
-    function atualizarInterfaceTelegram() {
-        const tokenInput = document.getElementById("telegramBotToken");
-        const chatIdInput = document.getElementById("telegramChatId");
-        const statusSpan = document.getElementById("telegramStatus");
-        const enableBtn = document.getElementById("enableTelegramBtn");
-        const disableBtn = document.getElementById("disableTelegramBtn");
-        
-        if (tokenInput) tokenInput.value = settings.telegram.botToken || "";
-        if (chatIdInput) chatIdInput.value = settings.telegram.chatId || "";
-        
-        if (settings.telegram.enabled) {
-            if (statusSpan) statusSpan.innerHTML = '<i class="fas fa-check-circle" style="color:#22c55e"></i> Ativado';
-            if (enableBtn) {
-                enableBtn.classList.add("btn-active");
-                enableBtn.classList.remove("btn-inactive");
-            }
-            if (disableBtn) {
-                disableBtn.classList.add("btn-inactive");
-                disableBtn.classList.remove("btn-active");
-            }
-        } else {
-            if (statusSpan) statusSpan.innerHTML = '<i class="fas fa-times-circle" style="color:#ef4444"></i> Desativado';
-            if (enableBtn) {
-                enableBtn.classList.add("btn-inactive");
-                enableBtn.classList.remove("btn-active");
-            }
-            if (disableBtn) {
-                disableBtn.classList.add("btn-active");
-                disableBtn.classList.remove("btn-inactive");
-            }
-        }
-    }
-
-    function ativarNotificacoes() {
-        const botToken = document.getElementById("telegramBotToken").value.trim();
-        const chatId = document.getElementById("telegramChatId").value.trim();
-        
-        if (!botToken || !chatId) {
-            showToast("❌ Preencha o Token do Bot e o Chat ID antes de ativar!", true);
+        if (!atividades || atividades.length === 0) {
+            container.innerHTML = `<div class="list-item" style="justify-content: center; gap: 10px;">
+                <i class="fas fa-history" style="color: #94a3b8;"></i> 
+                Nenhuma atividade registrada ainda
+            </div>`;
             return;
         }
-        
-        settings.telegram.enabled = true;
-        settings.telegram.botToken = botToken;
-        settings.telegram.chatId = chatId;
-        salvarConfiguracoes();
-        atualizarInterfaceTelegram();
-        showToast("✅ Notificações ativadas e salvas com sucesso!", false, true);
-    }
 
-    function desativarNotificacoes() {
-        settings.telegram.enabled = false;
-        salvarConfiguracoes();
-        atualizarInterfaceTelegram();
-        showToast("🔕 Notificações desativadas.", false, true);
-    }
+        let html = "";
+        for (let i = 0; i < atividades.length; i++) {
+            const act = atividades[i];
+            const isProduto = act.tipo === 'produto';
+            const iconClass = isProduto ? 'produto' : 'categoria';
+            const icon = isProduto ? '<i class="fas fa-box"></i>' : '<i class="fas fa-tag"></i>';
+            const badgeClass = isProduto ? 'produto' : 'categoria';
+            const badgeText = isProduto ? 'PRODUTO' : 'CATEGORIA';
 
-    function toggleTokenVisibility() {
-        const tokenInput = document.getElementById("telegramBotToken");
-        const toggleBtn = document.getElementById("toggleTokenBtn");
-        
-        tokenVisible = !tokenVisible;
-        if (tokenVisible) {
-            tokenInput.type = "text";
-            toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i>';
-        } else {
-            tokenInput.type = "password";
-            toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
+            html += `
+                <div class="activity-item">
+                    <div class="activity-icon ${iconClass}">
+                        ${icon}
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">
+                            ${act.nome}
+                            <span class="activity-badge ${badgeClass}">${badgeText}</span>
+                        </div>
+                        <div class="activity-time">
+                            <i class="far fa-clock"></i> ${act.horario}
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: #cbd5e1; font-size: 12px;"></i>
+                </div>
+            `;
         }
+
+        container.innerHTML = html;
     }
 
     function levenshteinDistance(a, b) {
@@ -761,7 +624,7 @@
     function shuffleArrayExceptTop(array) {
         const specialProducts = [];
         const normalProducts = [];
-        
+
         for (let p of array) {
             if (p.freteGratis === true || isProdutoEmAlta(p)) {
                 specialProducts.push(p);
@@ -769,12 +632,12 @@
                 normalProducts.push(p);
             }
         }
-        
+
         for (let i = normalProducts.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [normalProducts[i], normalProducts[j]] = [normalProducts[j], normalProducts[i]];
         }
-        
+
         return [...specialProducts, ...normalProducts];
     }
 
@@ -795,7 +658,7 @@
         if (!products.length) return;
         const specialProducts = [];
         const normalProducts = [];
-        
+
         for (let p of products) {
             if (p.freteGratis === true || isProdutoEmAlta(p)) {
                 specialProducts.push(p);
@@ -803,9 +666,9 @@
                 normalProducts.push(p);
             }
         }
-        
+
         normalProducts.reverse();
-        
+
         const newOrder = [...specialProducts, ...normalProducts];
         for (let i = 0; i < newOrder.length; i++) {
             newOrder[i].ordem = i;
@@ -827,9 +690,11 @@
     }
 
     function salvarTudo() {
-        if (products) productsRef.set(products).catch(err => console.error("Erro ao salvar produtos:", err));
-        if (categories) categoriesRef.set(categories).catch(err => console.error("Erro ao salvar categorias:", err));
-        salvarStats();
+        return Promise.all([
+            productsRef.set(products).catch(err => console.error("Erro ao salvar produtos:", err)),
+            categoriesRef.set(categories).catch(err => console.error("Erro ao salvar categorias:", err)),
+            salvarStats()
+        ]);
     }
 
     function carregarDoFirebase() {
@@ -944,7 +809,7 @@
             showToast(`❌ Categoria "${novoNomeTrim}" já existe!`, true);
             return false;
         }
-        
+
         let index = categories.findIndex(c => c === nomeAntigo);
         if(index !== -1 && nomeAntigo !== "todos") {
             categories[index] = novoNomeTrim;
@@ -1026,29 +891,29 @@
     function atualizarSelectCategorias() {
         const select = document.getElementById("prodCategory");
         if(!select) return;
-        
+
         const categoriasFiltradas = categories.filter(c => c !== "todos");
         const selectedValue = select.value;
-        
+
         select.innerHTML = '<option value="todos">Todos</option>';
-        
+
         for(let cat of categoriasFiltradas) {
             const option = document.createElement("option");
             option.value = cat;
             option.textContent = cat;
             select.appendChild(option);
         }
-        
+
         if(selectedValue && categories.includes(selectedValue)) {
             select.value = selectedValue;
         }
     }
-    
+
     function filtrarCategoriasSelect() {
         const searchTerm = document.getElementById("categorySearchInput").value.toLowerCase();
         const select = document.getElementById("prodCategory");
         const options = select.options;
-        
+
         for (let i = 0; i < options.length; i++) {
             const option = options[i];
             if (option.value === "todos") {
@@ -1061,7 +926,7 @@
                 option.style.display = "none";
             }
         }
-        
+
         if (searchTerm !== "") {
             for (let i = 0; i < options.length; i++) {
                 if (options[i].style.display !== "none" && options[i].value !== "todos") {
@@ -1075,10 +940,10 @@
     function atualizarListaCategoriasModal() {
         const container = document.getElementById("categoryManageList");
         if(!container) return;
-        
+
         let categoriasSemTodos = categories.filter(c => c !== "todos");
         let html = "";
-        
+
         for(let i = 0; i < categoriasSemTodos.length; i++) {
             let cat = categoriasSemTodos[i];
             let originalIndex = categories.indexOf(cat);
@@ -1100,13 +965,13 @@
                 </div>
             `;
         }
-        
+
         container.innerHTML = html || "<div style='text-align:center;padding:20px;color:#94a3b8;'>Nenhuma categoria além de 'Todos'</div>";
-        
+
         document.querySelectorAll(".category-manage-item").forEach(item => {
             const catName = item.dataset.cat;
             const index = parseInt(item.dataset.index);
-            
+
             const topBtn = item.querySelector(".cat-top-btn");
             if(topBtn) {
                 topBtn.addEventListener("click", (e) => {
@@ -1114,7 +979,7 @@
                     colocarCategoriaTopo(catName);
                 });
             }
-            
+
             const moveUpBtn = item.querySelector(".cat-move-up");
             if(moveUpBtn && !moveUpBtn.disabled) {
                 moveUpBtn.addEventListener("click", (e) => {
@@ -1122,7 +987,7 @@
                     moverCategoria(index, -1);
                 });
             }
-            
+
             const moveDownBtn = item.querySelector(".cat-move-down");
             if(moveDownBtn && !moveDownBtn.disabled) {
                 moveDownBtn.addEventListener("click", (e) => {
@@ -1130,7 +995,7 @@
                     moverCategoria(index, 1);
                 });
             }
-            
+
             const editBtn = item.querySelector(".cat-edit-btn");
             if(editBtn) {
                 editBtn.addEventListener("click", (e) => {
@@ -1141,7 +1006,7 @@
                     if(input) input.focus();
                 });
             }
-            
+
             const saveBtn = item.querySelector(".save-cat-edit");
             if(saveBtn) {
                 saveBtn.addEventListener("click", (e) => {
@@ -1153,7 +1018,7 @@
                     item.classList.remove("editing");
                 });
             }
-            
+
             const cancelBtn = item.querySelector(".cancel-cat-edit");
             if(cancelBtn) {
                 cancelBtn.addEventListener("click", (e) => {
@@ -1161,7 +1026,7 @@
                     item.classList.remove("editing");
                 });
             }
-            
+
             const deleteBtn = item.querySelector(".cat-delete-btn");
             if(deleteBtn) {
                 deleteBtn.addEventListener("click", (e) => {
@@ -1303,8 +1168,8 @@
                     } else {
                         stats.catClicks[cat] = { hoje: 1, total: 1 };
                     }
-                    salvarTudo();
-                    notificarCliqueCategoria(cat);
+                    await salvarTudo();
+                    adicionarAtividade('categoria', cat);
                 }
 
                 document.querySelectorAll(".special-cat").forEach(sc => sc.classList.remove("active"));
@@ -1335,17 +1200,15 @@
         });
     }
 
-    // Função handleProductClick CORRIGIDA - recebe ID e busca produto atualizado
     async function handleProductClick(productId, event) {
         if(!productId) return;
-        if(event) { event.preventDefault(); event.stopPropagation(); }
-
-        // Buscar o produto mais atualizado pelo ID
-        const produto = products.find(p => p.id === productId);
-        if(!produto) {
-            console.error("Produto não encontrado:", productId);
-            return;
+        if(event) { 
+            event.preventDefault(); 
+            event.stopPropagation(); 
         }
+
+        const produto = products.find(p => p.id === productId);
+        if(!produto) return;
 
         let productLink = produto.link && produto.link.trim() !== "" ? produto.link.trim() : "https://shopee.com.br";
 
@@ -1357,15 +1220,11 @@
         }
 
         if(!editMode) {
-            // Incrementar os cliques
             produto.clicksHoje = (produto.clicksHoje || 0) + 1;
             produto.clicksTotal = (produto.clicksTotal || 0) + 1;
-            
-            // SALVAR no Firebase
+
             await salvarTudo();
-            
-            // Enviar notificação com o ID do produto
-            notificarCliqueProduto(productId);
+            adicionarAtividade('produto', produto.nome);
         }
         renderizar();
     }
@@ -1451,6 +1310,7 @@
 
         document.querySelectorAll(".product").forEach(el => {
             const productId = parseInt(el.dataset.id);
+
             el.addEventListener("click", (e) => {
                 if(e.target.closest(".product-actions")) {
                     e.preventDefault();
@@ -1521,6 +1381,8 @@
         let catStats = categories.filter(c => c !== "todos").map(c => ({ nome: c, hoje: stats.catClicks[c]?.hoje || 0, total: stats.catClicks[c]?.total || 0 }));
         catStats.sort((a,b) => b.total - a.total);
         document.getElementById("catClicksList").innerHTML = catStats.map(c => `<div class="list-item"><span><i class="fas fa-folder-open" style="color:#f59e0b"></i> ${c.nome}</span><span>Hoje: <strong style="color:#22c55e">${c.hoje}</strong> | Total: ${c.total}</span></div>`).join("") || "<div class='list-item'>Nenhuma categoria</div>";
+
+        renderAtividades();
 
         for(let [listaId, isVisible] of Object.entries(listStates)) {
             let container = document.getElementById(listaId);
@@ -1697,16 +1559,16 @@
         document.getElementById("prodMeta").value = prod?.metaCliques || 0;
         document.getElementById("prodShopeeId").value = prod?.shopeeId || "";
         document.getElementById("categorySearchInput").value = "";
-        
+
         atualizarSelectCategorias();
-        
+
         if(prod?.categoria) {
             const select = document.getElementById("prodCategory");
             if(select.querySelector(`option[value="${prod.categoria}"]`)) {
                 select.value = prod.categoria;
             }
         }
-        
+
         filtrarCategoriasSelect();
 
         if(prod?.imagem) {
@@ -1770,6 +1632,7 @@
                 document.getElementById("loginLoading").style.display = "none";
                 document.getElementById("doLogin").disabled = false;
                 carregarDoFirebase();
+                carregarAtividades();
                 showToast("👋 Bem-vindo ao modo edição!");
             })
             .catch((error) => {
@@ -1834,14 +1697,6 @@
     document.getElementById("shuffleRandom").addEventListener("click", shuffleAllProducts);
     document.getElementById("categorySearchInput").addEventListener("input", filtrarCategoriasSelect);
 
-    document.getElementById("enableTelegramBtn").addEventListener("click", ativarNotificacoes);
-    document.getElementById("disableTelegramBtn").addEventListener("click", desativarNotificacoes);
-    document.getElementById("testTelegramBtn").addEventListener("click", testarNotificacaoTelegram);
-    document.getElementById("toggleTokenBtn").addEventListener("click", toggleTokenVisibility);
-    
-    const tokenInputElement = document.getElementById("telegramBotToken");
-    if (tokenInputElement) tokenInputElement.type = "password";
-
     document.getElementById("prodPosTop").addEventListener("click", () => {
         productPosition = "top";
         document.getElementById("prodPosTop").classList.add("position-btn-active");
@@ -1898,6 +1753,9 @@
                     renderizar();
                     showToast("✅ Cliques por categoria resetados!", false, true);
                 }
+            }
+            else if(resetType === "atividades") {
+                limparAtividades();
             }
         });
     });
@@ -1992,14 +1850,14 @@
             document.body.classList.add("edit-mode");
             document.getElementById("editBadge").style.display = "flex";
             carregarDoFirebase();
-            carregarConfiguracoes();
+            carregarAtividades();
         } else {
             currentUser = null;
             editMode = false;
             document.body.classList.remove("edit-mode");
             document.getElementById("editBadge").style.display = "none";
             carregarDoFirebase();
-            carregarConfiguracoes();
+            carregarAtividades();
         }
     });
 
