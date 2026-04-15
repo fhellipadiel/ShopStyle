@@ -9,6 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f5f7fb 0%, #f0f2f5 100%); min-height: 100vh; padding-bottom: 30px; }
@@ -20,21 +21,21 @@
         .container { max-width: 500px; margin: 0 auto; padding: 16px; animation: fadeInUp 0.6s ease-out; }
         .logo { text-align: center; margin-bottom: 24px; cursor: pointer; transition: all 0.3s ease; }
         .logo:hover { transform: scale(1.02); }
-        .logo h1 { font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #ee4d2d, #f59e0b, #ee4d2d); background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 3s ease infinite; letter-spacing: -0.5px; }
-        .logo p { font-size: 11px; color: #f59e0b; margin-top: 4px; font-weight: 500; }
+        .logo h1 { font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #f97316, #ea580c, #f97316); background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 3s ease infinite; letter-spacing: -0.5px; }
+        .logo p { font-size: 11px; color: #f97316; margin-top: 4px; font-weight: 500; }
 
-        .search-box { background: white; border-radius: 50px; padding: 14px 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); transition: all 0.3s ease; border: 1px solid rgba(245, 158, 11, 0.1); position: relative; }
-        .search-box:focus-within { box-shadow: 0 8px 25px rgba(245, 158, 11, 0.15); border-color: #f59e0b; transform: translateY(-2px); }
-        .search-box i { color: #f59e0b; font-size: 18px; transition: transform 0.3s ease; }
+        .search-box { background: white; border-radius: 50px; padding: 14px 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); transition: all 0.3s ease; border: 1px solid rgba(249, 115, 22, 0.1); position: relative; }
+        .search-box:focus-within { box-shadow: 0 8px 25px rgba(249, 115, 22, 0.15); border-color: #f97316; transform: translateY(-2px); }
+        .search-box i { color: #f97316; font-size: 18px; transition: transform 0.3s ease; }
         .search-box:hover i { transform: rotate(15deg); }
         .search-box input { flex: 1; border: none; outline: none; font-size: 14px; font-weight: 500; background: transparent; }
         .search-box input::placeholder { color: #94a3b8; font-size: 14px; font-weight: 400; }
-        .search-box button { background: none; border: none; cursor: pointer; color: #f59e0b; font-size: 16px; transition: transform 0.2s ease; display: none; }
+        .search-box button { background: none; border: none; cursor: pointer; color: #f97316; font-size: 16px; transition: transform 0.2s ease; display: none; }
         .search-box button:hover { transform: scale(1.1); }
 
         .categories-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .categories-header h3 { font-size: 14px; font-weight: 600; color: #475569; }
-        .categories-header h3 i { color: #f59e0b; margin-right: 6px; }
+        .categories-header h3 i { color: #f97316; margin-right: 6px; }
         .add-cat { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; cursor: pointer; display: none; align-items: center; gap: 6px; transition: all 0.3s ease; }
         .add-cat:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4); }
         .manage-cat-btn { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border: none; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; cursor: pointer; display: none; align-items: center; gap: 6px; transition: all 0.3s ease; margin-right: 8px; }
@@ -46,32 +47,71 @@
         .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 20px; scrollbar-width: none; }
         .categories::-webkit-scrollbar { display: none; }
         .category { background: white; border-radius: 40px; padding: 8px 18px; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; gap: 6px; }
-        .category:hover { transform: translateY(-2px); border-color: #f59e0b; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
-        .category.active { background: linear-gradient(135deg, #ee4d2d, #f59e0b); color: white; border-color: transparent; box-shadow: 0 4px 15px rgba(238, 77, 45, 0.3); }
+        .category:hover { transform: translateY(-2px); border-color: #f97316; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2); }
+        .category.active { background: linear-gradient(135deg, #ea580c, #f97316); color: white; border-color: transparent; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3); }
         .category small { font-size: 10px; opacity: 0.8; }
         .delete-cat, .move-cat-up, .move-cat-down, .top-cat-btn { background: #ef4444; color: white; border: none; width: 20px; height: 20px; border-radius: 50%; font-size: 9px; cursor: pointer; margin-left: 2px; transition: all 0.2s ease; }
         .move-cat-up, .move-cat-down { background: #3b82f6; }
-        .top-cat-btn { background: #f59e0b; }
+        .top-cat-btn { background: #f97316; }
         .delete-cat:hover, .move-cat-up:hover, .move-cat-down:hover, .top-cat-btn:hover { transform: scale(1.1); }
 
-        .admin-panel { background: white; border-radius: 20px; margin-bottom: 20px; overflow: hidden; display: none; box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+        .admin-panel { background: white; border-radius: 24px; margin-bottom: 20px; overflow: hidden; display: none; box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
         .edit-mode .admin-panel { display: block; }
-        .admin-tabs { display: flex; background: #f8fafc; border-bottom: 1px solid #e2e8f0; overflow-x: auto; }
-        .tab-btn { flex: 1; padding: 12px 8px; background: none; border: none; font-size: 11px; font-weight: 600; cursor: pointer; color: #64748b; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
-        .tab-btn i { color: #f59e0b; font-size: 12px; transition: transform 0.2s ease; }
-        .tab-btn:hover i { transform: translateY(-2px); }
-        .tab-btn.active { color: #ee4d2d; border-bottom: 2px solid #ee4d2d; background: white; }
-        .tab-content { padding: 16px; display: none; animation: fadeInUp 0.3s ease-out; }
+        
+        .admin-tabs { 
+            display: flex; 
+            gap: 8px; 
+            padding: 16px 16px 0 16px;
+            background: white;
+            flex-wrap: wrap;
+            border-bottom: none;
+        }
+        .tab-btn { 
+            background: #f1f5f9;
+            border: none; 
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-size: 12px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            color: #64748b; 
+            transition: all 0.3s ease; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px;
+        }
+        .tab-btn i { 
+            font-size: 14px;
+            transition: transform 0.2s ease; 
+        }
+        .tab-btn:hover { 
+            background: #fef3c7;
+            transform: translateY(-2px);
+        }
+        .tab-btn:hover i { 
+            transform: scale(1.1);
+        }
+        .tab-btn.active { 
+            background: linear-gradient(135deg, #ea580c, #f97316);
+            color: white; 
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+        }
+        .tab-content { 
+            padding: 20px 16px; 
+            display: none; 
+            animation: fadeInUp 0.3s ease-out; 
+            background: white;
+        }
         .tab-content.active { display: block; }
 
         .tab-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 10px; }
         .tab-header h4 { font-size: 14px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
-        .tab-header h4 i { color: #f59e0b; font-size: 14px; }
+        .tab-header h4 i { color: #f97316; font-size: 14px; }
         .tab-actions { display: flex; gap: 8px; }
         .toggle-list-btn { background: none; border: none; cursor: pointer; font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 30px; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px; }
         .toggle-list-btn.show { background: #22c55e; color: white; }
         .toggle-list-btn.hide { background: #ef4444; color: white; }
-        .reset-tab-btn { background: #f59e0b; color: white; border: none; cursor: pointer; font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 30px; transition: all 0.3s ease; }
+        .reset-tab-btn { background: #f97316; color: white; border: none; cursor: pointer; font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 30px; transition: all 0.3s ease; }
         .reset-tab-btn:hover { transform: scale(1.02); background: #ea580c; }
         .toggle-list-btn:hover { transform: scale(1.02); }
         .list-container { transition: all 0.3s ease; overflow: hidden; }
@@ -79,15 +119,15 @@
 
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
         .stat-card { background: linear-gradient(135deg, #f8fafc, #ffffff); padding: 12px; border-radius: 14px; text-align: center; border: 1px solid #e2e8f0; transition: all 0.3s ease; }
-        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(245, 158, 11, 0.1); border-color: #f59e0b; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(249, 115, 22, 0.1); border-color: #f97316; }
         .stat-card .label { font-size: 11px; color: #64748b; margin-bottom: 6px; }
-        .stat-card .value { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, #ee4d2d, #f59e0b); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .stat-card .value { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, #ea580c, #f97316); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .stat-card .value.today { background: linear-gradient(135deg, #22c55e, #16a34a); -webkit-background-clip: text; background-clip: text; }
 
         .admin-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
         .admin-btn { padding: 8px 16px; border: none; border-radius: 40px; font-size: 11px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; }
         .admin-btn:hover { transform: translateY(-2px); filter: brightness(105%); }
-        .btn-orange { background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; }
+        .btn-orange { background: linear-gradient(135deg, #f97316, #ea580c); color: white; }
         .btn-red { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
         .btn-green { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
         .btn-gray { background: linear-gradient(135deg, #475569, #334155); color: white; }
@@ -95,27 +135,230 @@
 
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #f8fafc; border-radius: 12px; margin-bottom: 8px; font-size: 12px; font-weight: 500; transition: all 0.2s ease; }
         .list-item:hover { transform: translateX(5px); background: #fef3c7; }
-        .result-count { font-size: 12px; color: #f59e0b; margin-bottom: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .result-count { font-size: 12px; color: #f97316; margin-bottom: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 
-        .activity-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: linear-gradient(135deg, #f8fafc, #ffffff); border-radius: 14px; margin-bottom: 10px; border-left: 4px solid #f59e0b; transition: all 0.2s ease; }
-        .activity-item:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .activity-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .activity-icon.produto { background: linear-gradient(135deg, #ee4d2d20, #f59e0b20); color: #f59e0b; }
-        .activity-icon.categoria { background: linear-gradient(135deg, #8b5cf620, #7c3aed20); color: #7c3aed; }
-        .activity-content { flex: 1; }
-        .activity-title { font-weight: 700; font-size: 13px; color: #1e293b; margin-bottom: 4px; }
-        .activity-time { font-size: 10px; color: #94a3b8; display: flex; align-items: center; gap: 4px; }
-        .activity-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 9px; font-weight: 600; margin-left: 8px; }
-        .activity-badge.produto { background: #fef3c7; color: #f59e0b; }
-        .activity-badge.categoria { background: #ede9fe; color: #7c3aed; }
+        .heatmap-container {
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+        }
+        .heatmap-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .heatmap-header h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .heatmap-header h4 i { color: #f97316; font-size: 18px; }
+        .heatmap-header select {
+            padding: 8px 14px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            font-size: 12px;
+            background: white;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .heatmap-legend {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-size: 11px;
+            justify-content: center;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 40px;
+        }
+        .gradient-bar {
+            width: 150px;
+            height: 10px;
+            background: linear-gradient(90deg, #9be9a8, #40c463, #f9d71c, #fe9600, #eb6f00, #cc3300);
+            border-radius: 20px;
+        }
+        .heatmap-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 500px;
+        }
+        .heatmap-row {
+            display: flex;
+            gap: 6px;
+        }
+        .heatmap-row.header {
+            margin-bottom: 8px;
+        }
+        .heatmap-cell {
+            flex: 1;
+            padding: 12px 6px;
+            text-align: center;
+            background: #ebedf0;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .heatmap-cell:hover {
+            transform: scale(1.02);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .heatmap-cell.header {
+            background: #f1f5f9;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .heatmap-cell[data-intensity="0"] { background: #ebedf0; color: #64748b; }
+        .heatmap-cell[data-intensity="1"] { background: #9be9a8; color: #1e293b; }
+        .heatmap-cell[data-intensity="2"] { background: #40c463; color: white; }
+        .heatmap-cell[data-intensity="3"] { background: #30a14e; color: white; }
+        .heatmap-cell[data-intensity="4"] { background: #f9d71c; color: #1e293b; }
+        .heatmap-cell[data-intensity="5"] { background: #fe9600; color: white; }
+        .heatmap-cell[data-intensity="6"] { background: #eb6f00; color: white; }
+        .heatmap-cell[data-intensity="7"] { background: #cc3300; color: white; }
+        
+        .hour-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .hour-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+        }
+        .hour-label {
+            width: 50px;
+            font-weight: 700;
+            color: #ea580c;
+        }
+        .bar-container {
+            flex: 1;
+            height: 32px;
+            background: #f1f5f9;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f97316, #ea580c);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            transition: width 0.5s ease;
+        }
+        .analysis-card {
+            background: linear-gradient(135deg, #fff7ed, #ffffff);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 16px;
+            border: 1px solid #fed7aa;
+        }
+        .analysis-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: #ea580c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .insight-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #fed7aa;
+            font-size: 12px;
+        }
+        .insight-icon {
+            width: 32px;
+            height: 32px;
+            background: #fef3c7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f97316;
+        }
+        .chart-container {
+            margin: 20px 0;
+            height: 200px;
+        }
+        .heatmap-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 50px;
+        }
+        .heatmap-tab-btn {
+            flex: 1;
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 40px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .heatmap-tab-btn i { font-size: 14px; }
+        .heatmap-tab-btn.active {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+            color: white;
+            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+        }
+        .heatmap-pane {
+            display: none;
+        }
+        .heatmap-pane.active {
+            display: block;
+        }
+        .reset-buttons-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .reset-buttons-group .admin-btn {
+            flex: 1;
+            text-align: center;
+            justify-content: center;
+        }
 
         .products { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .product { background: white; border-radius: 16px; overflow: hidden; cursor: pointer; position: relative; border: 1px solid #e2e8f0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); animation: fadeInUp 0.4s ease-out backwards; }
-        .product:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-color: #f59e0b; }
+        .product:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-color: #f97316; }
         .product.free { border: 2px solid #22c55e; }
-        .product.trending { border: 2px solid #f59e0b; animation: trendingPulse 2s ease infinite; }
+        .product.trending { border: 2px solid #f97316; animation: trendingPulse 2s ease infinite; }
         .free-badge { position: absolute; top: 10px; left: 10px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 3px 10px; border-radius: 30px; font-size: 9px; font-weight: 700; z-index: 1; animation: pulse 2s ease infinite; }
-        .trending-badge { position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; padding: 3px 10px; border-radius: 30px; font-size: 9px; font-weight: 700; z-index: 1; animation: pulse 2s ease infinite; }
+        .trending-badge { position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; padding: 3px 10px; border-radius: 30px; font-size: 9px; font-weight: 700; z-index: 1; animation: pulse 2s ease infinite; }
 
         .product-actions { position: absolute; top: 10px; left: 10px; right: 10px; display: none; gap: 5px; z-index: 2; flex-wrap: wrap; justify-content: center; background: rgba(0,0,0,0.7); border-radius: 30px; padding: 5px; }
         .edit-mode .product-actions { display: flex; }
@@ -125,34 +368,34 @@
         .free-product { background: #22c55e; color: white; }
         .delete-product { background: #ef4444; color: white; }
         .move-up, .move-down { background: #8b5cf6; color: white; }
-        .set-meta { background: #f59e0b; color: white; }
-        .top-product-btn { background: #f59e0b; color: white; }
+        .set-meta { background: #f97316; color: white; }
+        .top-product-btn { background: #f97316; color: white; }
 
         .product-img { width: 100%; aspect-ratio: 1; object-fit: cover; background: linear-gradient(135deg, #f1f5f9, #e2e8f0); transition: transform 0.3s ease; pointer-events: none; }
         .product:hover .product-img { transform: scale(1.02); }
         .product-info { padding: 10px; pointer-events: none; }
         .product-name { font-size: 13px; font-weight: 700; margin-bottom: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: #1e293b; }
-        .product-price { font-size: 16px; font-weight: 800; background: linear-gradient(135deg, #ee4d2d, #f59e0b); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 5px; }
+        .product-price { font-size: 16px; font-weight: 800; background: linear-gradient(135deg, #ea580c, #f97316); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 5px; }
         .product-sold { font-size: 10px; color: #f97316; display: flex; align-items: center; gap: 4px; }
         .product-stats { font-size: 9px; color: #94a3b8; margin-top: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .product-meta { font-size: 9px; color: #f59e0b; font-weight: 600; }
+        .product-meta { font-size: 9px; color: #f97316; font-weight: 600; }
         .product-shopee-id { font-size: 8px; color: #94a3b8; margin-top: 4px; }
 
         .empty { text-align: center; padding: 40px; background: white; border-radius: 20px; grid-column: span 2; }
-        .empty i { font-size: 50px; color: #f59e0b; margin-bottom: 15px; opacity: 0.5; }
+        .empty i { font-size: 50px; color: #f97316; margin-bottom: 15px; opacity: 0.5; }
 
-        .admin-bar { position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(135deg, #1e293b, #0f172a); padding: 12px; display: none; justify-content: center; gap: 12px; z-index: 100; border-top: 1px solid rgba(245, 158, 11, 0.3); }
+        .admin-bar { position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(135deg, #1e293b, #0f172a); padding: 12px; display: none; justify-content: center; gap: 12px; z-index: 100; border-top: 1px solid rgba(249, 115, 22, 0.3); }
         .edit-mode .admin-bar { display: flex; }
-        .edit-mode-badge { position: fixed; top: 10px; right: 10px; background: linear-gradient(135deg, #ee4d2d, #f59e0b); color: white; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; display: none; align-items: center; gap: 6px; z-index: 100; animation: pulse 2s ease infinite; }
+        .edit-mode-badge { position: fixed; top: 10px; right: 10px; background: linear-gradient(135deg, #ea580c, #f97316); color: white; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; display: none; align-items: center; gap: 6px; z-index: 100; animation: pulse 2s ease infinite; }
 
         .footer { text-align: center; font-size: 10px; color: #94a3b8; margin-top: 25px; padding-top: 15px; border-top: 1px solid #e2e8f0; display: flex; justify-content: center; gap: 15px; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: all 0.3s ease; z-index: 1000; }
         .modal.active { visibility: visible; opacity: 1; }
         .modal-box { background: white; border-radius: 24px; padding: 24px; width: 90%; max-width: 350px; animation: fadeInUp 0.3s ease-out; max-height: 80vh; overflow-y: auto; }
-        .modal-box h3 { margin-bottom: 16px; color: #ee4d2d; font-weight: 700; text-align: center; }
+        .modal-box h3 { margin-bottom: 16px; color: #ea580c; font-weight: 700; text-align: center; }
         .modal-box input, .modal-box select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 14px; transition: all 0.2s ease; }
-        .modal-box input:focus, .modal-box select:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1); }
+        .modal-box input:focus, .modal-box select:focus { outline: none; border-color: #f97316; box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1); }
         .modal-box button { width: 100%; padding: 12px; border: none; border-radius: 40px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.3s ease; }
         .modal-box button:hover { transform: translateY(-2px); }
 
@@ -170,35 +413,32 @@
             overflow-y: auto;
             background: white;
         }
-        #prodCategory option { 
-            padding: 8px 12px; 
-            cursor: pointer;
-        }
+        #prodCategory option { padding: 8px 12px; cursor: pointer; }
         #prodCategory option:hover { background: #fef3c7; }
-        #prodCategory option:checked { background: linear-gradient(135deg, #ee4d2d, #f59e0b); color: white; }
+        #prodCategory option:checked { background: linear-gradient(135deg, #ea580c, #f97316); color: white; }
 
         .error-msg { color: #ef4444; font-size: 12px; text-align: center; margin-top: 8px; display: none; }
-        .loading-msg { color: #f59e0b; font-size: 12px; text-align: center; margin-top: 8px; display: none; }
+        .loading-msg { color: #f97316; font-size: 12px; text-align: center; margin-top: 8px; display: none; }
         .upload-area { border: 2px dashed #e2e8f0; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; margin-bottom: 12px; transition: all 0.2s ease; }
-        .upload-area:hover { border-color: #f59e0b; background: #fffbeb; }
+        .upload-area:hover { border-color: #f97316; background: #fffbeb; }
         .preview-img { width: 100%; height: 100px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; display: none; }
 
         .position-buttons { display: flex; gap: 10px; margin-bottom: 12px; }
         .position-buttons button { flex: 1; padding: 10px; border-radius: 30px; font-size: 12px; }
-        .position-btn-active { background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; }
+        .position-btn-active { background: linear-gradient(135deg, #f97316, #ea580c); color: white; }
         .position-btn-inactive { background: #e2e8f0; color: #64748b; }
 
         .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 30px; font-size: 12px; z-index: 1000; animation: fadeInUp 0.3s ease; display: none; }
         .toast i { margin-right: 6px; }
 
-        .scroll-top-btn { position: fixed; bottom: 30px; right: 20px; width: 45px; height: 45px; background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; border: none; border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); transition: all 0.3s ease; z-index: 99; }
+        .scroll-top-btn { position: fixed; bottom: 30px; right: 20px; width: 45px; height: 45px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4); transition: all 0.3s ease; z-index: 99; }
         .scroll-top-btn:hover { transform: scale(1.1); }
         .scroll-top-btn.show { display: flex; }
 
         .special-categories { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-        .special-cat { background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; border-radius: 40px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 6px; }
+        .special-cat { background: linear-gradient(135deg, #f97316, #ea580c); color: white; border-radius: 40px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 6px; }
         .special-cat:hover { transform: translateY(-2px); filter: brightness(105%); }
-        .special-cat.active { background: linear-gradient(135deg, #ee4d2d, #f59e0b); box-shadow: 0 4px 15px rgba(238, 77, 45, 0.3); }
+        .special-cat.active { background: linear-gradient(135deg, #ea580c, #f97316); box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3); }
         .special-cat.hidden { display: none; }
 
         .shuffle-buttons { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
@@ -211,7 +451,7 @@
         .category-manage-actions { display: flex; gap: 6px; }
         .category-manage-actions button { width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; transition: all 0.2s ease; }
         .category-manage-actions button:hover { transform: scale(1.05); }
-        .cat-top-btn { background: #f59e0b; color: white; }
+        .cat-top-btn { background: #f97316; color: white; }
         .cat-move-up { background: #3b82f6; color: white; }
         .cat-move-down { background: #3b82f6; color: white; }
         .cat-edit-btn { background: #8b5cf6; color: white; }
@@ -222,9 +462,6 @@
         .category-manage-item.editing .category-manage-name { display: none; }
         .category-manage-item.editing .category-manage-actions { display: none; }
         .category-manage-item.editing .edit-cat-input { display: flex; }
-
-        .btn-green { background: #22c55e; color: white; }
-        .btn-gray { background: #64748b; color: white; }
     </style>
 </head>
 <body>
@@ -235,9 +472,10 @@
         <p><i class="fas fa-bolt"></i> marketplace oficial</p>
     </div>
 
+    <!-- APENAS UM CAMPO DE BUSCA -->
     <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Buscar produto ou categoria..." autocomplete="off">
+        <input type="text" id="searchInput" placeholder="🔍 Buscar produto, categoria ou ID da Shopee..." autocomplete="off">
         <button id="clearSearch"><i class="fas fa-times-circle"></i></button>
     </div>
 
@@ -261,7 +499,8 @@
             <button class="tab-btn" data-tab="tab2"><i class="fas fa-fire"></i> Top Hoje</button>
             <button class="tab-btn" data-tab="tab3"><i class="fas fa-trophy"></i> Top Total</button>
             <button class="tab-btn" data-tab="tab4"><i class="fas fa-folder-open"></i> Clicks Cat</button>
-            <button class="tab-btn" data-tab="tab5"><i class="fas fa-history"></i> Atividade</button>
+            <button class="tab-btn" data-tab="tab5"><i class="fas fa-fire"></i> Heatmap</button>
+            <button class="tab-btn" data-tab="tab6"><i class="fas fa-chart-line"></i> Sazonalidade</button>
         </div>
 
         <div class="tab-content active" id="tab1">
@@ -312,14 +551,87 @@
         </div>
 
         <div class="tab-content" id="tab5">
-            <div class="tab-header">
-                <h4><i class="fas fa-history"></i> Últimas Atividades</h4>
-                <div class="tab-actions">
-                    <button class="reset-tab-btn" data-reset="atividades"><i class="fas fa-trash-alt"></i> Limpar Histórico</button>
-                    <button class="toggle-list-btn show" data-target="atividadesList"><i class="fas fa-eye"></i> Ocultar</button>
+            <div class="heatmap-tabs">
+                <button class="heatmap-tab-btn active" data-heatmap="dia"><i class="fas fa-calendar-day"></i> Hoje</button>
+                <button class="heatmap-tab-btn" data-heatmap="semana"><i class="fas fa-calendar-week"></i> Semana</button>
+                <button class="heatmap-tab-btn" data-heatmap="mes"><i class="fas fa-calendar-alt"></i> Mês</button>
+            </div>
+            
+            <div class="reset-buttons-group">
+                <button id="resetDiaHeatmap" class="admin-btn btn-orange"><i class="fas fa-calendar-day"></i> Resetar Hoje</button>
+                <button id="resetSemanaHeatmap" class="admin-btn btn-orange"><i class="fas fa-calendar-week"></i> Resetar Semana</button>
+                <button id="resetMesHeatmap" class="admin-btn btn-orange"><i class="fas fa-calendar-alt"></i> Resetar Mês</button>
+                <button id="resetAllHeatmaps" class="admin-btn btn-red"><i class="fas fa-trash-alt"></i> Resetar Tudo</button>
+            </div>
+            
+            <div id="heatmapDia" class="heatmap-pane active">
+                <div class="heatmap-container">
+                    <div class="heatmap-header">
+                        <h4><i class="fas fa-clock"></i> Cliques por Hora - Hoje</h4>
+                        <select id="heatmapProdutoDia">
+                            <option value="todos">📦 Todos os produtos</option>
+                        </select>
+                    </div>
+                    <div id="hourBarsContainer" class="hour-bars"></div>
                 </div>
             </div>
-            <div id="atividadesList" class="list-container"></div>
+            
+            <div id="heatmapSemana" class="heatmap-pane">
+                <div class="heatmap-container">
+                    <div class="heatmap-header">
+                        <h4><i class="fas fa-calendar-week"></i> Mapa de Calor - Dias vs Períodos</h4>
+                        <select id="heatmapProdutoSemana">
+                            <option value="todos">📦 Todos os produtos</option>
+                        </select>
+                    </div>
+                    <div class="heatmap-legend">
+                        <span>🟢 Menos cliques</span>
+                        <div class="gradient-bar"></div>
+                        <span>🔴 Mais cliques</span>
+                    </div>
+                    <div id="heatmapGridContainer" class="heatmap-grid"></div>
+                </div>
+            </div>
+            
+            <div id="heatmapMes" class="heatmap-pane">
+                <div class="heatmap-container">
+                    <div class="heatmap-header">
+                        <h4><i class="fas fa-calendar-alt"></i> Mapa de Calor - Semanas do Mês</h4>
+                        <select id="heatmapProdutoMes">
+                            <option value="todos">📦 Todos os produtos</option>
+                        </select>
+                    </div>
+                    <div id="mesHeatmapContainer" class="heatmap-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab6">
+            <div class="reset-buttons-group">
+                <button id="resetSazonalidade" class="admin-btn btn-orange"><i class="fas fa-chart-line"></i> Resetar Análise</button>
+            </div>
+            
+            <div class="analysis-card">
+                <div class="analysis-title"><i class="fas fa-chart-line"></i> Evolução dos Cliques (Últimos 30 dias)</div>
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="analysis-card">
+                <div class="analysis-title"><i class="fas fa-chart-simple"></i> Comparativo: Semana Atual vs Semana Passada</div>
+                <div id="comparisonStats"></div>
+            </div>
+            
+            <div class="analysis-card">
+                <div class="analysis-title"><i class="fas fa-fire"></i> Insights de Tráfego</div>
+                <div id="insightsList"></div>
+            </div>
+            
+            <div class="analysis-card">
+                <div class="analysis-title"><i class="fas fa-chart-bar"></i> Ranking de Horários de Pico</div>
+                <div id="peakHoursList"></div>
+            </div>
         </div>
     </div>
 
@@ -342,13 +654,13 @@
 
 <div id="loginModal" class="modal">
     <div class="modal-box">
-        <i class="fas fa-envelope" style="font-size: 45px; color: #f59e0b; display: block; text-align: center; margin-bottom: 15px;"></i>
+        <i class="fas fa-envelope" style="font-size: 45px; color: #f97316; display: block; text-align: center; margin-bottom: 15px;"></i>
         <h3 style="text-align: center;">ShopStyle</h3>
         <input type="email" id="loginEmail" placeholder="Email cadastrado">
         <input type="password" id="loginPassword" placeholder="Senha">
         <div class="error-msg" id="loginError"></div>
         <div class="loading-msg" id="loginLoading"><i class="fas fa-spinner fa-spin"></i> Entrando...</div>
-        <button id="doLogin" style="background: linear-gradient(135deg, #ee4d2d, #f59e0b); color: white;">Entrar</button>
+        <button id="doLogin" style="background: linear-gradient(135deg, #ea580c, #f97316); color: white;">Entrar</button>
     </div>
 </div>
 
@@ -362,7 +674,6 @@
             <button id="prodPosTop" class="position-btn-active">📌 Topo</button>
             <button id="prodPosLast" class="position-btn-inactive">📄 Último</button>
         </div>
-
         <div class="category-select-container">
             <div class="category-search">
                 <i class="fas fa-search"></i>
@@ -372,10 +683,9 @@
                 <option value="todos">Todos</option>
             </select>
         </div>
-
         <input type="text" id="prodShopeeId" placeholder="ID do produto na Shopee (opcional)">
         <div class="upload-area" id="uploadTrigger">
-            <i class="fas fa-cloud-upload-alt" style="color: #f59e0b; font-size: 24px;"></i>
+            <i class="fas fa-cloud-upload-alt" style="color: #f97316; font-size: 24px;"></i>
             <p style="margin-top: 5px;">Clique para enviar imagem</p>
         </div>
         <input type="file" id="prodImage" accept="image/*" style="display: none;">
@@ -386,7 +696,7 @@
         <div class="meta-input">
             <input type="number" id="prodMeta" placeholder="Meta de cliques (Em Alta)">
         </div>
-        <button id="saveProduct" style="background: linear-gradient(135deg, #ee4d2d, #f59e0b); color: white;">Salvar</button>
+        <button id="saveProduct" style="background: linear-gradient(135deg, #ea580c, #f97316); color: white;">Salvar</button>
         <button id="closeModal" style="background: #e2e8f0;">Cancelar</button>
     </div>
 </div>
@@ -420,7 +730,7 @@
         <h3><i class="fas fa-chart-line"></i> Definir Meta de Cliques</h3>
         <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Produto: <strong id="metaProdName"></strong></p>
         <input type="number" id="metaValue" placeholder="Número de cliques para estar EM ALTA">
-        <button id="saveMeta" style="background: linear-gradient(135deg, #f59e0b, #ea580c); color: white;">Salvar Meta</button>
+        <button id="saveMeta" style="background: linear-gradient(135deg, #f97316, #ea580c); color: white;">Salvar Meta</button>
         <button id="closeMeta" style="background: #e2e8f0;">Cancelar</button>
     </div>
 </div>
@@ -433,7 +743,7 @@
             Exemplo: <strong>Camiseta,49.90,roupas</strong>
         </p>
         <div class="upload-area" id="csvTrigger" style="margin-bottom: 15px;">
-            <i class="fas fa-cloud-upload-alt" style="color: #f59e0b; font-size: 28px;"></i>
+            <i class="fas fa-cloud-upload-alt" style="color: #f97316; font-size: 28px;"></i>
             <p style="margin-top: 8px;"><strong>Clique para selecionar arquivo CSV</strong></p>
             <p style="font-size: 11px; color: #64748b;">Suporta vírgula ou ponto e vírgula</p>
         </div>
@@ -465,13 +775,13 @@
     const productsRef = database.ref('products');
     const categoriesRef = database.ref('categories');
     const statsRef = database.ref('stats');
-    const atividadesRef = database.ref('atividades');
+    const clicksHistoryRef = database.ref('clicksHistory');
     const IMGBB_KEY = "39d6fa29c5d1a99652d6dcb6bd611757";
 
     let categories = ["todos"];
     let products = [];
     let stats = { catClicks: {}, lastReset: new Date().toDateString() };
-    let atividades = [];
+    let clicksHistory = [];
     let editMode = false;
     let currentCat = "todos";
     let currentSpecial = null;
@@ -482,125 +792,322 @@
     let currentUser = null;
     let productPosition = "top";
     let categoryPosition = "top";
-    let listStates = { topTodayList: true, topTotalList: true, catClicksList: true, atividadesList: true };
+    let listStates = { topTodayList: true, topTotalList: true, catClicksList: true };
+    let trendChart = null;
 
     function showToast(message, isError = false, isSuccess = false) {
         const toast = document.getElementById("toast");
         toast.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle' : (isError ? 'fa-exclamation-triangle' : 'fa-info-circle')}"></i> ${message}`;
-        toast.style.backgroundColor = isError ? "#ef4444" : (isSuccess ? "#22c55e" : "#f59e0b");
+        toast.style.backgroundColor = isError ? "#ef4444" : (isSuccess ? "#22c55e" : "#f97316");
         toast.style.display = "block";
         setTimeout(() => { toast.style.display = "none"; }, 3000);
     }
 
-    function adicionarAtividade(tipo, nome, subtipo = null) {
+    async function registrarClickDetalhado(produtoId, produtoNome) {
         const agora = new Date();
-        const horaFormatada = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-        const novaAtividade = {
-            id: Date.now(),
-            tipo: tipo,
-            nome: nome,
-            horario: horaFormatada,
-            timestamp: agora.getTime(),
-            subtipo: subtipo
+        const dataStr = agora.toISOString().split('T')[0];
+        const diaSemana = agora.getDay();
+        const hora = agora.getHours();
+        
+        let periodo = "";
+        if (hora >= 0 && hora < 6) periodo = "madrugada";
+        else if (hora >= 6 && hora < 12) periodo = "manha";
+        else if (hora >= 12 && hora < 18) periodo = "tarde";
+        else periodo = "noite";
+        
+        const semanaMes = Math.ceil(agora.getDate() / 7);
+        const semanaAno = getWeekNumber(agora);
+        
+        const clickData = {
+            produtoId: produtoId,
+            produtoNome: produtoNome,
+            data: dataStr,
+            diaSemana: diaSemana,
+            hora: hora,
+            periodo: periodo,
+            semanaMes: semanaMes,
+            semanaAno: semanaAno,
+            mes: agora.getMonth() + 1,
+            ano: agora.getFullYear(),
+            timestamp: agora.getTime()
         };
-
-        atividades.unshift(novaAtividade);
-
-        if (atividades.length > 5) {
-            atividades = atividades.slice(0, 5);
-        }
-
-        atividadesRef.set(atividades).catch(err => console.error("Erro ao salvar atividades:", err));
-
-        if (editMode) {
-            renderAdmin();
-        }
+        
+        clicksHistory.push(clickData);
+        if (clicksHistory.length > 5000) clicksHistory = clicksHistory.slice(-5000);
+        await clicksHistoryRef.set(clicksHistory);
+        if (editMode) { renderHeatmaps(); renderSazonalidade(); }
     }
-
-    function limparAtividades() {
-        if (confirm("Limpar todo o histórico de atividades?")) {
-            atividades = [];
-            atividadesRef.set(atividades);
-            if (editMode) renderAdmin();
-            showToast("✅ Histórico de atividades limpo!", false, true);
-        }
+    
+    function getWeekNumber(date) {
+        const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+        const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+        return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
     }
-
-    function carregarAtividades() {
-        atividadesRef.on('value', (snapshot) => {
+    
+    function carregarHistoricoCliques() {
+        clicksHistoryRef.on('value', (snapshot) => {
             if (snapshot.exists()) {
-                atividades = snapshot.val();
-                if (!Array.isArray(atividades)) atividades = [];
-                atividades.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                if (atividades.length > 5) atividades = atividades.slice(0, 5);
-            } else {
-                atividades = [];
-            }
-            if (editMode) renderAdmin();
+                clicksHistory = snapshot.val();
+                if (!Array.isArray(clicksHistory)) clicksHistory = [];
+            } else { clicksHistory = []; }
+            if (editMode) { renderHeatmaps(); renderSazonalidade(); }
         });
     }
-
-    function renderAtividades() {
-        const container = document.getElementById("atividadesList");
-        if (!container) return;
-
-        if (!atividades || atividades.length === 0) {
-            container.innerHTML = `<div class="list-item" style="justify-content: center; gap: 10px;">
-                <i class="fas fa-history" style="color: #94a3b8;"></i> 
-                Nenhuma atividade registrada ainda
-            </div>`;
-            return;
+    
+    function getCliquesPorPeriodo(tipo, filtroProduto = "todos") {
+        const hoje = new Date();
+        const hojeStr = hoje.toISOString().split('T')[0];
+        let dados = clicksHistory;
+        if (filtroProduto !== "todos") dados = dados.filter(c => c.produtoId == filtroProduto);
+        if (tipo === "dia") return dados.filter(c => c.data === hojeStr);
+        else if (tipo === "semana") return dados.filter(c => c.semanaAno === getWeekNumber(hoje) && c.ano === hoje.getFullYear());
+        else if (tipo === "mes") return dados.filter(c => c.mes === hoje.getMonth() + 1 && c.ano === hoje.getFullYear());
+        return [];
+    }
+    
+    function getCliquesPorHoraHoje(produtoId = "todos") {
+        const hoje = new Date().toISOString().split('T')[0];
+        let clicksHoje = clicksHistory.filter(c => c.data === hoje);
+        if (produtoId !== "todos") clicksHoje = clicksHoje.filter(c => c.produtoId == produtoId);
+        const horas = Array(24).fill(0);
+        clicksHoje.forEach(click => { if (click.hora >= 0 && click.hora < 24) horas[click.hora]++; });
+        return horas;
+    }
+    
+    function getMatrizHeatmapSemana(produtoId = "todos") {
+        const dias = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+        const periodos = ["manha", "tarde", "noite", "madrugada"];
+        const nomesPeriodos = ["🌅 Manhã", "☀️ Tarde", "🌙 Noite", "🌃 Madrugada"];
+        let matriz = Array(4).fill().map(() => Array(7).fill(0));
+        let dados = getCliquesPorPeriodo("semana", produtoId);
+        dados.forEach(click => {
+            let diaIdx = (click.diaSemana + 6) % 7;
+            let periodoIdx = periodos.indexOf(click.periodo);
+            if (periodoIdx >= 0 && diaIdx >= 0) matriz[periodoIdx][diaIdx]++;
+        });
+        return { matriz, dias, periodos: nomesPeriodos };
+    }
+    
+    function getMatrizHeatmapMes(produtoId = "todos") {
+        const semanas = ["Semana 1", "Semana 2", "Semana 3", "Semana 4"];
+        const diasTipo = ["Seg-Sex", "Sábado", "Domingo"];
+        let matriz = Array(3).fill().map(() => Array(4).fill(0));
+        let dados = getCliquesPorPeriodo("mes", produtoId);
+        dados.forEach(click => {
+            let semanaIdx = click.semanaMes - 1;
+            if (semanaIdx >= 0 && semanaIdx < 4) {
+                let diaTipoIdx = (click.diaSemana === 0) ? 2 : (click.diaSemana === 6 ? 1 : 0);
+                if (diaTipoIdx >= 0 && diaTipoIdx < 3) matriz[diaTipoIdx][semanaIdx]++;
+            }
+        });
+        return { matriz, semanas, diasTipo };
+    }
+    
+    function getIntensidade(valor, max) {
+        if (max === 0) return 0;
+        const percent = valor / max;
+        if (percent < 0.1) return 1;
+        if (percent < 0.25) return 2;
+        if (percent < 0.5) return 3;
+        if (percent < 0.7) return 4;
+        if (percent < 0.85) return 5;
+        if (percent < 0.95) return 6;
+        return 7;
+    }
+    
+    function renderHeatmaps() {
+        const horas = getCliquesPorHoraHoje(document.getElementById("heatmapProdutoDia")?.value || "todos");
+        const maxHora = Math.max(...horas, 1);
+        const hourContainer = document.getElementById("hourBarsContainer");
+        if (hourContainer) {
+            let html = "";
+            for (let i = 0; i < 24; i++) {
+                const percent = (horas[i] / maxHora) * 100;
+                html += `<div class="hour-bar"><div class="hour-label">${i.toString().padStart(2,'0')}h</div><div class="bar-container"><div class="bar-fill" style="width: ${percent}%">${horas[i] > 0 ? horas[i] : ''}</div></div></div>`;
+            }
+            hourContainer.innerHTML = html || "<div style='text-align:center;padding:20px;'>Nenhum clique registrado hoje</div>";
         }
-
-        let html = "";
-        for (let i = 0; i < atividades.length; i++) {
-            const act = atividades[i];
-            const isProduto = act.tipo === 'produto';
-            const iconClass = isProduto ? 'produto' : 'categoria';
-            const icon = isProduto ? '<i class="fas fa-box"></i>' : '<i class="fas fa-tag"></i>';
-            const badgeClass = isProduto ? 'produto' : 'categoria';
-            const badgeText = isProduto ? 'PRODUTO' : 'CATEGORIA';
-
-            html += `
-                <div class="activity-item">
-                    <div class="activity-icon ${iconClass}">
-                        ${icon}
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">
-                            ${act.nome}
-                            <span class="activity-badge ${badgeClass}">${badgeText}</span>
-                        </div>
-                        <div class="activity-time">
-                            <i class="far fa-clock"></i> ${act.horario}
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right" style="color: #cbd5e1; font-size: 12px;"></i>
-                </div>
-            `;
+        
+        const semanaData = getMatrizHeatmapSemana(document.getElementById("heatmapProdutoSemana")?.value || "todos");
+        const maxSemana = Math.max(...semanaData.matriz.flat(), 1);
+        const semanaContainer = document.getElementById("heatmapGridContainer");
+        if (semanaContainer) {
+            let html = `<div class="heatmap-row header"><div class="heatmap-cell header">Período</div>`;
+            for (let dia of semanaData.dias) html += `<div class="heatmap-cell header">${dia}</div>`;
+            html += `</div>`;
+            for (let i = 0; i < semanaData.periodos.length; i++) {
+                html += `<div class="heatmap-row">`;
+                html += `<div class="heatmap-cell header">${semanaData.periodos[i]}</div>`;
+                for (let j = 0; j < semanaData.dias.length; j++) {
+                    const valor = semanaData.matriz[i][j];
+                    const intensidade = getIntensidade(valor, maxSemana);
+                    html += `<div class="heatmap-cell" data-intensity="${intensidade}">${valor > 0 ? valor : '-'}</div>`;
+                }
+                html += `</div>`;
+            }
+            semanaContainer.innerHTML = html;
         }
-
-        container.innerHTML = html;
+        
+        const mesData = getMatrizHeatmapMes(document.getElementById("heatmapProdutoMes")?.value || "todos");
+        const maxMes = Math.max(...mesData.matriz.flat(), 1);
+        const mesContainer = document.getElementById("mesHeatmapContainer");
+        if (mesContainer) {
+            let html = `<div class="heatmap-row header"><div class="heatmap-cell header">Tipo</div>`;
+            for (let semana of mesData.semanas) html += `<div class="heatmap-cell header">${semana}</div>`;
+            html += `</div>`;
+            for (let i = 0; i < mesData.diasTipo.length; i++) {
+                html += `<div class="heatmap-row">`;
+                html += `<div class="heatmap-cell header">${mesData.diasTipo[i]}</div>`;
+                for (let j = 0; j < mesData.semanas.length; j++) {
+                    const valor = mesData.matriz[i][j];
+                    const intensidade = getIntensidade(valor, maxMes);
+                    html += `<div class="heatmap-cell" data-intensity="${intensidade}">${valor > 0 ? valor : '-'}</div>`;
+                }
+                html += `</div>`;
+            }
+            mesContainer.innerHTML = html;
+        }
+    }
+    
+    function renderSazonalidade() {
+        const ultimos30Dias = [];
+        for (let i = 29; i >= 0; i--) {
+            const data = new Date();
+            data.setDate(data.getDate() - i);
+            const dataStr = data.toISOString().split('T')[0];
+            const cliquesDia = clicksHistory.filter(c => c.data === dataStr).length;
+            ultimos30Dias.push({ data: dataStr, cliques: cliquesDia });
+        }
+        
+        if (trendChart) trendChart.destroy();
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        trendChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: ultimos30Dias.map(d => d.data.substring(5)), datasets: [{ label: 'Cliques', data: ultimos30Dias.map(d => d.cliques), borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true, tension: 0.4 }] },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
+        });
+        
+        const hoje = new Date();
+        const semanaAtual = getWeekNumber(hoje);
+        const semanaPassada = semanaAtual - 1;
+        const cliquesSemanaAtual = clicksHistory.filter(c => c.semanaAno === semanaAtual && c.ano === hoje.getFullYear()).length;
+        const cliquesSemanaPassada = clicksHistory.filter(c => c.semanaAno === semanaPassada && c.ano === hoje.getFullYear()).length;
+        const variacao = semanaPassada > 0 ? ((cliquesSemanaAtual - cliquesSemanaPassada) / cliquesSemanaPassada * 100).toFixed(1) : 0;
+        
+        document.getElementById("comparisonStats").innerHTML = `
+            <div class="insight-item"><div class="insight-icon"><i class="fas fa-chart-line"></i></div><div>Semana atual: <strong>${cliquesSemanaAtual}</strong> cliques</div></div>
+            <div class="insight-item"><div class="insight-icon"><i class="fas fa-chart-line"></i></div><div>Semana passada: <strong>${cliquesSemanaPassada}</strong> cliques</div></div>
+            <div class="insight-item"><div class="insight-icon"><i class="fas ${variacao >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'}"></i></div><div>Variação: <strong style="color: ${variacao >= 0 ? '#22c55e' : '#ef4444'}">${variacao >= 0 ? '+' : ''}${variacao}%</strong></div></div>
+        `;
+        
+        const clicksPorHora = Array(24).fill(0);
+        const clicksPorDia = Array(7).fill(0);
+        clicksHistory.forEach(click => { clicksPorHora[click.hora]++; clicksPorDia[click.diaSemana]++; });
+        const horaPico = clicksPorHora.indexOf(Math.max(...clicksPorHora));
+        const diaPico = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"][clicksPorDia.indexOf(Math.max(...clicksPorDia))];
+        const totalCliques = clicksHistory.length;
+        const mediaDia = (totalCliques / 30).toFixed(1);
+        
+        document.getElementById("insightsList").innerHTML = `
+            <div class="insight-item"><div class="insight-icon"><i class="fas fa-clock"></i></div><div>⏰ Horário de pico: <strong>${horaPico}h - ${horaPico+1}h</strong></div></div>
+            <div class="insight-item"><div class="insight-icon"><i class="fas fa-calendar"></i></div><div>📊 Dia mais forte: <strong>${diaPico}</strong></div></div>
+            <div class="insight-item"><div class="insight-icon"><i class="fas fa-chart-line"></i></div><div>📈 Média diária: <strong>${mediaDia}</strong> cliques/dia</div></div>
+        `;
+        
+        const horasComNomes = clicksPorHora.map((cliques, hora) => ({ hora, cliques }));
+        horasComNomes.sort((a, b) => b.cliques - a.cliques);
+        let peakHtml = "";
+        for (let i = 0; i < 5 && i < horasComNomes.length; i++) {
+            const h = horasComNomes[i];
+            if (h.cliques > 0) peakHtml += `<div class="insight-item"><div class="insight-icon"><i class="fas fa-fire"></i></div><div>${h.hora.toString().padStart(2,'0')}h - ${(h.hora+1).toString().padStart(2,'0')}h: <strong>${h.cliques}</strong> cliques</div></div>`;
+        }
+        document.getElementById("peakHoursList").innerHTML = peakHtml || "<div class='insight-item'>Nenhum dado ainda</div>";
+    }
+    
+    function resetHeatmapDia() {
+        if(confirm("⚠️ Resetar TODOS os cliques de HOJE?\n\nEsta ação não pode ser desfeita!")) {
+            const hoje = new Date().toISOString().split('T')[0];
+            const novosHistory = clicksHistory.filter(c => c.data !== hoje);
+            clicksHistory = novosHistory;
+            clicksHistoryRef.set(clicksHistory);
+            renderHeatmaps();
+            renderSazonalidade();
+            showToast("✅ Cliques de hoje removidos do heatmap!", false, true);
+        }
     }
 
+    function resetHeatmapSemana() {
+        if(confirm("⚠️ Resetar TODOS os cliques desta SEMANA?\n\nEsta ação não pode ser desfeita!")) {
+            const hoje = new Date();
+            const semanaAtual = getWeekNumber(hoje);
+            const anoAtual = hoje.getFullYear();
+            const novosHistory = clicksHistory.filter(c => !(c.semanaAno === semanaAtual && c.ano === anoAtual));
+            clicksHistory = novosHistory;
+            clicksHistoryRef.set(clicksHistory);
+            renderHeatmaps();
+            renderSazonalidade();
+            showToast("✅ Cliques desta semana removidos do heatmap!", false, true);
+        }
+    }
+
+    function resetHeatmapMes() {
+        if(confirm("⚠️ Resetar TODOS os cliques deste MÊS?\n\nEsta ação não pode ser desfeita!")) {
+            const hoje = new Date();
+            const mesAtual = hoje.getMonth() + 1;
+            const anoAtual = hoje.getFullYear();
+            const novosHistory = clicksHistory.filter(c => !(c.mes === mesAtual && c.ano === anoAtual));
+            clicksHistory = novosHistory;
+            clicksHistoryRef.set(clicksHistory);
+            renderHeatmaps();
+            renderSazonalidade();
+            showToast("✅ Cliques deste mês removidos do heatmap!", false, true);
+        }
+    }
+
+    function resetAllHeatmaps() {
+        if(confirm("⚠️⚠️ ATENÇÃO! ⚠️⚠️\n\nResetar TODOS os dados de cliques (histórico completo)?\n\nEsta ação é IRREVERSÍVEL e apagará:\n- Todos os heatmaps\n- Todas as análises de sazonalidade\n- Todo o histórico de cliques\n\nDeseja continuar?")) {
+            if(confirm("ÚLTIMA CONFIRMAÇÃO: Apagar TODO o histórico de cliques?")) {
+                clicksHistory = [];
+                clicksHistoryRef.set(clicksHistory);
+                renderHeatmaps();
+                renderSazonalidade();
+                showToast("🗑️ Todo o histórico de cliques foi apagado!", false, true);
+            }
+        }
+    }
+    
+    function resetSazonalidade() {
+        if(confirm("⚠️ Resetar TODA a análise de sazonalidade?\n\nIsso limpará o histórico de cliques e os gráficos!")) {
+            clicksHistory = [];
+            clicksHistoryRef.set(clicksHistory);
+            renderSazonalidade();
+            renderHeatmaps();
+            showToast("✅ Análise de sazonalidade resetada!", false, true);
+        }
+    }
+    
+    function atualizarSelectsProdutosHeatmap() {
+        ["heatmapProdutoDia", "heatmapProdutoSemana", "heatmapProdutoMes"].forEach(selectId => {
+            const select = document.getElementById(selectId);
+            if (select) {
+                const currentValue = select.value;
+                select.innerHTML = '<option value="todos">📦 Todos os produtos</option>';
+                products.forEach(p => { const option = document.createElement("option"); option.value = p.id; option.textContent = p.nome.substring(0, 30); select.appendChild(option); });
+                if (currentValue && products.some(p => p.id == currentValue)) select.value = currentValue;
+            }
+        });
+    }
+    
     function levenshteinDistance(a, b) {
         const matrix = [];
         for (let i = 0; i <= b.length; i++) matrix[i] = [i];
         for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-        for (let i = 1; i <= b.length; i++) {
-            for (let j = 1; j <= a.length; j++) {
-                const cost = a[j-1] === b[i-1] ? 0 : 1;
-                matrix[i][j] = Math.min(matrix[i-1][j] + 1, matrix[i][j-1] + 1, matrix[i-1][j-1] + cost);
-            }
-        }
+        for (let i = 1; i <= b.length; i++) for (let j = 1; j <= a.length; j++) matrix[i][j] = Math.min(matrix[i-1][j] + 1, matrix[i][j-1] + 1, matrix[i-1][j-1] + (a[j-1] === b[i-1] ? 0 : 1));
         return matrix[b.length][a.length];
     }
-
-    function normalizeString(str) {
-        return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
-    }
-
+    
+    function normalizeString(str) { return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, ''); }
+    
     function fuzzySearch(termo, nomeProduto) {
         if (!termo || termo.length < 2) return true;
         const termoNorm = normalizeString(termo);
@@ -608,683 +1115,152 @@
         if (nomeNorm.includes(termoNorm)) return true;
         const termoPalavras = termoNorm.split(/\s+/);
         const nomePalavras = nomeNorm.split(/\s+/);
-        for (let tp of termoPalavras) {
-            if (tp.length < 2) continue;
-            for (let np of nomePalavras) {
-                if (levenshteinDistance(tp, np) <= 2) return true;
-                if (np.includes(tp) || tp.includes(np)) return true;
-            }
-        }
+        for (let tp of termoPalavras) if (tp.length >= 2) for (let np of nomePalavras) if (levenshteinDistance(tp, np) <= 2 || np.includes(tp) || tp.includes(np)) return true;
         return false;
     }
-
-    function isProdutoEmAlta(produto) {
-        if (!produto.metaCliques || produto.metaCliques <= 0) return false;
-        return (produto.clicksTotal || 0) >= produto.metaCliques;
-    }
-
-    // NOVA FUNÇÃO: Colocar produtos especiais (Frete Grátis e Em Alta) no topo
+    
+    function isProdutoEmAlta(produto) { return produto.metaCliques > 0 && (produto.clicksTotal || 0) >= produto.metaCliques; }
+    
     function sortSpecialsToTop() {
         if (!products.length) return;
-        
-        const specialProducts = [];
-        const normalProducts = [];
-        
-        for (let p of products) {
-            if (p.freteGratis === true || isProdutoEmAlta(p)) {
-                specialProducts.push(p);
-            } else {
-                normalProducts.push(p);
-            }
-        }
-        
-        const newOrder = [...specialProducts, ...normalProducts];
-        for (let i = 0; i < newOrder.length; i++) {
-            newOrder[i].ordem = i;
-        }
-        products = newOrder;
-        ordenarProdutos();
-        salvarTudo();
-        renderizar();
-        showToast("⭐ Produtos especiais (Frete Grátis e Em Alta) no topo!", false, true);
-    }
-
-    // FUNÇÃO CORRIGIDA: Inverter ordem completa
-    function reverseProducts() {
-        if (!products.length) return;
-        
-        // Inverte toda a ordem dos produtos
-        products.reverse();
-        
-        // Reordena os índices
+        const specialProducts = products.filter(p => p.freteGratis === true || isProdutoEmAlta(p));
+        const normalProducts = products.filter(p => !(p.freteGratis === true || isProdutoEmAlta(p)));
+        products = [...specialProducts, ...normalProducts];
         products.forEach((p, idx) => p.ordem = idx);
-        
         ordenarProdutos();
         salvarTudo();
         renderizar();
-        showToast("🔄 Ordem dos produtos invertida!", false, true);
+        showToast("⭐ Produtos especiais no topo!", false, true);
     }
-
-    // FUNÇÃO CORRIGIDA: Misturar aleatoriamente TODOS os produtos
-    function shuffleAllProducts() {
-        if (!products.length) return;
-        
-        // Mistura todos os produtos aleatoriamente
-        for (let i = products.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [products[i], products[j]] = [products[j], products[i]];
-        }
-        
-        // Reordena os índices
-        products.forEach((p, idx) => p.ordem = idx);
-        
-        ordenarProdutos();
-        salvarTudo();
-        renderizar();
-        showToast("🎲 Produtos misturados aleatoriamente!", false, true);
-    }
-
-    function ordenarProdutos() {
-        if (!products || products.length === 0) return;
-        products.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
-    }
-
-    function salvarStats() {
-        if (stats) statsRef.set(stats).catch(err => console.error("Erro ao salvar stats:", err));
-    }
-
-    function salvarTudo() {
-        return Promise.all([
-            productsRef.set(products).catch(err => console.error("Erro ao salvar produtos:", err)),
-            categoriesRef.set(categories).catch(err => console.error("Erro ao salvar categorias:", err)),
-            salvarStats()
-        ]);
-    }
-
+    
+    function reverseProducts() { products.reverse(); products.forEach((p, idx) => p.ordem = idx); ordenarProdutos(); salvarTudo(); renderizar(); showToast("🔄 Ordem invertida!", false, true); }
+    function shuffleAllProducts() { for (let i = products.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [products[i], products[j]] = [products[j], products[i]]; } products.forEach((p, idx) => p.ordem = idx); ordenarProdutos(); salvarTudo(); renderizar(); showToast("🎲 Produtos misturados!", false, true); }
+    function ordenarProdutos() { if (products) products.sort((a, b) => (a.ordem || 0) - (b.ordem || 0)); }
+    function salvarStats() { if (stats) statsRef.set(stats).catch(err => console.error("Erro ao salvar stats:", err)); }
+    function salvarTudo() { return Promise.all([productsRef.set(products).catch(err => console.error("Erro ao salvar produtos:", err)), categoriesRef.set(categories).catch(err => console.error("Erro ao salvar categorias:", err)), salvarStats()]); }
+    
     function carregarDoFirebase() {
-        Promise.all([
-            productsRef.once('value'),
-            categoriesRef.once('value'),
-            statsRef.once('value')
-        ]).then(([productsSnap, categoriesSnap, statsSnap]) => {
-            if (productsSnap.exists() && Array.isArray(productsSnap.val())) products = productsSnap.val();
-            else products = [];
-
-            if (categoriesSnap.exists() && Array.isArray(categoriesSnap.val())) categories = categoriesSnap.val();
-            else categories = ["todos"];
-
-            if (statsSnap.exists()) stats = statsSnap.val();
-            else stats = { catClicks: {}, lastReset: new Date().toDateString() };
-
+        Promise.all([productsRef.once('value'), categoriesRef.once('value'), statsRef.once('value')]).then(([productsSnap, categoriesSnap, statsSnap]) => {
+            products = (productsSnap.exists() && Array.isArray(productsSnap.val())) ? productsSnap.val() : [];
+            categories = (categoriesSnap.exists() && Array.isArray(categoriesSnap.val())) ? categoriesSnap.val() : ["todos"];
+            stats = statsSnap.exists() ? statsSnap.val() : { catClicks: {}, lastReset: new Date().toDateString() };
             categories = categories.filter(cat => cat && typeof cat === 'string' && cat !== "Object Object" && cat.trim() !== "");
             if (!categories.includes("todos")) categories.unshift("todos");
-
             categories.forEach(c => { if(!stats.catClicks[c]) stats.catClicks[c] = { hoje: 0, total: 0 }; });
-
-            if (products && products.length > 0) {
-                products.forEach((p,i) => { 
-                    if(p.ordem === undefined) p.ordem = i;
-                    if(p.freteGratis === undefined) p.freteGratis = false;
-                    if(p.metaCliques === undefined) p.metaCliques = 0;
-                    if(p.clicksHoje === undefined) p.clicksHoje = 0;
-                    if(p.clicksTotal === undefined) p.clicksTotal = 0;
-                    if(p.link === undefined || p.link === "") p.link = "https://shopee.com.br";
-                    if(p.shopeeId === undefined) p.shopeeId = "";
-                });
-            }
-
+            if (products.length) products.forEach((p,i) => { if(p.ordem === undefined) p.ordem = i; if(p.freteGratis === undefined) p.freteGratis = false; if(p.metaCliques === undefined) p.metaCliques = 0; if(p.clicksHoje === undefined) p.clicksHoje = 0; if(p.clicksTotal === undefined) p.clicksTotal = 0; if(p.link === undefined || p.link === "") p.link = "https://shopee.com.br"; if(p.shopeeId === undefined) p.shopeeId = ""; });
             ordenarProdutos();
             resetDiario();
             renderizar();
             atualizarSelectCategorias();
+            atualizarSelectsProdutosHeatmap();
         }).catch(err => console.error("Erro ao carregar:", err));
     }
-
+    
     function resetDiario() {
         let hoje = new Date().toDateString();
-        if(stats.lastReset !== hoje) {
-            if (products) products.forEach(p => p.clicksHoje = 0);
-            Object.keys(stats.catClicks).forEach(c => stats.catClicks[c].hoje = 0);
-            stats.lastReset = hoje;
-            salvarTudo();
-        }
+        if(stats.lastReset !== hoje) { products.forEach(p => p.clicksHoje = 0); Object.keys(stats.catClicks).forEach(c => stats.catClicks[c].hoje = 0); stats.lastReset = hoje; salvarTudo(); }
     }
-
+    
     function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
-
-    function moverCategoria(index, direcao) {
-        let novaPos = index + direcao;
-        if(novaPos < 0 || novaPos >= categories.length) return;
-        if(categories[novaPos] === "todos" || categories[index] === "todos") return;
-        [categories[index], categories[novaPos]] = [categories[novaPos], categories[index]];
-        salvarTudo();
-        renderizar();
-        atualizarListaCategoriasModal();
-        atualizarSelectCategorias();
-    }
-
-    function moverProduto(id, direcao) {
-        let index = products.findIndex(p => p.id === id);
-        let novaPos = index + direcao;
-        if(novaPos < 0 || novaPos >= products.length) return;
-        [products[index], products[novaPos]] = [products[novaPos], products[index]];
-        products.forEach((p, idx) => p.ordem = idx);
-        ordenarProdutos();
-        salvarTudo();
-        renderizar();
-    }
-
-    function colocarProdutoTopo(id) {
-        let index = products.findIndex(p => p.id === id);
-        if(index === 0) return;
-        let produto = products.splice(index, 1)[0];
-        products.unshift(produto);
-        products.forEach((p, idx) => p.ordem = idx);
-        ordenarProdutos();
-        salvarTudo();
-        renderizar();
-        showToast(`✅ ${produto.nome} foi para o topo!`, false, true);
-    }
-
-    function colocarCategoriaTopo(nomeCat) {
-        if(nomeCat === "todos") return;
-        let index = categories.findIndex(c => c === nomeCat);
-        if(index <= 1) return;
-        let categoria = categories.splice(index, 1)[0];
-        categories.splice(1, 0, categoria);
-        salvarTudo();
-        renderizar();
-        atualizarListaCategoriasModal();
-        atualizarSelectCategorias();
-        showToast(`✅ Categoria "${nomeCat}" foi para o topo!`, false, true);
-    }
-
-    function editarCategoriaNome(nomeAntigo, novoNome) {
-        if(novoNome === nomeAntigo) return true;
-        if(!novoNome || novoNome.trim() === "") {
-            showToast("❌ Nome da categoria não pode ficar vazio!", true);
-            return false;
-        }
-        let novoNomeTrim = novoNome.trim().toLowerCase();
-        if(novoNomeTrim === "todos") {
-            showToast("❌ 'todos' é uma categoria especial e não pode ser usada!", true);
-            return false;
-        }
-        if(categories.includes(novoNomeTrim) && categories.indexOf(novoNomeTrim) !== categories.indexOf(nomeAntigo)) {
-            showToast(`❌ Categoria "${novoNomeTrim}" já existe!`, true);
-            return false;
-        }
-
-        let index = categories.findIndex(c => c === nomeAntigo);
-        if(index !== -1 && nomeAntigo !== "todos") {
-            categories[index] = novoNomeTrim;
-            products.forEach(p => {
-                if(p.categoria === nomeAntigo) p.categoria = novoNomeTrim;
-            });
-            if(stats.catClicks[nomeAntigo]) {
-                stats.catClicks[novoNomeTrim] = stats.catClicks[nomeAntigo];
-                delete stats.catClicks[nomeAntigo];
-            }
-            if(currentCat === nomeAntigo) currentCat = novoNomeTrim;
-            salvarTudo();
-            renderizar();
-            atualizarListaCategoriasModal();
-            atualizarSelectCategorias();
-            showToast(`✅ Categoria renomeada para "${novoNomeTrim}"`, false, true);
-            return true;
-        }
-        return false;
-    }
-
-    function excluirCategoria(nomeCat) {
-        if(nomeCat === "todos") return;
-        if(confirm(`Excluir categoria "${nomeCat}"? Produtos serão movidos para "Todos".`)) {
-            categories = categories.filter(c => c !== nomeCat);
-            products.forEach(p => { if(p.categoria === nomeCat) p.categoria = "todos"; });
-            delete stats.catClicks[nomeCat];
-            if(currentCat === nomeCat) currentCat = "todos";
-            salvarTudo();
-            renderizar();
-            atualizarListaCategoriasModal();
-            atualizarSelectCategorias();
-            showToast(`🗑️ Categoria "${nomeCat}" excluída!`, false, true);
-        }
-    }
-
-    function definirMeta(produto) {
-        currentMetaProduct = produto;
-        document.getElementById("metaProdName").innerText = produto.nome;
-        document.getElementById("metaValue").value = produto.metaCliques || 0;
-        document.getElementById("metaModal").classList.add("active");
-    }
-
-    function salvarMeta() {
-        if (currentMetaProduct) {
-            let novaMeta = parseInt(document.getElementById("metaValue").value);
-            currentMetaProduct.metaCliques = isNaN(novaMeta) ? 0 : novaMeta;
-            salvarTudo();
-            renderizar();
-            document.getElementById("metaModal").classList.remove("active");
-            showToast(`✅ Meta de ${currentMetaProduct.nome} definida para ${currentMetaProduct.metaCliques} cliques!`, false, true);
-        }
-    }
-
-    function adicionarCategoria(nome, posicao) {
-        if(!nome || nome.trim() === "") return false;
-        let catNome = nome.trim().toLowerCase();
-        if(categories.includes(catNome)) {
-            showToast(`⚠️ Categoria "${catNome}" já existe!`, true);
-            return false;
-        }
-        if(catNome === "todos") {
-            showToast(`⚠️ "todos" é uma categoria padrão!`, true);
-            return false;
-        }
-
-        if(posicao === "top") categories.splice(1, 0, catNome);
-        else categories.push(catNome);
-
-        stats.catClicks[catNome] = { hoje: 0, total: 0 };
-        salvarTudo();
-        renderizar();
-        atualizarListaCategoriasModal();
-        atualizarSelectCategorias();
-        showToast(`✅ Categoria "${catNome}" adicionada!`, false, true);
-        return true;
-    }
-
-    function atualizarSelectCategorias() {
-        const select = document.getElementById("prodCategory");
-        if(!select) return;
-
-        const categoriasFiltradas = categories.filter(c => c !== "todos");
-        const selectedValue = select.value;
-
-        select.innerHTML = '<option value="todos">Todos</option>';
-
-        for(let cat of categoriasFiltradas) {
-            const option = document.createElement("option");
-            option.value = cat;
-            option.textContent = cat;
-            select.appendChild(option);
-        }
-
-        if(selectedValue && categories.includes(selectedValue)) {
-            select.value = selectedValue;
-        }
-    }
-
-    function filtrarCategoriasSelect() {
-        const searchTerm = document.getElementById("categorySearchInput").value.toLowerCase();
-        const select = document.getElementById("prodCategory");
-        const options = select.options;
-
-        for (let i = 0; i < options.length; i++) {
-            const option = options[i];
-            if (option.value === "todos") {
-                option.style.display = "";
-                continue;
-            }
-            if (option.text.toLowerCase().includes(searchTerm) || searchTerm === "") {
-                option.style.display = "";
-            } else {
-                option.style.display = "none";
-            }
-        }
-
-        if (searchTerm !== "") {
-            for (let i = 0; i < options.length; i++) {
-                if (options[i].style.display !== "none" && options[i].value !== "todos") {
-                    options[i].selected = true;
-                    break;
-                }
-            }
-        }
-    }
-
-    function atualizarListaCategoriasModal() {
-        const container = document.getElementById("categoryManageList");
-        if(!container) return;
-
-        let categoriasSemTodos = categories.filter(c => c !== "todos");
-        let html = "";
-
-        for(let i = 0; i < categoriasSemTodos.length; i++) {
-            let cat = categoriasSemTodos[i];
-            let originalIndex = categories.indexOf(cat);
-            html += `
-                <div class="category-manage-item" data-cat="${cat}" data-index="${originalIndex}">
-                    <span class="category-manage-name">${cat}</span>
-                    <div class="edit-cat-input">
-                        <input type="text" class="edit-cat-field" value="${cat}" maxlength="30">
-                        <button class="save-cat-edit btn-green">Salvar</button>
-                        <button class="cancel-cat-edit btn-gray">Cancelar</button>
-                    </div>
-                    <div class="category-manage-actions">
-                        <button class="cat-top-btn" title="Colocar no topo"><i class="fas fa-arrow-up"></i></button>
-                        <button class="cat-move-up" title="Subir" ${i === 0 ? 'disabled style="opacity:0.5"' : ''}><i class="fas fa-chevron-up"></i></button>
-                        <button class="cat-move-down" title="Descer" ${i === categoriasSemTodos.length-1 ? 'disabled style="opacity:0.5"' : ''}><i class="fas fa-chevron-down"></i></button>
-                        <button class="cat-edit-btn" title="Editar nome"><i class="fas fa-pen"></i></button>
-                        <button class="cat-delete-btn" title="Excluir"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
-            `;
-        }
-
-        container.innerHTML = html || "<div style='text-align:center;padding:20px;color:#94a3b8;'>Nenhuma categoria além de 'Todos'</div>";
-
-        document.querySelectorAll(".category-manage-item").forEach(item => {
-            const catName = item.dataset.cat;
-            const index = parseInt(item.dataset.index);
-
-            const topBtn = item.querySelector(".cat-top-btn");
-            if(topBtn) {
-                topBtn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    colocarCategoriaTopo(catName);
-                });
-            }
-
-            const moveUpBtn = item.querySelector(".cat-move-up");
-            if(moveUpBtn && !moveUpBtn.disabled) {
-                moveUpBtn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    moverCategoria(index, -1);
-                });
-            }
-
-            const moveDownBtn = item.querySelector(".cat-move-down");
-            if(moveDownBtn && !moveDownBtn.disabled) {
-                moveDownBtn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    moverCategoria(index, 1);
-                });
-            }
-
-            const editBtn = item.querySelector(".cat-edit-btn");
-            if(editBtn) {
-                editBtn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    document.querySelectorAll(".category-manage-item").forEach(i => i.classList.remove("editing"));
-                    item.classList.add("editing");
-                    const input = item.querySelector(".edit-cat-field");
-                    if(input) input.focus();
-                });
-            }
-
-            const saveBtn = item.querySelector(".save-cat-edit");
-            if(saveBtn) {
-                saveBtn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    const newName = item.querySelector(".edit-cat-field").value;
-                    if(newName && newName.trim()) {
-                        editarCategoriaNome(catName, newName.trim().toLowerCase());
-                    }
-                    item.classList.remove("editing");
-                });
-            }
-
-            const cancelBtn = item.querySelector(".cancel-cat-edit");
-            if(cancelBtn) {
-                cancelBtn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    item.classList.remove("editing");
-                });
-            }
-
-            const deleteBtn = item.querySelector(".cat-delete-btn");
-            if(deleteBtn) {
-                deleteBtn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    excluirCategoria(catName);
-                });
-            }
-        });
-    }
-
-    function abrirModalGerenciarCategorias() {
-        atualizarListaCategoriasModal();
-        document.getElementById("manageCategoriesModal").classList.add("active");
-    }
-
-    function atualizarVisibilidadeAbasEspeciais() {
-        const temProdutoEmAlta = products.some(p => isProdutoEmAlta(p));
-        const temFreteGratis = products.some(p => p.freteGratis === true);
-
-        const abaAlta = document.getElementById("specialAlta");
-        const abaFrete = document.getElementById("specialFrete");
-
-        if(abaAlta) {
-            if(temProdutoEmAlta) abaAlta.classList.remove("hidden");
-            else {
-                abaAlta.classList.add("hidden");
-                if(currentSpecial === "alta") { currentSpecial = null; currentCat = "todos"; }
-            }
-        }
-
-        if(abaFrete) {
-            if(temFreteGratis) abaFrete.classList.remove("hidden");
-            else {
-                abaFrete.classList.add("hidden");
-                if(currentSpecial === "frete") { currentSpecial = null; currentCat = "todos"; }
-            }
-        }
-    }
-
+    function moverCategoria(index, direcao) { let novaPos = index + direcao; if(novaPos < 0 || novaPos >= categories.length) return; if(categories[novaPos] === "todos" || categories[index] === "todos") return; [categories[index], categories[novaPos]] = [categories[novaPos], categories[index]]; salvarTudo(); renderizar(); atualizarListaCategoriasModal(); atualizarSelectCategorias(); }
+    function moverProduto(id, direcao) { let index = products.findIndex(p => p.id === id); let novaPos = index + direcao; if(novaPos < 0 || novaPos >= products.length) return; [products[index], products[novaPos]] = [products[novaPos], products[index]]; products.forEach((p, idx) => p.ordem = idx); ordenarProdutos(); salvarTudo(); renderizar(); }
+    function colocarProdutoTopo(id) { let index = products.findIndex(p => p.id === id); if(index === 0) return; let produto = products.splice(index, 1)[0]; products.unshift(produto); products.forEach((p, idx) => p.ordem = idx); ordenarProdutos(); salvarTudo(); renderizar(); showToast(`✅ ${produto.nome} foi para o topo!`, false, true); }
+    function colocarCategoriaTopo(nomeCat) { if(nomeCat === "todos") return; let index = categories.findIndex(c => c === nomeCat); if(index <= 1) return; let categoria = categories.splice(index, 1)[0]; categories.splice(1, 0, categoria); salvarTudo(); renderizar(); atualizarListaCategoriasModal(); atualizarSelectCategorias(); showToast(`✅ Categoria "${nomeCat}" foi para o topo!`, false, true); }
+    function editarCategoriaNome(nomeAntigo, novoNome) { if(novoNome === nomeAntigo) return true; if(!novoNome || novoNome.trim() === "") { showToast("❌ Nome da categoria não pode ficar vazio!", true); return false; } let novoNomeTrim = novoNome.trim().toLowerCase(); if(novoNomeTrim === "todos") { showToast("❌ 'todos' é uma categoria especial!", true); return false; } if(categories.includes(novoNomeTrim) && categories.indexOf(novoNomeTrim) !== categories.indexOf(nomeAntigo)) { showToast(`❌ Categoria "${novoNomeTrim}" já existe!`, true); return false; } let index = categories.findIndex(c => c === nomeAntigo); if(index !== -1 && nomeAntigo !== "todos") { categories[index] = novoNomeTrim; products.forEach(p => { if(p.categoria === nomeAntigo) p.categoria = novoNomeTrim; }); if(stats.catClicks[nomeAntigo]) { stats.catClicks[novoNomeTrim] = stats.catClicks[nomeAntigo]; delete stats.catClicks[nomeAntigo]; } if(currentCat === nomeAntigo) currentCat = novoNomeTrim; salvarTudo(); renderizar(); atualizarListaCategoriasModal(); atualizarSelectCategorias(); showToast(`✅ Categoria renomeada para "${novoNomeTrim}"`, false, true); return true; } return false; }
+    function excluirCategoria(nomeCat) { if(nomeCat === "todos") return; if(confirm(`Excluir categoria "${nomeCat}"?`)) { categories = categories.filter(c => c !== nomeCat); products.forEach(p => { if(p.categoria === nomeCat) p.categoria = "todos"; }); delete stats.catClicks[nomeCat]; if(currentCat === nomeCat) currentCat = "todos"; salvarTudo(); renderizar(); atualizarListaCategoriasModal(); atualizarSelectCategorias(); showToast(`🗑️ Categoria "${nomeCat}" excluída!`, false, true); } }
+    function definirMeta(produto) { currentMetaProduct = produto; document.getElementById("metaProdName").innerText = produto.nome; document.getElementById("metaValue").value = produto.metaCliques || 0; document.getElementById("metaModal").classList.add("active"); }
+    function salvarMeta() { if (currentMetaProduct) { let novaMeta = parseInt(document.getElementById("metaValue").value); currentMetaProduct.metaCliques = isNaN(novaMeta) ? 0 : novaMeta; salvarTudo(); renderizar(); document.getElementById("metaModal").classList.remove("active"); showToast(`✅ Meta de ${currentMetaProduct.nome} definida para ${currentMetaProduct.metaCliques} cliques!`, false, true); } }
+    function adicionarCategoria(nome, posicao) { if(!nome || nome.trim() === "") return false; let catNome = nome.trim().toLowerCase(); if(categories.includes(catNome)) { showToast(`⚠️ Categoria "${catNome}" já existe!`, true); return false; } if(catNome === "todos") { showToast(`⚠️ "todos" é uma categoria padrão!`, true); return false; } if(posicao === "top") categories.splice(1, 0, catNome); else categories.push(catNome); stats.catClicks[catNome] = { hoje: 0, total: 0 }; salvarTudo(); renderizar(); atualizarListaCategoriasModal(); atualizarSelectCategorias(); showToast(`✅ Categoria "${catNome}" adicionada!`, false, true); return true; }
+    function atualizarSelectCategorias() { const select = document.getElementById("prodCategory"); if(!select) return; const categoriasFiltradas = categories.filter(c => c !== "todos"); const selectedValue = select.value; select.innerHTML = '<option value="todos">Todos</option>'; for(let cat of categoriasFiltradas) { const option = document.createElement("option"); option.value = cat; option.textContent = cat; select.appendChild(option); } if(selectedValue && categories.includes(selectedValue)) select.value = selectedValue; }
+    function filtrarCategoriasSelect() { const searchTerm = document.getElementById("categorySearchInput").value.toLowerCase(); const select = document.getElementById("prodCategory"); const options = select.options; for (let i = 0; i < options.length; i++) { const option = options[i]; if (option.value === "todos") { option.style.display = ""; continue; } if (option.text.toLowerCase().includes(searchTerm) || searchTerm === "") option.style.display = ""; else option.style.display = "none"; } if (searchTerm !== "") { for (let i = 0; i < options.length; i++) if (options[i].style.display !== "none" && options[i].value !== "todos") { options[i].selected = true; break; } } }
+    function atualizarListaCategoriasModal() { const container = document.getElementById("categoryManageList"); if(!container) return; let categoriasSemTodos = categories.filter(c => c !== "todos"); let html = ""; for(let i = 0; i < categoriasSemTodos.length; i++) { let cat = categoriasSemTodos[i]; let originalIndex = categories.indexOf(cat); html += `<div class="category-manage-item" data-cat="${cat}" data-index="${originalIndex}"><span class="category-manage-name">${cat}</span><div class="edit-cat-input"><input type="text" class="edit-cat-field" value="${cat}" maxlength="30"><button class="save-cat-edit btn-green">Salvar</button><button class="cancel-cat-edit btn-gray">Cancelar</button></div><div class="category-manage-actions"><button class="cat-top-btn" title="Colocar no topo"><i class="fas fa-arrow-up"></i></button><button class="cat-move-up" title="Subir" ${i === 0 ? 'disabled style="opacity:0.5"' : ''}><i class="fas fa-chevron-up"></i></button><button class="cat-move-down" title="Descer" ${i === categoriasSemTodos.length-1 ? 'disabled style="opacity:0.5"' : ''}><i class="fas fa-chevron-down"></i></button><button class="cat-edit-btn" title="Editar nome"><i class="fas fa-pen"></i></button><button class="cat-delete-btn" title="Excluir"><i class="fas fa-trash"></i></button></div></div>`; } container.innerHTML = html || "<div style='text-align:center;padding:20px;color:#94a3b8;'>Nenhuma categoria além de 'Todos'</div>"; document.querySelectorAll(".category-manage-item").forEach(item => { const catName = item.dataset.cat; const index = parseInt(item.dataset.index); const topBtn = item.querySelector(".cat-top-btn"); if(topBtn) topBtn.addEventListener("click", (e) => { e.stopPropagation(); colocarCategoriaTopo(catName); }); const moveUpBtn = item.querySelector(".cat-move-up"); if(moveUpBtn && !moveUpBtn.disabled) moveUpBtn.addEventListener("click", (e) => { e.stopPropagation(); moverCategoria(index, -1); }); const moveDownBtn = item.querySelector(".cat-move-down"); if(moveDownBtn && !moveDownBtn.disabled) moveDownBtn.addEventListener("click", (e) => { e.stopPropagation(); moverCategoria(index, 1); }); const editBtn = item.querySelector(".cat-edit-btn"); if(editBtn) editBtn.addEventListener("click", (e) => { e.stopPropagation(); document.querySelectorAll(".category-manage-item").forEach(i => i.classList.remove("editing")); item.classList.add("editing"); const input = item.querySelector(".edit-cat-field"); if(input) input.focus(); }); const saveBtn = item.querySelector(".save-cat-edit"); if(saveBtn) saveBtn.addEventListener("click", (e) => { e.stopPropagation(); const newName = item.querySelector(".edit-cat-field").value; if(newName && newName.trim()) editarCategoriaNome(catName, newName.trim().toLowerCase()); item.classList.remove("editing"); }); const cancelBtn = item.querySelector(".cancel-cat-edit"); if(cancelBtn) cancelBtn.addEventListener("click", (e) => { e.stopPropagation(); item.classList.remove("editing"); }); const deleteBtn = item.querySelector(".cat-delete-btn"); if(deleteBtn) deleteBtn.addEventListener("click", (e) => { e.stopPropagation(); excluirCategoria(catName); }); }); }
+    function abrirModalGerenciarCategorias() { atualizarListaCategoriasModal(); document.getElementById("manageCategoriesModal").classList.add("active"); }
+    function atualizarVisibilidadeAbasEspeciais() { const temProdutoEmAlta = products.some(p => isProdutoEmAlta(p)); const temFreteGratis = products.some(p => p.freteGratis === true); const abaAlta = document.getElementById("specialAlta"); const abaFrete = document.getElementById("specialFrete"); if(abaAlta) { if(temProdutoEmAlta) abaAlta.classList.remove("hidden"); else { abaAlta.classList.add("hidden"); if(currentSpecial === "alta") { currentSpecial = null; currentCat = "todos"; } } } if(abaFrete) { if(temFreteGratis) abaFrete.classList.remove("hidden"); else { abaFrete.classList.add("hidden"); if(currentSpecial === "frete") { currentSpecial = null; currentCat = "todos"; } } } }
+    
     function renderizar() {
         atualizarVisibilidadeAbasEspeciais();
         renderCategorias();
         renderProdutos();
         if(editMode) renderAdmin();
     }
-
+    
     function renderCategorias() {
         let html = "";
         for(let i = 0; i < categories.length; i++) {
             let cat = categories[i];
             let ativo = (!currentSpecial && currentCat === cat) ? "active" : "";
             let statsText = "";
-            if(editMode && cat !== "todos" && stats.catClicks[cat]) {
-                statsText = `<small>(${stats.catClicks[cat]?.hoje || 0}/${stats.catClicks[cat]?.total || 0})</small>`;
-            }
-            html += `<div class="category ${ativo}" data-cat="${cat}">
-                        <i class="fas fa-tag"></i>
-                        ${cat === "todos" ? "Todos" : cat}
-                        ${statsText}`;
-            if(editMode) {
-                if(cat !== "todos") {
-                    html += `<button class="top-cat-btn" data-cat-name="${cat}"><i class="fas fa-arrow-up"></i></button>`;
-                    html += `<button class="move-cat-up" data-cat-index="${i}" data-dir="-1"><i class="fas fa-chevron-up"></i></button>`;
-                    html += `<button class="move-cat-down" data-cat-index="${i}" data-dir="1"><i class="fas fa-chevron-down"></i></button>`;
-                    html += `<button class="delete-cat" data-cat="${cat}"><i class="fas fa-trash"></i></button>`;
-                }
-            }
+            if(editMode && cat !== "todos" && stats.catClicks[cat]) statsText = `<small>(${stats.catClicks[cat]?.hoje || 0}/${stats.catClicks[cat]?.total || 0})</small>`;
+            html += `<div class="category ${ativo}" data-cat="${cat}"><i class="fas fa-tag"></i>${cat === "todos" ? "Todos" : cat}${statsText}`;
+            if(editMode && cat !== "todos") html += `<button class="top-cat-btn" data-cat-name="${cat}"><i class="fas fa-arrow-up"></i></button><button class="move-cat-up" data-cat-index="${i}" data-dir="-1"><i class="fas fa-chevron-up"></i></button><button class="move-cat-down" data-cat-index="${i}" data-dir="1"><i class="fas fa-chevron-down"></i></button><button class="delete-cat" data-cat="${cat}"><i class="fas fa-trash"></i></button>`;
             html += `</div>`;
         }
         document.getElementById("categoriesList").innerHTML = html;
-
-        // CORREÇÃO: Event listeners para botões de mover categoria
-        document.querySelectorAll(".move-cat-up").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                const index = parseInt(btn.dataset.catIndex);
-                if (!isNaN(index)) moverCategoria(index, -1);
-                return false;
-            });
-        });
-
-        document.querySelectorAll(".move-cat-down").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                const index = parseInt(btn.dataset.catIndex);
-                if (!isNaN(index)) moverCategoria(index, 1);
-                return false;
-            });
-        });
-
-        // CORREÇÃO: Botão topo das categorias
-        document.querySelectorAll(".top-cat-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                const catName = btn.dataset.catName;
-                if (catName && catName !== "todos") {
-                    colocarCategoriaTopo(catName);
-                }
-                return false;
-            });
-        });
-
-        document.querySelectorAll(".delete-cat").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                let cat = btn.dataset.cat;
-                if(confirm(`Excluir categoria "${cat}"?`)) {
-                    categories = categories.filter(c => c !== cat);
-                    products.forEach(p => { if(p.categoria === cat) p.categoria = "todos"; });
-                    delete stats.catClicks[cat];
-                    if(currentCat === cat) currentCat = "todos";
-                    salvarTudo();
-                    renderizar();
-                    atualizarListaCategoriasModal();
-                    atualizarSelectCategorias();
-                }
-                return false;
-            });
-        });
-
-        document.querySelectorAll(".category").forEach(el => {
-            el.addEventListener("click", async (e) => {
-                if(e.target.classList.contains("top-cat-btn") || 
-                   e.target.closest(".top-cat-btn") ||
-                   e.target.classList.contains("move-cat-up") || 
-                   e.target.closest(".move-cat-up") ||
-                   e.target.classList.contains("move-cat-down") || 
-                   e.target.closest(".move-cat-down") ||
-                   e.target.classList.contains("delete-cat") || 
-                   e.target.closest(".delete-cat")) {
-                    return;
-                }
-
-                let cat = el.dataset.cat;
-                currentSpecial = null;
-                currentCat = cat;
-
-                if(!editMode && cat !== "todos") {
-                    if(stats.catClicks[cat]) {
-                        stats.catClicks[cat].hoje++;
-                        stats.catClicks[cat].total++;
-                    } else {
-                        stats.catClicks[cat] = { hoje: 1, total: 1 };
-                    }
-                    await salvarTudo();
-                    adicionarAtividade('categoria', cat);
-                }
-
-                document.querySelectorAll(".special-cat").forEach(sc => sc.classList.remove("active"));
-                renderizar();
-            });
-        });
-
-        document.querySelectorAll(".special-cat").forEach(el => {
-            if(currentSpecial === el.dataset.special && currentCat === "todos") el.classList.add("active");
-            else el.classList.remove("active");
-
-            el.addEventListener("click", (e) => {
-                e.stopPropagation();
-                let special = el.dataset.special;
-
-                if(currentSpecial === special && currentCat === "todos") {
-                    currentSpecial = null;
-                    currentCat = "todos";
-                    el.classList.remove("active");
-                } else {
-                    currentSpecial = special;
-                    currentCat = "todos";
-                    document.querySelectorAll(".special-cat").forEach(sc => sc.classList.remove("active"));
-                    el.classList.add("active");
-                }
-                renderizar();
-            });
-        });
+        document.querySelectorAll(".move-cat-up").forEach(btn => btn.addEventListener("click", (e) => { e.stopPropagation(); e.preventDefault(); const index = parseInt(btn.dataset.catIndex); if (!isNaN(index)) moverCategoria(index, -1); return false; }));
+        document.querySelectorAll(".move-cat-down").forEach(btn => btn.addEventListener("click", (e) => { e.stopPropagation(); e.preventDefault(); const index = parseInt(btn.dataset.catIndex); if (!isNaN(index)) moverCategoria(index, 1); return false; }));
+        document.querySelectorAll(".top-cat-btn").forEach(btn => btn.addEventListener("click", (e) => { e.stopPropagation(); e.preventDefault(); const catName = btn.dataset.catName; if (catName && catName !== "todos") colocarCategoriaTopo(catName); return false; }));
+        document.querySelectorAll(".delete-cat").forEach(btn => btn.addEventListener("click", (e) => { e.stopPropagation(); e.preventDefault(); let cat = btn.dataset.cat; if(confirm(`Excluir categoria "${cat}"?`)) { categories = categories.filter(c => c !== cat); products.forEach(p => { if(p.categoria === cat) p.categoria = "todos"; }); delete stats.catClicks[cat]; if(currentCat === cat) currentCat = "todos"; salvarTudo(); renderizar(); atualizarListaCategoriasModal(); atualizarSelectCategorias(); } return false; }));
+        document.querySelectorAll(".category").forEach(el => { el.addEventListener("click", async (e) => { if(e.target.classList.contains("top-cat-btn") || e.target.closest(".top-cat-btn") || e.target.classList.contains("move-cat-up") || e.target.closest(".move-cat-up") || e.target.classList.contains("move-cat-down") || e.target.closest(".move-cat-down") || e.target.classList.contains("delete-cat") || e.target.closest(".delete-cat")) return; let cat = el.dataset.cat; currentSpecial = null; currentCat = cat; if(!editMode && cat !== "todos") { if(stats.catClicks[cat]) { stats.catClicks[cat].hoje++; stats.catClicks[cat].total++; } else stats.catClicks[cat] = { hoje: 1, total: 1 }; await salvarTudo(); } document.querySelectorAll(".special-cat").forEach(sc => sc.classList.remove("active")); renderizar(); }); });
+        document.querySelectorAll(".special-cat").forEach(el => { if(currentSpecial === el.dataset.special && currentCat === "todos") el.classList.add("active"); else el.classList.remove("active"); el.addEventListener("click", (e) => { e.stopPropagation(); let special = el.dataset.special; if(currentSpecial === special && currentCat === "todos") { currentSpecial = null; currentCat = "todos"; el.classList.remove("active"); } else { currentSpecial = special; currentCat = "todos"; document.querySelectorAll(".special-cat").forEach(sc => sc.classList.remove("active")); el.classList.add("active"); } renderizar(); }); });
     }
-
+    
     async function handleProductClick(productId, event) {
         if(!productId) return;
-        if(event) { 
-            event.preventDefault(); 
-            event.stopPropagation(); 
-        }
-
+        if(event) { event.preventDefault(); event.stopPropagation(); }
         const produto = products.find(p => p.id === productId);
         if(!produto) return;
-
         let productLink = produto.link && produto.link.trim() !== "" ? produto.link.trim() : "https://shopee.com.br";
-
-        if(productLink === "https://shopee.com.br" && (!produto.link || produto.link === "https://shopee.com.br")) {
-            showToast(`⚠️ Produto "${produto.nome}" não tem link cadastrado!`, true);
-        } else {
-            window.open(productLink, "_blank");
-            if(!editMode) showToast(`🔗 Redirecionando para ${produto.nome}...`);
-        }
-
-        if(!editMode) {
-            produto.clicksHoje = (produto.clicksHoje || 0) + 1;
-            produto.clicksTotal = (produto.clicksTotal || 0) + 1;
-
-            await salvarTudo();
-            adicionarAtividade('produto', produto.nome);
-        }
+        if(productLink === "https://shopee.com.br" && (!produto.link || produto.link === "https://shopee.com.br")) showToast(`⚠️ Produto "${produto.nome}" não tem link cadastrado!`, true);
+        else { window.open(productLink, "_blank"); if(!editMode) showToast(`🔗 Redirecionando para ${produto.nome}...`); }
+        if(!editMode) { produto.clicksHoje = (produto.clicksHoje || 0) + 1; produto.clicksTotal = (produto.clicksTotal || 0) + 1; await registrarClickDetalhado(produto.id, produto.nome); await salvarTudo(); }
         renderizar();
     }
-
+    
     function renderProdutos() {
-        if (!products || products.length === 0) {
-            document.getElementById("productsList").innerHTML = `<div class="empty"><i class="fas fa-store"></i><p>Nenhum produto cadastrado</p><p style="font-size: 10px;">Entre no modo edição para adicionar produtos</p></div>`;
-            document.getElementById("resultCount").innerHTML = `<i class="fas fa-store"></i> 0 produtos encontrados`;
-            return;
-        }
-
+        if (!products.length) { document.getElementById("productsList").innerHTML = `<div class="empty"><i class="fas fa-store"></i><p>Nenhum produto cadastrado</p><p style="font-size: 10px;">Entre no modo edição para adicionar produtos</p></div>`; document.getElementById("resultCount").innerHTML = `<i class="fas fa-store"></i> 0 produtos encontrados`; return; }
         let filtrados = [...products];
-
         if(currentSpecial === "alta") filtrados = filtrados.filter(p => isProdutoEmAlta(p));
         else if(currentSpecial === "frete") filtrados = filtrados.filter(p => p.freteGratis === true);
         else if(currentCat !== "todos") filtrados = filtrados.filter(p => p.categoria === currentCat);
-
-        if(currentSearch && currentSearch.trim().length > 0) {
+        
+        // Busca unificada: por nome, categoria ou shopeeId
+        if(currentSearch && currentSearch.trim().length > 0) { 
             let searchLower = currentSearch.toLowerCase().trim();
-
-            if(!editMode) {
+            filtrados = filtrados.filter(p => {
+                // Busca por nome
+                if(fuzzySearch(currentSearch, p.nome)) return true;
+                // Busca por categoria
+                if(p.categoria && p.categoria.toLowerCase().includes(searchLower)) return true;
+                // Busca por shopeeId
+                if(p.shopeeId && p.shopeeId.toLowerCase().includes(searchLower)) return true;
+                return false;
+            });
+            
+            // Se não encontrou produtos, tenta buscar por categoria
+            if(filtrados.length === 0 && !editMode) {
                 let categoriaEncontrada = categories.find(c => c !== "todos" && c.toLowerCase().includes(searchLower));
-                if(categoriaEncontrada && filtrados.length === 0) {
+                if(categoriaEncontrada) {
                     currentSpecial = null;
                     currentCat = categoriaEncontrada;
-                    document.getElementById("searchInput").value = "";
                     currentSearch = "";
+                    document.getElementById("searchInput").value = "";
                     renderizar();
                     return;
                 }
             }
-
-            filtrados = filtrados.filter(p => fuzzySearch(currentSearch, p.nome));
         }
-
+        
         document.getElementById("resultCount").innerHTML = `<i class="fas ${filtrados.length > 0 ? 'fa-chart-line' : 'fa-store'}"></i> ${filtrados.length} produto${filtrados.length !== 1 ? 's' : ''} encontrado${filtrados.length !== 1 ? 's' : ''}`;
-
-        if(filtrados.length === 0) {
-            let mensagem = "";
-            if(currentSpecial === "alta") mensagem = "Nenhum produto está em alta no momento.";
-            else if(currentSpecial === "frete") mensagem = "Nenhum produto com frete grátis encontrado.";
-            else if(currentCat !== "todos") mensagem = `Nenhum produto na categoria "${currentCat}".`;
-            else if(currentSearch) mensagem = `Nenhum produto encontrado para "${currentSearch}".`;
-            else mensagem = "Nenhum produto encontrado";
-            document.getElementById("productsList").innerHTML = `<div class="empty"><i class="fas fa-store"></i><p>${mensagem}</p></div>`;
-            return;
+        if(filtrados.length === 0) { 
+            let mensagem = ""; 
+            if(currentSpecial === "alta") mensagem = "Nenhum produto está em alta no momento."; 
+            else if(currentSpecial === "frete") mensagem = "Nenhum produto com frete grátis encontrado."; 
+            else if(currentCat !== "todos") mensagem = `Nenhum produto na categoria "${currentCat}".`; 
+            else if(currentSearch) mensagem = `Nenhum produto encontrado para "${currentSearch}".`; 
+            else mensagem = "Nenhum produto encontrado"; 
+            document.getElementById("productsList").innerHTML = `<div class="empty"><i class="fas fa-store"></i><p>${mensagem}</p></div>`; 
+            return; 
         }
-
         let html = "";
         for(let p of filtrados) {
             let freteClass = p.freteGratis ? "free" : "";
@@ -1292,402 +1268,71 @@
             let freteBadge = p.freteGratis ? `<div class="free-badge"><i class="fas fa-truck"></i> Frete Grátis</div>` : "";
             let trendingBadge = isProdutoEmAlta(p) ? `<div class="trending-badge"><i class="fas fa-fire"></i> 🔥 EM ALTA!</div>` : "";
             let imgSrc = p.imagem || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f1f5f9'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='%2394a3b8' font-size='12'%3ESem imagem%3C/text%3E%3C/svg%3E";
-
-            html += `<div class="product ${freteClass} ${trendingClass}" data-id="${p.id}">
-                        ${freteBadge}
-                        ${trendingBadge}
-                        <div class="product-actions">
-                            <button class="top-product-btn" data-id="${p.id}"><i class="fas fa-arrow-up"></i></button>
-                            <button class="move-up" data-id="${p.id}" data-dir="-1"><i class="fas fa-chevron-up"></i></button>
-                            <button class="move-down" data-id="${p.id}" data-dir="1"><i class="fas fa-chevron-down"></i></button>
-                            <button class="edit-product" data-id="${p.id}"><i class="fas fa-edit"></i></button>
-                            <button class="free-product" data-id="${p.id}"><i class="fas fa-truck"></i></button>
-                            <button class="set-meta" data-id="${p.id}"><i class="fas fa-chart-line"></i></button>
-                            <button class="delete-product" data-id="${p.id}"><i class="fas fa-trash"></i></button>
-                        </div>
-                        <img class="product-img" src="${imgSrc}">
-                        <div class="product-info">
-                            <div class="product-name">${p.nome}</div>
-                            <div class="product-price">R$ ${p.preco.toFixed(2).replace('.', ',')}</div>
-                            <div class="product-sold"><i class="fas fa-shopping-cart"></i> ${p.vendidos >= 1000 ? (p.vendidos/1000).toFixed(1)+"k" : p.vendidos} compraram</div>
-                            ${editMode ? `<div class="product-stats">
-                                <i class="fas fa-eye"></i> Hoje: ${p.clicksHoje} | Total: ${p.clicksTotal}
-                                <span class="product-meta"><i class="fas fa-bullseye"></i> Meta: ${p.metaCliques || 0}</span>
-                            </div>` : ""}
-                            ${p.shopeeId ? `<div class="product-shopee-id"><i class="fab fa-shopee"></i> ID: ${p.shopeeId}</div>` : ""}
-                        </div>
-                    </div>`;
+            html += `<div class="product ${freteClass} ${trendingClass}" data-id="${p.id}">${freteBadge}${trendingBadge}<div class="product-actions"><button class="top-product-btn" data-id="${p.id}"><i class="fas fa-arrow-up"></i></button><button class="move-up" data-id="${p.id}" data-dir="-1"><i class="fas fa-chevron-up"></i></button><button class="move-down" data-id="${p.id}" data-dir="1"><i class="fas fa-chevron-down"></i></button><button class="edit-product" data-id="${p.id}"><i class="fas fa-edit"></i></button><button class="free-product" data-id="${p.id}"><i class="fas fa-truck"></i></button><button class="set-meta" data-id="${p.id}"><i class="fas fa-chart-line"></i></button><button class="delete-product" data-id="${p.id}"><i class="fas fa-trash"></i></button></div><img class="product-img" src="${imgSrc}"><div class="product-info"><div class="product-name">${p.nome}</div><div class="product-price">R$ ${p.preco.toFixed(2).replace('.', ',')}</div><div class="product-sold"><i class="fas fa-shopping-cart"></i> ${p.vendidos >= 1000 ? (p.vendidos/1000).toFixed(1)+"k" : p.vendidos} compraram</div>${editMode ? `<div class="product-stats"><i class="fas fa-eye"></i> Hoje: ${p.clicksHoje} | Total: ${p.clicksTotal}<span class="product-meta"><i class="fas fa-bullseye"></i> Meta: ${p.metaCliques || 0}</span></div>` : ""}${p.shopeeId ? `<div class="product-shopee-id"><i class="fab fa-shopee"></i> ID: ${p.shopeeId}</div>` : ""}</div></div>`;
         }
         document.getElementById("productsList").innerHTML = html;
-
-        document.querySelectorAll(".product").forEach(el => {
-            const productId = parseInt(el.dataset.id);
-
-            el.addEventListener("click", (e) => {
-                if(e.target.closest(".product-actions")) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return;
-                }
-                e.preventDefault();
-                e.stopPropagation();
-                handleProductClick(productId, e);
-            });
-        });
-
-        document.querySelectorAll(".top-product-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => { e.stopPropagation(); colocarProdutoTopo(parseInt(btn.dataset.id)); });
-        });
-        document.querySelectorAll(".move-up").forEach(btn => {
-            btn.addEventListener("click", (e) => { e.stopPropagation(); moverProduto(parseInt(btn.dataset.id), -1); });
-        });
-        document.querySelectorAll(".move-down").forEach(btn => {
-            btn.addEventListener("click", (e) => { e.stopPropagation(); moverProduto(parseInt(btn.dataset.id), 1); });
-        });
-        document.querySelectorAll(".edit-product").forEach(btn => {
-            btn.addEventListener("click", (e) => { e.stopPropagation(); abrirModalProduto(products.find(p => p.id === parseInt(btn.dataset.id))); });
-        });
-        document.querySelectorAll(".free-product").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                let prod = products.find(p => p.id === parseInt(btn.dataset.id));
-                if(prod) { prod.freteGratis = !prod.freteGratis; salvarTudo(); renderizar(); }
-            });
-        });
-        document.querySelectorAll(".set-meta").forEach(btn => {
-            btn.addEventListener("click", (e) => { e.stopPropagation(); definirMeta(products.find(p => p.id === parseInt(btn.dataset.id))); });
-        });
-        document.querySelectorAll(".delete-product").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                if(confirm("Excluir este produto?")) {
-                    products = products.filter(p => p.id !== parseInt(btn.dataset.id));
-                    products.forEach((p,i) => p.ordem = i);
-                    ordenarProdutos();
-                    salvarTudo();
-                    renderizar();
-                    showToast("🗑️ Produto excluído!");
-                }
-            });
-        });
+        document.querySelectorAll(".product").forEach(el => { const productId = parseInt(el.dataset.id); el.addEventListener("click", (e) => { if(e.target.closest(".product-actions")) { e.preventDefault(); e.stopPropagation(); return; } e.preventDefault(); e.stopPropagation(); handleProductClick(productId, e); }); });
+        document.querySelectorAll(".top-product-btn").forEach(btn => btn.addEventListener("click", (e) => { e.stopPropagation(); colocarProdutoTopo(parseInt(btn.dataset.id)); }));
+        document.querySelectorAll(".move-up").forEach(btn => btn.addEventListener("click", (e) => { e.stopPropagation(); moverProduto(parseInt(btn.dataset.id), -1); }));
+        document.querySelectorAll(".move-down").forEach(btn => btn.addEventListener("click", (e) => { e.stopPropagation(); moverProduto(parseInt(btn.dataset.id), 1); }));
+        document.querySelectorAll(".edit-product").forEach(btn => btn.addEventListener("click", (e) => { e.stopPropagation(); abrirModalProduto(products.find(p => p.id === parseInt(btn.dataset.id))); }));
+        document.querySelectorAll(".free-product").forEach(btn => btn.addEventListener("click", (e) => { e.stopPropagation(); let prod = products.find(p => p.id === parseInt(btn.dataset.id)); if(prod) { prod.freteGratis = !prod.freteGratis; salvarTudo(); renderizar(); } }));
+        document.querySelectorAll(".set-meta").forEach(btn => btn.addEventListener("click", (e) => { e.stopPropagation(); definirMeta(products.find(p => p.id === parseInt(btn.dataset.id))); }));
+        document.querySelectorAll(".delete-product").forEach(btn => btn.addEventListener("click", (e) => { e.stopPropagation(); if(confirm("Excluir este produto?")) { products = products.filter(p => p.id !== parseInt(btn.dataset.id)); products.forEach((p,i) => p.ordem = i); ordenarProdutos(); salvarTudo(); renderizar(); showToast("🗑️ Produto excluído!"); } }));
     }
-
+    
     function renderAdmin() {
         let clicksHoje = products.reduce((s,p) => s + (p.clicksHoje||0), 0);
         let clicksTotal = products.reduce((s,p) => s + (p.clicksTotal||0), 0);
         let emAltaCount = products.filter(p => isProdutoEmAlta(p)).length;
-
-        document.getElementById("statsGrid").innerHTML = `
-            <div class="stat-card"><div class="label"><i class="fas fa-calendar-day"></i> Cliques Hoje</div><div class="value today">${clicksHoje}</div></div>
-            <div class="stat-card"><div class="label"><i class="fas fa-chart-line"></i> Cliques Total</div><div class="value">${clicksTotal}</div></div>
-            <div class="stat-card"><div class="label"><i class="fas fa-box"></i> Produtos</div><div class="value">${products.length}</div></div>
-            <div class="stat-card"><div class="label"><i class="fas fa-fire"></i> Em Alta</div><div class="value">${emAltaCount}</div></div>
-        `;
-
+        document.getElementById("statsGrid").innerHTML = `<div class="stat-card"><div class="label"><i class="fas fa-calendar-day"></i> Cliques Hoje</div><div class="value today">${clicksHoje}</div></div><div class="stat-card"><div class="label"><i class="fas fa-chart-line"></i> Cliques Total</div><div class="value">${clicksTotal}</div></div><div class="stat-card"><div class="label"><i class="fas fa-box"></i> Produtos</div><div class="value">${products.length}</div></div><div class="stat-card"><div class="label"><i class="fas fa-fire"></i> Em Alta</div><div class="value">${emAltaCount}</div></div>`;
         let topHojeList = [...products].sort((a,b) => (b.clicksHoje||0) - (a.clicksHoje||0)).slice(0,10);
-        document.getElementById("topTodayList").innerHTML = topHojeList.map((p,i) => `<div class="list-item"><span><i class="fas fa-fire" style="color:#f59e0b"></i> ${i+1}. ${p.nome.substring(0,25)}</span><span style="color:#22c55e; font-weight:700">${p.clicksHoje||0}</span></div>`).join("") || "<div class='list-item'>Nenhum clique hoje</div>";
-
+        document.getElementById("topTodayList").innerHTML = topHojeList.map((p,i) => `<div class="list-item"><span><i class="fas fa-fire" style="color:#f97316"></i> ${i+1}. ${p.nome.substring(0,25)}</span><span style="color:#22c55e; font-weight:700">${p.clicksHoje||0}</span></div>`).join("") || "<div class='list-item'>Nenhum clique hoje</div>";
         let topTotalList = [...products].sort((a,b) => (b.clicksTotal||0) - (a.clicksTotal||0)).slice(0,10);
-        document.getElementById("topTotalList").innerHTML = topTotalList.map((p,i) => `<div class="list-item"><span><i class="fas fa-trophy" style="color:#f59e0b"></i> ${i+1}. ${p.nome.substring(0,25)}</span><span style="color:#22c55e; font-weight:700">${p.clicksTotal||0}</span></div>`).join("") || "<div class='list-item'>Nenhum clique registrado</div>";
-
+        document.getElementById("topTotalList").innerHTML = topTotalList.map((p,i) => `<div class="list-item"><span><i class="fas fa-trophy" style="color:#f97316"></i> ${i+1}. ${p.nome.substring(0,25)}</span><span style="color:#22c55e; font-weight:700">${p.clicksTotal||0}</span></div>`).join("") || "<div class='list-item'>Nenhum clique registrado</div>";
         let catStats = categories.filter(c => c !== "todos").map(c => ({ nome: c, hoje: stats.catClicks[c]?.hoje || 0, total: stats.catClicks[c]?.total || 0 }));
         catStats.sort((a,b) => b.total - a.total);
-        document.getElementById("catClicksList").innerHTML = catStats.map(c => `<div class="list-item"><span><i class="fas fa-folder-open" style="color:#f59e0b"></i> ${c.nome}</span><span>Hoje: <strong style="color:#22c55e">${c.hoje}</strong> | Total: ${c.total}</span></div>`).join("") || "<div class='list-item'>Nenhuma categoria</div>";
-
-        renderAtividades();
-
-        for(let [listaId, isVisible] of Object.entries(listStates)) {
-            let container = document.getElementById(listaId);
-            let btn = document.querySelector(`.toggle-list-btn[data-target="${listaId}"]`);
-            if(container) isVisible ? container.classList.remove("hidden") : container.classList.add("hidden");
-            if(btn) btn.innerHTML = isVisible ? '<i class="fas fa-eye"></i> Ocultar' : '<i class="fas fa-eye-slash"></i> Mostrar';
-        }
-    }
-
-    function toggleList(listaId) {
-        listStates[listaId] = !listStates[listaId];
-        renderAdmin();
-    }
-
-    function resetarContagens() {
-        if(confirm("Resetar TODAS as contagens?")) {
-            products.forEach(p => { p.clicksHoje = 0; p.clicksTotal = 0; });
-            Object.keys(stats.catClicks).forEach(c => { stats.catClicks[c].hoje = 0; stats.catClicks[c].total = 0; });
-            salvarTudo();
-            renderizar();
-            showToast("✅ Todas as contagens foram resetadas!", false, true);
-        }
-    }
-
-    function deletarTudo() {
-        if(confirm("DELETAR TODOS OS PRODUTOS?")) {
-            if(confirm("Última confirmação! Esta ação não pode ser desfeita!")) {
-                products = [];
-                salvarTudo();
-                renderizar();
-                showToast("🗑️ Todos os produtos foram deletados!");
+        document.getElementById("catClicksList").innerHTML = catStats.map(c => `<div class="list-item"><span><i class="fas fa-folder-open" style="color:#f97316"></i> ${c.nome}</span><span>Hoje: <strong style="color:#22c55e">${c.hoje}</strong> | Total: ${c.total}</span></div>`).join("") || "<div class='list-item'>Nenhuma categoria</div>";
+        
+        // Atualizar visibilidade das listas
+        for(let key in listStates) {
+            const container = document.getElementById(key);
+            const btn = document.querySelector(`.toggle-list-btn[data-target="${key}"]`);
+            if(container) {
+                if(listStates[key]) {
+                    container.classList.remove("hidden");
+                    if(btn) btn.innerHTML = '<i class="fas fa-eye"></i> Ocultar';
+                } else {
+                    container.classList.add("hidden");
+                    if(btn) btn.innerHTML = '<i class="fas fa-eye-slash"></i> Mostrar';
+                }
             }
         }
     }
-
-    function processarCSV(texto) {
-        let linhas = texto.split(/\r?\n/);
-        let resultados = [];
-        let erros = [];
-
-        for(let i = 0; i < linhas.length; i++) {
-            let linha = linhas[i].trim();
-            if(!linha) continue;
-
-            let separador = linha.includes(';') ? ';' : ',';
-            let cols = linha.split(separador);
-
-            if(i === 0) {
-                let primeiraColuna = cols[0].toLowerCase();
-                if(primeiraColuna === 'nome' || primeiraColuna === 'produto' || primeiraColuna === 'product') continue;
-            }
-
-            if(cols.length < 2) {
-                erros.push(`Linha ${i+1}: formato inválido (necessário pelo menos Nome e Preço)`);
-                continue;
-            }
-
-            let nome = cols[0]?.trim();
-            let valorStr = cols[1]?.toString().replace(/[^0-9.,]/g, '').replace(',', '.');
-            let valor = parseFloat(valorStr);
-            let categoria = cols[2]?.trim().toLowerCase() || "todos";
-
-            if(!nome) { erros.push(`Linha ${i+1}: nome vazio`); continue; }
-            if(isNaN(valor) || valor <= 0) { erros.push(`Linha ${i+1}: preço inválido "${cols[1]}"`); continue; }
-
-            resultados.push({ nome, preco: valor, categoria });
-        }
-
-        if(erros.length > 0) {
-            document.getElementById("csvError").innerHTML = erros.slice(0,5).join('<br>');
-            document.getElementById("csvError").style.display = "block";
-        } else {
-            document.getElementById("csvError").style.display = "none";
-        }
-        return resultados;
+    
+    function toggleList(listaId) { 
+        listStates[listaId] = !listStates[listaId]; 
+        renderAdmin(); 
     }
-
-    async function adicionarCSV(produtosCSV) {
-        let adicionados = 0;
-        let categoriasNovas = [];
-
-        for(let p of produtosCSV) {
-            if(p.categoria !== "todos" && !categories.includes(p.categoria)) {
-                categories.push(p.categoria);
-                stats.catClicks[p.categoria] = { hoje: 0, total: 0 };
-                categoriasNovas.push(p.categoria);
-            }
-
-            let novoId = products.length > 0 ? Math.max(...products.map(p=>p.id)) + 1 : 1;
-            products.push({
-                id: novoId, nome: p.nome, preco: p.preco,
-                categoria: categories.includes(p.categoria) ? p.categoria : "todos",
-                link: "https://shopee.com.br", imagem: "", vendidos: 0,
-                clicksHoje: 0, clicksTotal: 0, freteGratis: false,
-                metaCliques: 0, shopeeId: "", ordem: products.length
-            });
-            adicionados++;
-        }
-
-        ordenarProdutos();
-        salvarTudo();
-        renderizar();
-        atualizarSelectCategorias();
-
-        let msg = `✅ ${adicionados} produto(s) adicionado(s)!`;
-        if(categoriasNovas.length > 0) msg += ` Novas categorias: ${categoriasNovas.join(', ')}`;
-        showToast(msg, false, true);
-        return adicionados;
-    }
-
-    async function uploadImagem(file) {
-        let form = new FormData();
-        form.append("image", file);
-        form.append("key", IMGBB_KEY);
-        let resp = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: form });
-        let data = await resp.json();
-        if(data.success) return data.data.url;
-        throw new Error("Erro no upload");
-    }
-
-    async function salvarProduto() {
-        let id = parseInt(document.getElementById("prodId").value);
-        let nome = document.getElementById("prodName").value;
-        let preco = parseFloat(document.getElementById("prodPrice").value);
-        let categoria = document.getElementById("prodCategory").value;
-        let link = document.getElementById("prodLink").value;
-        let vendidos = parseInt(document.getElementById("prodSold").value) || 0;
-        let meta = parseInt(document.getElementById("prodMeta").value) || 0;
-        let shopeeId = document.getElementById("prodShopeeId").value;
-
-        if(!nome || isNaN(preco)) { alert("Nome e preço são obrigatórios!"); return; }
-
-        let imgUrl = "";
-        if(currentImage) {
-            try {
-                document.getElementById("saveProduct").innerText = "Enviando...";
-                imgUrl = await uploadImagem(currentImage);
-            } catch(e) { alert("Erro na imagem: " + e); document.getElementById("saveProduct").innerText = "Salvar"; return; }
-        }
-
-        if(id) {
-            let idx = products.findIndex(p => p.id === id);
-            if(idx !== -1) {
-                products[idx] = { ...products[idx], nome, preco, categoria, link, vendidos, metaCliques: meta, shopeeId };
-                if(imgUrl) products[idx].imagem = imgUrl;
-            }
-            showToast(`✏️ Produto "${nome}" atualizado!`, false, true);
-        } else {
-            let novoId = products.length > 0 ? Math.max(...products.map(p=>p.id)) + 1 : 1;
-            let novoProduto = {
-                id: novoId, nome, preco, categoria, link: link || "https://shopee.com.br", imagem: imgUrl,
-                vendidos, clicksHoje: 0, clicksTotal: 0, freteGratis: false, 
-                metaCliques: meta, shopeeId, ordem: products.length
-            };
-            if(productPosition === "top") products.unshift(novoProduto);
-            else products.push(novoProduto);
-            products.forEach((p, idx) => p.ordem = idx);
-            showToast(`✅ Produto "${nome}" adicionado com sucesso!`, false, true);
-        }
-        ordenarProdutos();
-        salvarTudo();
-        fecharModalProduto();
-        currentImage = null;
-        renderizar();
-        atualizarSelectCategorias();
-    }
-
-    function abrirModalProduto(prod = null) {
-        document.getElementById("prodId").value = prod?.id || "";
-        document.getElementById("prodName").value = prod?.nome || "";
-        document.getElementById("prodPrice").value = prod?.preco || "";
-        document.getElementById("prodLink").value = prod?.link || "https://shopee.com.br";
-        document.getElementById("prodSold").value = prod?.vendidos || 0;
-        document.getElementById("prodMeta").value = prod?.metaCliques || 0;
-        document.getElementById("prodShopeeId").value = prod?.shopeeId || "";
-        document.getElementById("categorySearchInput").value = "";
-
-        atualizarSelectCategorias();
-
-        if(prod?.categoria) {
-            const select = document.getElementById("prodCategory");
-            if(select.querySelector(`option[value="${prod.categoria}"]`)) {
-                select.value = prod.categoria;
-            }
-        }
-
-        filtrarCategoriasSelect();
-
-        if(prod?.imagem) {
-            document.getElementById("imagePreview").src = prod.imagem;
-            document.getElementById("imagePreview").style.display = "block";
-        } else {
-            document.getElementById("imagePreview").style.display = "none";
-        }
-
-        productPosition = "top";
-        document.getElementById("prodPosTop").classList.add("position-btn-active");
-        document.getElementById("prodPosTop").classList.remove("position-btn-inactive");
-        document.getElementById("prodPosLast").classList.add("position-btn-inactive");
-        document.getElementById("prodPosLast").classList.remove("position-btn-active");
-        document.getElementById("productModal").classList.add("active");
-    }
-
-    function fecharModalProduto() {
-        document.getElementById("productModal").classList.remove("active");
-        document.getElementById("saveProduct").innerText = "Salvar";
-        currentImage = null;
-        document.getElementById("categorySearchInput").value = "";
-    }
-
+    
+    function resetarContagens() { if(confirm("Resetar TODAS as contagens?")) { products.forEach(p => { p.clicksHoje = 0; p.clicksTotal = 0; }); Object.keys(stats.catClicks).forEach(c => { stats.catClicks[c].hoje = 0; stats.catClicks[c].total = 0; }); salvarTudo(); renderizar(); showToast("✅ Todas as contagens foram resetadas!", false, true); } }
+    function deletarTudo() { if(confirm("DELETAR TODOS OS PRODUTOS?")) if(confirm("Última confirmação!")) { products = []; salvarTudo(); renderizar(); showToast("🗑️ Todos os produtos foram deletados!"); } }
+    function processarCSV(texto) { let linhas = texto.split(/\r?\n/); let resultados = []; let erros = []; for(let i = 0; i < linhas.length; i++) { let linha = linhas[i].trim(); if(!linha) continue; let separador = linha.includes(';') ? ';' : ','; let cols = linha.split(separador); if(i === 0) { let primeiraColuna = cols[0].toLowerCase(); if(primeiraColuna === 'nome' || primeiraColuna === 'produto' || primeiraColuna === 'product') continue; } if(cols.length < 2) { erros.push(`Linha ${i+1}: formato inválido`); continue; } let nome = cols[0]?.trim(); let valorStr = cols[1]?.toString().replace(/[^0-9.,]/g, '').replace(',', '.'); let valor = parseFloat(valorStr); let categoria = cols[2]?.trim().toLowerCase() || "todos"; if(!nome) { erros.push(`Linha ${i+1}: nome vazio`); continue; } if(isNaN(valor) || valor <= 0) { erros.push(`Linha ${i+1}: preço inválido`); continue; } resultados.push({ nome, preco: valor, categoria }); } if(erros.length > 0) { document.getElementById("csvError").innerHTML = erros.slice(0,5).join('<br>'); document.getElementById("csvError").style.display = "block"; } else document.getElementById("csvError").style.display = "none"; return resultados; }
+    async function adicionarCSV(produtosCSV) { let adicionados = 0; let categoriasNovas = []; for(let p of produtosCSV) { if(p.categoria !== "todos" && !categories.includes(p.categoria)) { categories.push(p.categoria); stats.catClicks[p.categoria] = { hoje: 0, total: 0 }; categoriasNovas.push(p.categoria); } let novoId = products.length > 0 ? Math.max(...products.map(p=>p.id)) + 1 : 1; products.push({ id: novoId, nome: p.nome, preco: p.preco, categoria: categories.includes(p.categoria) ? p.categoria : "todos", link: "https://shopee.com.br", imagem: "", vendidos: 0, clicksHoje: 0, clicksTotal: 0, freteGratis: false, metaCliques: 0, shopeeId: "", ordem: products.length }); adicionados++; } ordenarProdutos(); salvarTudo(); renderizar(); atualizarSelectCategorias(); let msg = `✅ ${adicionados} produto(s) adicionado(s)!`; if(categoriasNovas.length > 0) msg += ` Novas categorias: ${categoriasNovas.join(', ')}`; showToast(msg, false, true); return adicionados; }
+    async function uploadImagem(file) { let form = new FormData(); form.append("image", file); form.append("key", IMGBB_KEY); let resp = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: form }); let data = await resp.json(); if(data.success) return data.data.url; throw new Error("Erro no upload"); }
+    async function salvarProduto() { let id = parseInt(document.getElementById("prodId").value); let nome = document.getElementById("prodName").value; let preco = parseFloat(document.getElementById("prodPrice").value); let categoria = document.getElementById("prodCategory").value; let link = document.getElementById("prodLink").value; let vendidos = parseInt(document.getElementById("prodSold").value) || 0; let meta = parseInt(document.getElementById("prodMeta").value) || 0; let shopeeId = document.getElementById("prodShopeeId").value; if(!nome || isNaN(preco)) { alert("Nome e preço são obrigatórios!"); return; } let imgUrl = ""; if(currentImage) { try { document.getElementById("saveProduct").innerText = "Enviando..."; imgUrl = await uploadImagem(currentImage); } catch(e) { alert("Erro na imagem: " + e); document.getElementById("saveProduct").innerText = "Salvar"; return; } } if(id) { let idx = products.findIndex(p => p.id === id); if(idx !== -1) { products[idx] = { ...products[idx], nome, preco, categoria, link, vendidos, metaCliques: meta, shopeeId }; if(imgUrl) products[idx].imagem = imgUrl; } showToast(`✏️ Produto "${nome}" atualizado!`, false, true); } else { let novoId = products.length > 0 ? Math.max(...products.map(p=>p.id)) + 1 : 1; let novoProduto = { id: novoId, nome, preco, categoria, link: link || "https://shopee.com.br", imagem: imgUrl, vendidos, clicksHoje: 0, clicksTotal: 0, freteGratis: false, metaCliques: meta, shopeeId, ordem: products.length }; if(productPosition === "top") products.unshift(novoProduto); else products.push(novoProduto); products.forEach((p, idx) => p.ordem = idx); showToast(`✅ Produto "${nome}" adicionado com sucesso!`, false, true); } ordenarProdutos(); salvarTudo(); fecharModalProduto(); currentImage = null; renderizar(); atualizarSelectCategorias(); atualizarSelectsProdutosHeatmap(); }
+    function abrirModalProduto(prod = null) { document.getElementById("prodId").value = prod?.id || ""; document.getElementById("prodName").value = prod?.nome || ""; document.getElementById("prodPrice").value = prod?.preco || ""; document.getElementById("prodLink").value = prod?.link || "https://shopee.com.br"; document.getElementById("prodSold").value = prod?.vendidos || 0; document.getElementById("prodMeta").value = prod?.metaCliques || 0; document.getElementById("prodShopeeId").value = prod?.shopeeId || ""; document.getElementById("categorySearchInput").value = ""; atualizarSelectCategorias(); if(prod?.categoria) { const select = document.getElementById("prodCategory"); if(select.querySelector(`option[value="${prod.categoria}"]`)) select.value = prod.categoria; } filtrarCategoriasSelect(); if(prod?.imagem) { document.getElementById("imagePreview").src = prod.imagem; document.getElementById("imagePreview").style.display = "block"; } else document.getElementById("imagePreview").style.display = "none"; productPosition = "top"; document.getElementById("prodPosTop").classList.add("position-btn-active"); document.getElementById("prodPosTop").classList.remove("position-btn-inactive"); document.getElementById("prodPosLast").classList.add("position-btn-inactive"); document.getElementById("prodPosLast").classList.remove("position-btn-active"); document.getElementById("productModal").classList.add("active"); }
+    function fecharModalProduto() { document.getElementById("productModal").classList.remove("active"); document.getElementById("saveProduct").innerText = "Salvar"; currentImage = null; document.getElementById("categorySearchInput").value = ""; }
     function abrirModalCategoria() { document.getElementById("categoryModal").classList.add("active"); }
-    function fecharModalCategoria() {
-        document.getElementById("categoryModal").classList.remove("active");
-        document.getElementById("catName").value = "";
-        categoryPosition = "top";
-        document.getElementById("catPosTop").classList.add("position-btn-active");
-        document.getElementById("catPosTop").classList.remove("position-btn-inactive");
-        document.getElementById("catPosLast").classList.add("position-btn-inactive");
-        document.getElementById("catPosLast").classList.remove("position-btn-active");
-    }
-
-    function salvarCategoria() {
-        let nome = document.getElementById("catName").value;
-        if(adicionarCategoria(nome, categoryPosition)) fecharModalCategoria();
-    }
-
+    function fecharModalCategoria() { document.getElementById("categoryModal").classList.remove("active"); document.getElementById("catName").value = ""; categoryPosition = "top"; document.getElementById("catPosTop").classList.add("position-btn-active"); document.getElementById("catPosTop").classList.remove("position-btn-inactive"); document.getElementById("catPosLast").classList.add("position-btn-inactive"); document.getElementById("catPosLast").classList.remove("position-btn-active"); }
+    function salvarCategoria() { let nome = document.getElementById("catName").value; if(adicionarCategoria(nome, categoryPosition)) fecharModalCategoria(); }
     function mostrarLogin() { document.getElementById("loginModal").classList.add("active"); }
-
-    function fazerLogin() {
-        let email = document.getElementById("loginEmail").value;
-        let password = document.getElementById("loginPassword").value;
-        if(!email || !password) {
-            document.getElementById("loginError").innerText = "Preencha email e senha!";
-            document.getElementById("loginError").style.display = "block";
-            return;
-        }
-        document.getElementById("loginError").style.display = "none";
-        document.getElementById("loginLoading").style.display = "block";
-        document.getElementById("doLogin").disabled = true;
-        auth.signInWithEmailAndPassword(email, password)
-            .then((userCredential) => {
-                currentUser = userCredential.user;
-                document.getElementById("loginModal").classList.remove("active");
-                editMode = true;
-                document.body.classList.add("edit-mode");
-                document.getElementById("editBadge").style.display = "flex";
-                document.getElementById("loginLoading").style.display = "none";
-                document.getElementById("doLogin").disabled = false;
-                carregarDoFirebase();
-                carregarAtividades();
-                showToast("👋 Bem-vindo ao modo edição!");
-            })
-            .catch((error) => {
-                document.getElementById("loginLoading").style.display = "none";
-                document.getElementById("doLogin").disabled = false;
-                document.getElementById("loginError").innerText = "Acesso negado! Verifique suas credenciais.";
-                document.getElementById("loginError").style.display = "block";
-            });
-    }
-
-    function sairEdit() {
-        auth.signOut().then(() => {
-            editMode = false;
-            currentUser = null;
-            document.body.classList.remove("edit-mode");
-            document.getElementById("editBadge").style.display = "none";
-            renderizar();
-            showToast("👋 Você saiu do modo edição.");
-        });
-    }
-
-    function handleSearch() {
-        let newSearch = document.getElementById("searchInput").value;
-        currentSearch = newSearch;
-        const clearBtn = document.getElementById("clearSearch");
-        if(currentSearch && currentSearch.length > 0) clearBtn.style.display = "block";
-        else clearBtn.style.display = "none";
-        renderizar();
-    }
-
-    function resetSearch() {
-        document.getElementById("searchInput").value = "";
-        currentSearch = "";
-        document.getElementById("clearSearch").style.display = "none";
-        renderizar();
-    }
-
-    window.addEventListener("scroll", () => {
-        const scrollBtn = document.getElementById("scrollTopBtn");
-        if(window.scrollY > 300) scrollBtn.classList.add("show");
-        else scrollBtn.classList.remove("show");
-    });
-
+    function fazerLogin() { let email = document.getElementById("loginEmail").value; let password = document.getElementById("loginPassword").value; if(!email || !password) { document.getElementById("loginError").innerText = "Preencha email e senha!"; document.getElementById("loginError").style.display = "block"; return; } document.getElementById("loginError").style.display = "none"; document.getElementById("loginLoading").style.display = "block"; document.getElementById("doLogin").disabled = true; auth.signInWithEmailAndPassword(email, password).then((userCredential) => { currentUser = userCredential.user; document.getElementById("loginModal").classList.remove("active"); editMode = true; document.body.classList.add("edit-mode"); document.getElementById("editBadge").style.display = "flex"; document.getElementById("loginLoading").style.display = "none"; document.getElementById("doLogin").disabled = false; carregarDoFirebase(); carregarHistoricoCliques(); showToast("👋 Bem-vindo ao modo edição!"); }).catch((error) => { document.getElementById("loginLoading").style.display = "none"; document.getElementById("doLogin").disabled = false; document.getElementById("loginError").innerText = "Acesso negado!"; document.getElementById("loginError").style.display = "block"; }); }
+    function sairEdit() { auth.signOut().then(() => { editMode = false; currentUser = null; document.body.classList.remove("edit-mode"); document.getElementById("editBadge").style.display = "none"; renderizar(); showToast("👋 Você saiu do modo edição."); }); }
+    function handleSearch() { let newSearch = document.getElementById("searchInput").value; currentSearch = newSearch; const clearBtn = document.getElementById("clearSearch"); if(currentSearch && currentSearch.length > 0) clearBtn.style.display = "block"; else clearBtn.style.display = "none"; renderizar(); }
+    function resetSearch() { document.getElementById("searchInput").value = ""; currentSearch = ""; document.getElementById("clearSearch").style.display = "none"; renderizar(); }
+    
+    window.addEventListener("scroll", () => { const scrollBtn = document.getElementById("scrollTopBtn"); if(window.scrollY > 300) scrollBtn.classList.add("show"); else scrollBtn.classList.remove("show"); });
     document.getElementById("scrollTopBtn").addEventListener("click", scrollToTop);
     document.getElementById("logoBtn").addEventListener("click", mostrarLogin);
     document.getElementById("doLogin").addEventListener("click", fazerLogin);
@@ -1705,178 +1350,40 @@
     document.getElementById("closeManageModal").addEventListener("click", () => document.getElementById("manageCategoriesModal").classList.remove("active"));
     document.getElementById("searchInput").addEventListener("input", handleSearch);
     document.getElementById("clearSearch").addEventListener("click", resetSearch);
-    
-    // NOVOS BOTÕES CORRIGIDOS
     document.getElementById("sortSpecialsTop").addEventListener("click", sortSpecialsToTop);
     document.getElementById("shuffleReverse").addEventListener("click", reverseProducts);
     document.getElementById("shuffleRandom").addEventListener("click", shuffleAllProducts);
-    
     document.getElementById("categorySearchInput").addEventListener("input", filtrarCategoriasSelect);
-
-    document.getElementById("prodPosTop").addEventListener("click", () => {
-        productPosition = "top";
-        document.getElementById("prodPosTop").classList.add("position-btn-active");
-        document.getElementById("prodPosTop").classList.remove("position-btn-inactive");
-        document.getElementById("prodPosLast").classList.add("position-btn-inactive");
-        document.getElementById("prodPosLast").classList.remove("position-btn-active");
-    });
-    document.getElementById("prodPosLast").addEventListener("click", () => {
-        productPosition = "last";
-        document.getElementById("prodPosLast").classList.add("position-btn-active");
-        document.getElementById("prodPosLast").classList.remove("position-btn-inactive");
-        document.getElementById("prodPosTop").classList.add("position-btn-inactive");
-        document.getElementById("prodPosTop").classList.remove("position-btn-active");
-    });
-
-    document.getElementById("catPosTop").addEventListener("click", () => {
-        categoryPosition = "top";
-        document.getElementById("catPosTop").classList.add("position-btn-active");
-        document.getElementById("catPosTop").classList.remove("position-btn-inactive");
-        document.getElementById("catPosLast").classList.add("position-btn-inactive");
-        document.getElementById("catPosLast").classList.remove("position-btn-active");
-    });
-    document.getElementById("catPosLast").addEventListener("click", () => {
-        categoryPosition = "last";
-        document.getElementById("catPosLast").classList.add("position-btn-active");
-        document.getElementById("catPosLast").classList.remove("position-btn-inactive");
-        document.getElementById("catPosTop").classList.add("position-btn-inactive");
-        document.getElementById("catPosTop").classList.remove("position-btn-active");
-    });
-
-    document.querySelectorAll(".reset-tab-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            let resetType = btn.dataset.reset;
-            if(resetType === "topHoje") {
-                if(confirm("Resetar cliques de HOJE?")) {
-                    products.forEach(p => p.clicksHoje = 0);
-                    salvarTudo();
-                    renderizar();
-                    showToast("✅ Cliques de hoje resetados!", false, true);
-                }
-            }
-            else if(resetType === "topTotal") {
-                if(confirm("Resetar cliques TOTAL?")) {
-                    products.forEach(p => p.clicksTotal = 0);
-                    salvarTudo();
-                    renderizar();
-                    showToast("✅ Cliques totais resetados!", false, true);
-                }
-            }
-            else if(resetType === "catClicks") {
-                if(confirm("Resetar cliques das categorias?")) {
-                    Object.keys(stats.catClicks).forEach(c => { stats.catClicks[c].hoje = 0; stats.catClicks[c].total = 0; });
-                    salvarTudo();
-                    renderizar();
-                    showToast("✅ Cliques por categoria resetados!", false, true);
-                }
-            }
-            else if(resetType === "atividades") {
-                limparAtividades();
-            }
-        });
-    });
-
+    
+    document.getElementById("prodPosTop").addEventListener("click", () => { productPosition = "top"; document.getElementById("prodPosTop").classList.add("position-btn-active"); document.getElementById("prodPosTop").classList.remove("position-btn-inactive"); document.getElementById("prodPosLast").classList.add("position-btn-inactive"); document.getElementById("prodPosLast").classList.remove("position-btn-active"); });
+    document.getElementById("prodPosLast").addEventListener("click", () => { productPosition = "last"; document.getElementById("prodPosLast").classList.add("position-btn-active"); document.getElementById("prodPosLast").classList.remove("position-btn-inactive"); document.getElementById("prodPosTop").classList.add("position-btn-inactive"); document.getElementById("prodPosTop").classList.remove("position-btn-active"); });
+    document.getElementById("catPosTop").addEventListener("click", () => { categoryPosition = "top"; document.getElementById("catPosTop").classList.add("position-btn-active"); document.getElementById("catPosTop").classList.remove("position-btn-inactive"); document.getElementById("catPosLast").classList.add("position-btn-inactive"); document.getElementById("catPosLast").classList.remove("position-btn-active"); });
+    document.getElementById("catPosLast").addEventListener("click", () => { categoryPosition = "last"; document.getElementById("catPosLast").classList.add("position-btn-active"); document.getElementById("catPosLast").classList.remove("position-btn-inactive"); document.getElementById("catPosTop").classList.add("position-btn-inactive"); document.getElementById("catPosTop").classList.remove("position-btn-active"); });
+    
+    document.getElementById("resetDiaHeatmap").addEventListener("click", resetHeatmapDia);
+    document.getElementById("resetSemanaHeatmap").addEventListener("click", resetHeatmapSemana);
+    document.getElementById("resetMesHeatmap").addEventListener("click", resetHeatmapMes);
+    document.getElementById("resetAllHeatmaps").addEventListener("click", resetAllHeatmaps);
+    document.getElementById("resetSazonalidade").addEventListener("click", resetSazonalidade);
+    
+    document.querySelectorAll(".reset-tab-btn").forEach(btn => { btn.addEventListener("click", () => { let resetType = btn.dataset.reset; if(resetType === "topHoje") { if(confirm("Resetar cliques de HOJE?")) { products.forEach(p => p.clicksHoje = 0); salvarTudo(); renderizar(); showToast("✅ Cliques de hoje resetados!", false, true); } } else if(resetType === "topTotal") { if(confirm("Resetar cliques TOTAL?")) { products.forEach(p => p.clicksTotal = 0); salvarTudo(); renderizar(); showToast("✅ Cliques totais resetados!", false, true); } } else if(resetType === "catClicks") { if(confirm("Resetar cliques das categorias?")) { Object.keys(stats.catClicks).forEach(c => { stats.catClicks[c].hoje = 0; stats.catClicks[c].total = 0; }); salvarTudo(); renderizar(); showToast("✅ Cliques por categoria resetados!", false, true); } } }); });
+    
     document.getElementById("uploadTrigger").addEventListener("click", () => document.getElementById("prodImage").click());
-    document.getElementById("prodImage").addEventListener("change", (e) => {
-        currentImage = e.target.files[0];
-        if(currentImage) {
-            let reader = new FileReader();
-            reader.onload = (ev) => {
-                document.getElementById("imagePreview").src = ev.target.result;
-                document.getElementById("imagePreview").style.display = "block";
-            };
-            reader.readAsDataURL(currentImage);
-        }
-    });
-
+    document.getElementById("prodImage").addEventListener("change", (e) => { currentImage = e.target.files[0]; if(currentImage) { let reader = new FileReader(); reader.onload = (ev) => { document.getElementById("imagePreview").src = ev.target.result; document.getElementById("imagePreview").style.display = "block"; }; reader.readAsDataURL(currentImage); } });
     document.getElementById("saveMeta").addEventListener("click", salvarMeta);
     document.getElementById("closeMeta").addEventListener("click", () => document.getElementById("metaModal").classList.remove("active"));
-
-    document.querySelectorAll(".toggle-list-btn").forEach(btn => {
-        btn.addEventListener("click", () => toggleList(btn.dataset.target));
-    });
-
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            let tabId = btn.dataset.tab;
-            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-            document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
-            btn.classList.add("active");
-            document.getElementById(tabId).classList.add("active");
-        });
-    });
-
-    document.getElementById("csvTrigger").addEventListener("click", () => { document.getElementById("csvFile").click(); });
-    document.getElementById("csvFile").addEventListener("change", async (e) => {
-        let file = e.target.files[0];
-        if(file) {
-            document.getElementById("csvPreview").style.display = "block";
-            document.getElementById("csvPreview").innerHTML = '<i class="fas fa-spinner fa-spin"></i> Lendo arquivo...';
-            try {
-                let texto = await file.text();
-                pendingCSV = processarCSV(texto);
-                if(pendingCSV.length > 0) {
-                    let categoriasEncontradas = [...new Set(pendingCSV.map(p => p.categoria).filter(c => c !== "todos"))];
-                    document.getElementById("csvPreview").innerHTML = `<i class="fas fa-check-circle" style="color: #22c55e;"></i> <strong>${pendingCSV.length} produto(s) encontrado(s)</strong><br><span style="font-size: 11px;">Categorias: ${categoriasEncontradas.length > 0 ? categoriasEncontradas.join(', ') : 'todos'}</span>`;
-                } else {
-                    document.getElementById("csvPreview").innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i> Nenhum produto válido encontrado no arquivo';
-                }
-            } catch(err) {
-                document.getElementById("csvPreview").innerHTML = '<i class="fas fa-times-circle" style="color: #ef4444;"></i> Erro ao ler o arquivo';
-            }
-        }
-    });
-
-    document.getElementById("confirmCsv").addEventListener("click", async () => {
-        if(pendingCSV && pendingCSV.length > 0) {
-            document.getElementById("confirmCsv").disabled = true;
-            document.getElementById("confirmCsv").innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importando...';
-            let count = await adicionarCSV(pendingCSV);
-            document.getElementById("confirmCsv").disabled = false;
-            document.getElementById("confirmCsv").innerHTML = '✅ Importar';
-            document.getElementById("csvModal").classList.remove("active");
-            document.getElementById("csvFile").value = "";
-            document.getElementById("csvPreview").style.display = "none";
-            pendingCSV = [];
-            showToast(`✅ ${count} produtos importados com sucesso!`, false, true);
-        } else {
-            showToast("❌ Nenhum produto para importar. Selecione um arquivo CSV válido.", true);
-        }
-    });
-
-    document.getElementById("closeCsv").addEventListener("click", () => {
-        document.getElementById("csvModal").classList.remove("active");
-        document.getElementById("csvFile").value = "";
-        document.getElementById("csvPreview").style.display = "none";
-        document.getElementById("csvError").style.display = "none";
-        pendingCSV = [];
-    });
-
-    statsRef.on('value', (snapshot) => {
-        if(snapshot.exists()) {
-            stats = snapshot.val();
-            if(editMode) renderAdmin();
-        }
-    });
-
-    auth.onAuthStateChanged((user) => {
-        if(user) {
-            currentUser = user;
-            editMode = true;
-            document.body.classList.add("edit-mode");
-            document.getElementById("editBadge").style.display = "flex";
-            carregarDoFirebase();
-            carregarAtividades();
-        } else {
-            currentUser = null;
-            editMode = false;
-            document.body.classList.remove("edit-mode");
-            document.getElementById("editBadge").style.display = "none";
-            carregarDoFirebase();
-            carregarAtividades();
-        }
-    });
-
+    document.querySelectorAll(".toggle-list-btn").forEach(btn => btn.addEventListener("click", () => toggleList(btn.dataset.target)));
+    document.querySelectorAll(".tab-btn").forEach(btn => { btn.addEventListener("click", () => { let tabId = btn.dataset.tab; document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active")); document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active")); btn.classList.add("active"); document.getElementById(tabId).classList.add("active"); if (tabId === "tab5") { renderHeatmaps(); atualizarSelectsProdutosHeatmap(); } if (tabId === "tab6") renderSazonalidade(); }); });
+    document.querySelectorAll(".heatmap-tab-btn").forEach(btn => { btn.addEventListener("click", () => { const heatmapType = btn.dataset.heatmap; document.querySelectorAll(".heatmap-tab-btn").forEach(b => b.classList.remove("active")); btn.classList.add("active"); document.querySelectorAll(".heatmap-pane").forEach(pane => pane.classList.remove("active")); document.getElementById(`heatmap${heatmapType.charAt(0).toUpperCase() + heatmapType.slice(1)}`).classList.add("active"); }); });
+    ["heatmapProdutoDia", "heatmapProdutoSemana", "heatmapProdutoMes"].forEach(id => { const select = document.getElementById(id); if (select) select.addEventListener("change", () => renderHeatmaps()); });
+    
+    document.getElementById("csvTrigger").addEventListener("click", () => document.getElementById("csvFile").click());
+    document.getElementById("csvFile").addEventListener("change", async (e) => { let file = e.target.files[0]; if(file) { document.getElementById("csvPreview").style.display = "block"; document.getElementById("csvPreview").innerHTML = '<i class="fas fa-spinner fa-spin"></i> Lendo arquivo...'; try { let texto = await file.text(); pendingCSV = processarCSV(texto); if(pendingCSV.length > 0) { let categoriasEncontradas = [...new Set(pendingCSV.map(p => p.categoria).filter(c => c !== "todos"))]; document.getElementById("csvPreview").innerHTML = `<i class="fas fa-check-circle" style="color: #22c55e;"></i> <strong>${pendingCSV.length} produto(s) encontrado(s)</strong><br><span style="font-size: 11px;">Categorias: ${categoriasEncontradas.length > 0 ? categoriasEncontradas.join(', ') : 'todos'}</span>`; } else document.getElementById("csvPreview").innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #f97316;"></i> Nenhum produto válido encontrado'; } catch(err) { document.getElementById("csvPreview").innerHTML = '<i class="fas fa-times-circle" style="color: #ef4444;"></i> Erro ao ler o arquivo'; } } });
+    document.getElementById("confirmCsv").addEventListener("click", async () => { if(pendingCSV && pendingCSV.length > 0) { document.getElementById("confirmCsv").disabled = true; document.getElementById("confirmCsv").innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importando...'; let count = await adicionarCSV(pendingCSV); document.getElementById("confirmCsv").disabled = false; document.getElementById("confirmCsv").innerHTML = '✅ Importar'; document.getElementById("csvModal").classList.remove("active"); document.getElementById("csvFile").value = ""; document.getElementById("csvPreview").style.display = "none"; pendingCSV = []; showToast(`✅ ${count} produtos importados com sucesso!`, false, true); } else showToast("❌ Nenhum produto para importar.", true); });
+    document.getElementById("closeCsv").addEventListener("click", () => { document.getElementById("csvModal").classList.remove("active"); document.getElementById("csvFile").value = ""; document.getElementById("csvPreview").style.display = "none"; document.getElementById("csvError").style.display = "none"; pendingCSV = []; });
+    
+    statsRef.on('value', (snapshot) => { if(snapshot.exists()) { stats = snapshot.val(); if(editMode) renderAdmin(); } });
+    auth.onAuthStateChanged((user) => { if(user) { currentUser = user; editMode = true; document.body.classList.add("edit-mode"); document.getElementById("editBadge").style.display = "flex"; carregarDoFirebase(); carregarHistoricoCliques(); } else { currentUser = null; editMode = false; document.body.classList.remove("edit-mode"); document.getElementById("editBadge").style.display = "none"; carregarDoFirebase(); carregarHistoricoCliques(); } });
     setInterval(() => { resetDiario(); if(editMode) renderAdmin(); }, 60000);
 </script>
 </body>
