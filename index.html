@@ -472,7 +472,6 @@
         <p><i class="fas fa-bolt"></i> marketplace oficial</p>
     </div>
 
-    <!-- APENAS UM CAMPO DE BUSCA -->
     <div class="search-box">
         <i class="fas fa-search"></i>
         <input type="text" id="searchInput" placeholder="🔍 Buscar produto, categoria ou ID da Shopee..." autocomplete="off">
@@ -730,7 +729,7 @@
         <h3><i class="fas fa-chart-line"></i> Definir Meta de Cliques</h3>
         <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Produto: <strong id="metaProdName"></strong></p>
         <input type="number" id="metaValue" placeholder="Número de cliques para estar EM ALTA">
-        <button id="saveMeta" style="background: linear-gradient(135deg, #f97316, #ea580c); color: white;">Salvar Meta</button>
+        <button id="saveMeta" style="background: linear-gradient(135deg, #f97316, #ea580c); color: white;">Salvar</button>
         <button id="closeMeta" style="background: #e2e8f0;">Cancelar</button>
     </div>
 </div>
@@ -801,6 +800,61 @@
         toast.style.backgroundColor = isError ? "#ef4444" : (isSuccess ? "#22c55e" : "#f97316");
         toast.style.display = "block";
         setTimeout(() => { toast.style.display = "none"; }, 3000);
+    }
+
+    // FUNÇÃO CORRIGIDA QUE SALVA OS CLIQUES CORRETAMENTE
+    async function registrarCliqueProduto(produto) {
+        if(editMode) return;
+        
+        console.log("📊 Registrando clique para:", produto.nome);
+        
+        try {
+            // 1. Incrementar cliques do produto diretamente no Firebase
+            const produtoRef = database.ref(`products/${produto.id}`);
+            
+            await produtoRef.child('clicksHoje').transaction(current => {
+                return (current || 0) + 1;
+            });
+            
+            await produtoRef.child('clicksTotal').transaction(current => {
+                return (current || 0) + 1;
+            });
+            
+            // 2. Incrementar estatísticas da categoria
+            const categoriaNome = produto.categoria || "todos";
+            const catRef = database.ref(`stats/catClicks/${categoriaNome}`);
+            
+            await catRef.child('hoje').transaction(current => {
+                return (current || 0) + 1;
+            });
+            
+            await catRef.child('total').transaction(current => {
+                return (current || 0) + 1;
+            });
+            
+            // 3. Atualizar o objeto local
+            produto.clicksHoje = (produto.clicksHoje || 0) + 1;
+            produto.clicksTotal = (produto.clicksTotal || 0) + 1;
+            
+            if(!stats.catClicks[categoriaNome]) {
+                stats.catClicks[categoriaNome] = { hoje: 0, total: 0 };
+            }
+            stats.catClicks[categoriaNome].hoje++;
+            stats.catClicks[categoriaNome].total++;
+            
+            // 4. Registrar histórico
+            await registrarClickDetalhado(produto.id, produto.nome);
+            
+            console.log("✅ Clique registrado com sucesso!");
+            
+            // 5. Atualizar interface se necessário
+            if(editMode) renderAdmin();
+            renderizar();
+            
+        } catch(error) {
+            console.error("❌ Erro ao registrar clique:", error);
+            showToast("Erro ao registrar clique. Tente novamente.", true);
+        }
     }
 
     async function registrarClickDetalhado(produtoId, produtoNome) {
@@ -1207,12 +1261,22 @@
     async function handleProductClick(productId, event) {
         if(!productId) return;
         if(event) { event.preventDefault(); event.stopPropagation(); }
+        
         const produto = products.find(p => p.id === productId);
         if(!produto) return;
+        
         let productLink = produto.link && produto.link.trim() !== "" ? produto.link.trim() : "https://shopee.com.br";
-        if(productLink === "https://shopee.com.br" && (!produto.link || produto.link === "https://shopee.com.br")) showToast(`⚠️ Produto "${produto.nome}" não tem link cadastrado!`, true);
-        else { window.open(productLink, "_blank"); if(!editMode) showToast(`🔗 Redirecionando para ${produto.nome}...`); }
-        if(!editMode) { produto.clicksHoje = (produto.clicksHoje || 0) + 1; produto.clicksTotal = (produto.clicksTotal || 0) + 1; await registrarClickDetalhado(produto.id, produto.nome); await salvarTudo(); }
+        if(productLink === "https://shopee.com.br" && (!produto.link || produto.link === "https://shopee.com.br")) {
+            showToast(`⚠️ Produto "${produto.nome}" não tem link cadastrado!`, true);
+        } else {
+            window.open(productLink, "_blank");
+            if(!editMode) showToast(`🔗 Redirecionando para ${produto.nome}...`);
+        }
+        
+        if(!editMode) {
+            await registrarCliqueProduto(produto);
+        }
+        
         renderizar();
     }
     
@@ -1223,20 +1287,15 @@
         else if(currentSpecial === "frete") filtrados = filtrados.filter(p => p.freteGratis === true);
         else if(currentCat !== "todos") filtrados = filtrados.filter(p => p.categoria === currentCat);
         
-        // Busca unificada: por nome, categoria ou shopeeId
         if(currentSearch && currentSearch.trim().length > 0) { 
             let searchLower = currentSearch.toLowerCase().trim();
             filtrados = filtrados.filter(p => {
-                // Busca por nome
                 if(fuzzySearch(currentSearch, p.nome)) return true;
-                // Busca por categoria
                 if(p.categoria && p.categoria.toLowerCase().includes(searchLower)) return true;
-                // Busca por shopeeId
                 if(p.shopeeId && p.shopeeId.toLowerCase().includes(searchLower)) return true;
                 return false;
             });
             
-            // Se não encontrou produtos, tenta buscar por categoria
             if(filtrados.length === 0 && !editMode) {
                 let categoriaEncontrada = categories.find(c => c !== "todos" && c.toLowerCase().includes(searchLower));
                 if(categoriaEncontrada) {
@@ -1294,7 +1353,6 @@
         catStats.sort((a,b) => b.total - a.total);
         document.getElementById("catClicksList").innerHTML = catStats.map(c => `<div class="list-item"><span><i class="fas fa-folder-open" style="color:#f97316"></i> ${c.nome}</span><span>Hoje: <strong style="color:#22c55e">${c.hoje}</strong> | Total: ${c.total}</span></div>`).join("") || "<div class='list-item'>Nenhuma categoria</div>";
         
-        // Atualizar visibilidade das listas
         for(let key in listStates) {
             const container = document.getElementById(key);
             const btn = document.querySelector(`.toggle-list-btn[data-target="${key}"]`);
